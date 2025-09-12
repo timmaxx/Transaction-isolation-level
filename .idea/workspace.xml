@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="init">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleLocalServer.java" afterDir="false" />
+    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="change from ServerSocket and Socket implementation to Apache MINA implementation">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/MinaClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/MinaServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleLocalServer.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +58,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
+    "Application.MinaClient.executor": "Run",
+    "Application.MinaServer.executor": "Run",
     "Application.SimpleClient.executor": "Run",
     "Application.SimpleLocalServer.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -78,9 +84,9 @@
       <recent name="D:\japps\timmax\training and demonstration\Transaction-isolation-level" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.SimpleClient">
-    <configuration name="SimpleClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.SimpleClient" />
+  <component name="RunManager" selected="Application.MinaClient">
+    <configuration name="MinaClient" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.MinaClient" />
       <module name="Transaction-isolation-level" />
       <extension name="coverage">
         <pattern>
@@ -92,8 +98,8 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SimpleLocalServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.SimpleLocalServer" />
+    <configuration name="MinaServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.MinaServer" />
       <module name="Transaction-isolation-level" />
       <extension name="coverage">
         <pattern>
@@ -105,10 +111,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.MinaClient" />
+      <item itemvalue="Application.MinaServer" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.SimpleClient" />
-        <item itemvalue="Application.SimpleLocalServer" />
+        <item itemvalue="Application.MinaClient" />
+        <item itemvalue="Application.MinaServer" />
       </list>
     </recent_temporary>
   </component>
@@ -152,8 +162,20 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+    <MESSAGE value="change from ServerSocket and Socket implementation to Apache MINA implementation" />
+    <option name="LAST_COMMIT_MESSAGE" value="change from ServerSocket and Socket implementation to Apache MINA implementation" />
   </component>
 </project>

@@ -19,6 +19,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -31,7 +44,8 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <!-- here we specify that we want to use the main method within the App class -->
-                            <mainClass>com.timmax.training-demo.transaction-isolation-level.Main</mainClass>
+                            <mainClass>com.timmax.training-demo.transaction-isolation-level.MinaServer</mainClass>
+                            <mainClass>com.timmax.training-demo.transaction-isolation-level.MinaClient</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
