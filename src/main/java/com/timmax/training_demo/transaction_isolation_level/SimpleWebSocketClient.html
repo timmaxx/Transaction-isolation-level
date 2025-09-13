@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Клиент</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #messages { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; }
+        #messageInput { width: 300px; }
+    </style>
+</head>
+<body>
+<h1>WebSocket Клиент</h1>
+<label for="messageInput"></label><input type="text" id="messageInput" placeholder="Введите сообщение (exit для выхода)">
+<button onclick="sendMessage()">Отправить</button>
+<div id="messages"></div>
+
+<script>
+    const ws = new WebSocket('ws://localhost:8080');
+
+    ws.onopen = () => {
+        addMessage('Подключено к серверу');
+    };
+
+    ws.onmessage = (event) => {
+        // Callback: вызывается при получении данных от сервера
+        addMessage('Сервер: ' + event.data);
+    };
+
+    ws.onclose = () => {
+        addMessage('Соединение закрыто');
+    };
+
+    ws.onerror = (error) => {
+        addMessage('Ошибка: ' + error.message);
+    };
+
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+        if (message) {
+            ws.send(message);
+            addMessage('Отправлено: ' + message);
+            input.value = '';
+            if (message.toLowerCase() === 'exit') {
+                ws.close();
+            }
+        }
+    }
+
+    function addMessage(text) {
+        const messages = document.getElementById('messages');
+        const p = document.createElement('p');
+        p.textContent = text;
+        messages.appendChild(p);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    // Отправка по Enter
+    document.getElementById('messageInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+</body>
+</html>

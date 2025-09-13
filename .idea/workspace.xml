@@ -4,14 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="change from ServerSocket and Socket implementation to Apache MINA implementation">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/MinaClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/MinaServer.java" afterDir="false" />
+    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="change from Apache MINA in server and client implementation to WebSocket in java server and html-js client implementation (there is warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server)">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketClient.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleLocalServer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/MinaClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/MinaServer.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +46,9 @@
     &quot;accountId&quot;: &quot;3e3330d4-dfa5-4294-a5bd-6b4c298497c3&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -62,6 +64,7 @@
     "Application.MinaServer.executor": "Run",
     "Application.SimpleClient.executor": "Run",
     "Application.SimpleLocalServer.executor": "Run",
+    "Application.SimpleWebSocketServer.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -73,9 +76,9 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
+    "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.15317139",
-    "project.structure.side.proportion": "0.17667437",
+    "project.structure.side.proportion": "0.21247113",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -84,9 +87,9 @@
       <recent name="D:\japps\timmax\training and demonstration\Transaction-isolation-level" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.MinaClient">
-    <configuration name="MinaClient" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.MinaClient" />
+  <component name="RunManager">
+    <configuration name="SimpleWebSocketServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.SimpleWebSocketServer" />
       <module name="Transaction-isolation-level" />
       <extension name="coverage">
         <pattern>
@@ -98,27 +101,9 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MinaServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.MinaServer" />
-      <module name="Transaction-isolation-level" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.timmax.training_demo.transaction_isolation_level.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Application.MinaClient" />
-      <item itemvalue="Application.MinaServer" />
-    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.MinaClient" />
-        <item itemvalue="Application.MinaServer" />
+        <item itemvalue="Application.SimpleWebSocketServer" />
       </list>
     </recent_temporary>
   </component>
@@ -156,7 +141,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757621448123</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="change from ServerSocket and Socket implementation to Apache MINA implementation">
+      <option name="closed" value="true" />
+      <created>1757712397785</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1757712397785</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -176,6 +169,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <MESSAGE value="change from ServerSocket and Socket implementation to Apache MINA implementation" />
-    <option name="LAST_COMMIT_MESSAGE" value="change from ServerSocket and Socket implementation to Apache MINA implementation" />
+    <MESSAGE value="change from Apache MINA in server and client implementation to WebSocket in java server and html-js client implementation (there is warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server)" />
+    <option name="LAST_COMMIT_MESSAGE" value="change from Apache MINA in server and client implementation to WebSocket in java server and html-js client implementation (there is warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server)" />
   </component>
 </project>
