@@ -25,6 +25,11 @@
             <artifactId>Java-WebSocket</artifactId>
             <version>1.5.4</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.18</version>
+        </dependency>
     </dependencies>
 
     <build>

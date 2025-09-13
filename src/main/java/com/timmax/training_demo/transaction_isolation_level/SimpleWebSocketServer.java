@@ -67,6 +67,7 @@ public class SimpleWebSocketServer extends WebSocketServer {
                 System.out.println("Введите 'exit' для выхода");
                 String input = scanner.nextLine();
                 if (input.equalsIgnoreCase("exit")) {
+                    logger.info("Введено 'exit'. Сервер будет остановлен");
                     break;
                 }
             }
