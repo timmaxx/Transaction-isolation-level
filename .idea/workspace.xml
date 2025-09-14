@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="bad fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via modify classpath in IntelliJ IDEA adding include &quot;some_path\logback-core-1.5.18.jar&quot; and &quot;some_path\logback-classic-1.5.18.jar&quot; and &quot;some_path\slf4j-simple-2.0.13.jar&quot;">
+    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml">
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketClient.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/SimpleWebSocketClient.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -63,6 +65,8 @@
     "Application.SimpleLocalServer.executor": "Run",
     "Application.SimpleWebSocketServer.executor": "Run",
     "Maven.Transaction-isolation-level [clean].executor": "Run",
+    "Maven.Transaction-isolation-level [compile].executor": "Run",
+    "Maven.Transaction-isolation-level [validate].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -74,9 +78,10 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15317139",
     "project.structure.side.proportion": "0.21247113",
+    "settings.editor.selected.configurable": "configurable.group.build",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -84,17 +89,14 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\japps\timmax\training and demonstration\Transaction-isolation-level" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\japps\timmax\training and demonstration\Transaction-isolation-level\src\main\webapp" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="SimpleWebSocketServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.timmax.training_demo.transaction_isolation_level.SimpleWebSocketServer" />
       <module name="Transaction-isolation-level" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.timmax.training_demo.transaction_isolation_level.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -195,7 +197,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757792328303</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml">
+      <option name="closed" value="true" />
+      <created>1757793772706</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1757793772706</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -222,6 +232,7 @@
     <MESSAGE value="alternative fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml" />
     <MESSAGE value="alternative fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via modify classpath in IntelliJ IDEA adding include &quot;some_path\logback-core-1.5.18.jar&quot; and &quot;some_path\logback-classic-1.5.18.jar&quot;" />
     <MESSAGE value="bad fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via modify classpath in IntelliJ IDEA adding include &quot;some_path\logback-core-1.5.18.jar&quot; and &quot;some_path\logback-classic-1.5.18.jar&quot; and &quot;some_path\slf4j-simple-2.0.13.jar&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="bad fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via modify classpath in IntelliJ IDEA adding include &quot;some_path\logback-core-1.5.18.jar&quot; and &quot;some_path\logback-classic-1.5.18.jar&quot; and &quot;some_path\slf4j-simple-2.0.13.jar&quot;" />
+    <MESSAGE value="fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml" />
   </component>
 </project>
