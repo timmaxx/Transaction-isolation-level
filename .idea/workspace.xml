@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketClient.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/SimpleWebSocketClient.html" afterDir="false" />
+    <list default="true" id="448cb816-a139-402a-b66b-578663399d22" name="Changes" comment="create constants for socket address for java">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timmax/training_demo/transaction_isolation_level/SimpleWebSocketServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -205,7 +201,31 @@
       <option name="project" value="LOCAL" />
       <updated>1757793772706</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="change scope for logback-classic dependency to runtime">
+      <option name="closed" value="true" />
+      <created>1757844322223</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1757844322223</updated>
+    </task>
+    <task id="LOCAL-00012" summary="move SimpleWebSocketClient.html into webapp">
+      <option name="closed" value="true" />
+      <created>1757844408647</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1757844408647</updated>
+    </task>
+    <task id="LOCAL-00013" summary="create constants for socket address for java">
+      <option name="closed" value="true" />
+      <created>1757844516547</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1757844516547</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -233,6 +253,9 @@
     <MESSAGE value="alternative fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via modify classpath in IntelliJ IDEA adding include &quot;some_path\logback-core-1.5.18.jar&quot; and &quot;some_path\logback-classic-1.5.18.jar&quot;" />
     <MESSAGE value="bad fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via modify classpath in IntelliJ IDEA adding include &quot;some_path\logback-core-1.5.18.jar&quot; and &quot;some_path\logback-classic-1.5.18.jar&quot; and &quot;some_path\slf4j-simple-2.0.13.jar&quot;" />
     <MESSAGE value="fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix warning &quot;SLF4J: No SLF4J providers were found. ...&quot; with start server via adding dependency &quot;logback-classic&quot; into pom.xml" />
+    <MESSAGE value="change scope for logback-classic dependency to runtime" />
+    <MESSAGE value="move SimpleWebSocketClient.html into webapp" />
+    <MESSAGE value="create constants for socket address for java" />
+    <option name="LAST_COMMIT_MESSAGE" value="create constants for socket address for java" />
   </component>
 </project>

@@ -6,6 +6,7 @@ import org.java_websocket.server.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
 
@@ -19,6 +20,16 @@ public class SimpleWebSocketServer extends WebSocketServer {
     public SimpleWebSocketServer() {
         // Привязка к хосту и порту
         super(new InetSocketAddress(LOCALHOST, PORT));
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ie) {
+            throw new RuntimeException(ie);
+        }
     }
 
     @Override
@@ -53,6 +64,10 @@ public class SimpleWebSocketServer extends WebSocketServer {
         if (conn != null) {
             conn.close();
         }
+        if (!(ex instanceof BindException)) {
+            logger.error("Не предвиденная ошибка! Требуется дополнительный анализ.");
+        }
+        System.exit(1);
     }
 
     @Override
