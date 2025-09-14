@@ -15,8 +15,9 @@
 <button onclick="sendMessage()">Отправить</button>
 <div id="messages"></div>
 
+<script src="ConnectConstants.js"></script>
 <script>
-    const ws = new WebSocket('ws://localhost:8080');
+    const ws = new WebSocket(SERVER_URL);
 
     ws.onopen = () => {
         addMessage('Подключено к серверу');

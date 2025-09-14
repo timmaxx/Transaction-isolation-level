@@ -10,10 +10,10 @@ import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
 
-public class SimpleWebSocketServer extends WebSocketServer {
-    public static final String LOCALHOST = "localhost";
-    public static final int PORT = 8080;
+import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.LOCALHOST;
+import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.PORT;
 
+public class SimpleWebSocketServer extends WebSocketServer {
     // Инициализация логгера
     private static final Logger logger = LoggerFactory.getLogger(SimpleWebSocketServer.class);
 
