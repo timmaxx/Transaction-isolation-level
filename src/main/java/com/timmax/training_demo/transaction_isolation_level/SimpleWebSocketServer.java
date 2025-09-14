@@ -76,6 +76,8 @@ public class SimpleWebSocketServer extends WebSocketServer {
     }
 
     public static void main(String[] args) throws InterruptedException {
+        System.out.println("If you see message with incorrect symbols in log you can run 'chcp 65001' before running this application.");
+
         WebSocketServer server = new SimpleWebSocketServer();
         server.start();
 
