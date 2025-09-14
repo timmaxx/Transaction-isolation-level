@@ -10,7 +10,7 @@ import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
 
-import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.LOCALHOST;
+import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.HOST;
 import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.PORT;
 
 public class SimpleWebSocketServer extends WebSocketServer {
@@ -19,7 +19,7 @@ public class SimpleWebSocketServer extends WebSocketServer {
 
     public SimpleWebSocketServer() {
         // Привязка к хосту и порту
-        super(new InetSocketAddress(LOCALHOST, PORT));
+        super(new InetSocketAddress(HOST, PORT));
     }
 
     @Override
