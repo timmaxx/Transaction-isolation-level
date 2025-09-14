@@ -10,12 +10,15 @@ import java.net.InetSocketAddress;
 import java.util.Scanner;
 
 public class SimpleWebSocketServer extends WebSocketServer {
+    public static final String LOCALHOST = "localhost";
+    public static final int PORT = 8080;
+
     // Инициализация логгера
     private static final Logger logger = LoggerFactory.getLogger(SimpleWebSocketServer.class);
 
     public SimpleWebSocketServer() {
-        // Привязка к localhost:8080
-        super(new InetSocketAddress("localhost", 8080));
+        // Привязка к хосту и порту
+        super(new InetSocketAddress(LOCALHOST, PORT));
     }
 
     @Override
