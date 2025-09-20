@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.timmax.training_demo.transaction_isolation_level.TestData.afterOneRecordWasInserted;
-import static com.timmax.training_demo.transaction_isolation_level.TestData.recordForOneInsert;
+import static com.timmax.training_demo.transaction_isolation_level.TestData.*;
 
 public class DataBaseTest {
     private static final Logger logger = LoggerFactory.getLogger(DataBaseTest.class);
 
-    private final SomeTableInDB someTableInDB = new SomeTableInDB();
+    private final SomeTableInDB someTableInDB = emptyTable;
 
     @Test
     public void insertOneRecordIntoEmptyTable() {
@@ -40,7 +39,7 @@ public class DataBaseTest {
             logger.debug("  dataBase.someTableInDB = {}", someTableInDB);
         }
 
-        Assertions.assertEquals(afterOneRecordWasInserted, someTableInDB);
+        Assertions.assertEquals(oneRecordTable, someTableInDB);
     }
 
 /*
