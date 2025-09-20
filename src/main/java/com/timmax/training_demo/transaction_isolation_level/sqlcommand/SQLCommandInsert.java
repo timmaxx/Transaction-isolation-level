@@ -1,6 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
-import com.timmax.training_demo.transaction_isolation_level.SomeRecordInDB;
+import com.timmax.training_demo.transaction_isolation_level.table.SomeRecordInDB;
 import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 
 public class SQLCommandInsert extends SQLCommand {

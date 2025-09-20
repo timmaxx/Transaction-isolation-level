@@ -1,4 +1,4 @@
-package com.timmax.training_demo.transaction_isolation_level;
+package com.timmax.training_demo.transaction_isolation_level.websocket;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.Scanner;
 
-import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.SERVER_URL;
+import static com.timmax.training_demo.transaction_isolation_level.websocket.ConnectConstants.SERVER_URL;
 
 public class SimpleWebSocketClient extends WebSocketClient {
     private static final Logger logger = LoggerFactory.getLogger(SimpleWebSocketClient.class);

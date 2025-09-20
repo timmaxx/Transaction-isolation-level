@@ -1,4 +1,4 @@
-package com.timmax.training_demo.transaction_isolation_level;
+package com.timmax.training_demo.transaction_isolation_level.table;
 
 import java.util.Objects;
 

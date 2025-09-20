@@ -1,7 +1,5 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
-import com.timmax.training_demo.transaction_isolation_level.SomeRecordInDB;
-
 public class ImmutableDbTable extends BaseDbTable {
     private ImmutableDbTable() {
         super();

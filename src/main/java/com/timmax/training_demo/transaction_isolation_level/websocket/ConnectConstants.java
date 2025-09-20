@@ -1,4 +1,4 @@
-package com.timmax.training_demo.transaction_isolation_level;
+package com.timmax.training_demo.transaction_isolation_level.websocket;
 
 public class ConnectConstants {
     public static final String HOST = "localhost";

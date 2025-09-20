@@ -1,4 +1,4 @@
-package com.timmax.training_demo.transaction_isolation_level;
+package com.timmax.training_demo.transaction_isolation_level.websocket;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -10,8 +10,8 @@ import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
 
-import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.HOST;
-import static com.timmax.training_demo.transaction_isolation_level.ConnectConstants.PORT;
+import static com.timmax.training_demo.transaction_isolation_level.websocket.ConnectConstants.HOST;
+import static com.timmax.training_demo.transaction_isolation_level.websocket.ConnectConstants.PORT;
 
 public class SimpleWebSocketServer extends WebSocketServer {
     // Инициализация логгера

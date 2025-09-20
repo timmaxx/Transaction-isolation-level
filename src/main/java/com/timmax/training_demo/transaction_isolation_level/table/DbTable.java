@@ -1,7 +1,5 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
-import com.timmax.training_demo.transaction_isolation_level.SomeRecordInDB;
-
 public class DbTable extends BaseDbTable {
     public DbTable(BaseDbTable baseDbTable) {
         super(baseDbTable);
