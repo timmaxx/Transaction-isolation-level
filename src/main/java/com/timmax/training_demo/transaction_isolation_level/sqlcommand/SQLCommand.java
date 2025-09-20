@@ -1,17 +1,17 @@
 package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
-import com.timmax.training_demo.transaction_isolation_level.SomeTableInDB;
+import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class SQLCommand {
     protected static final Logger logger = LoggerFactory.getLogger(SQLCommand.class);
 
-    protected final SomeTableInDB someTableInDB;
+    protected final BaseDbTable baseDbTable;
     protected Thread thread;
 
-    public SQLCommand(SomeTableInDB someTableInDB) {
-        this.someTableInDB = someTableInDB;
+    public SQLCommand(BaseDbTable baseDbTable) {
+        this.baseDbTable = baseDbTable;
     }
 
     public final void startThread() {

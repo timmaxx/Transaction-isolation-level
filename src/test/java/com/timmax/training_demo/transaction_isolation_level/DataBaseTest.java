@@ -2,6 +2,7 @@ package com.timmax.training_demo.transaction_isolation_level;
 
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommand;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandInsert;
+import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -12,34 +13,34 @@ import static com.timmax.training_demo.transaction_isolation_level.TestData.*;
 public class DataBaseTest {
     private static final Logger logger = LoggerFactory.getLogger(DataBaseTest.class);
 
-    private final SomeTableInDB someTableInDB = emptyTable;
-
     @Test
     public void insertOneRecordIntoEmptyTable() {
+        final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
+
         synchronized (this) {
             logger.debug("Main thread 1. Before insert");
-            logger.debug("  dataBase.someTableInDB = {}", someTableInDB);
+            logger.debug("  dataBase.someTableInDB = {}", workDbTable);
         }
 
         SQLCommand sqlCommand = new SQLCommandInsert(
-                someTableInDB,
+                workDbTable,
                 recordForOneInsert
         );
         sqlCommand.startThread();
 
         synchronized (this) {
             logger.debug("Main thread 2. Just after calling insert.execute, but might be before fact executing");
-            logger.debug("  dataBase.someTableInDB = {}", someTableInDB);
+            logger.debug("  dataBase.someTableInDB = {}", workDbTable);
         }
 
         sqlCommand.joinToThread();
 
         synchronized (this) {
             logger.debug("Main thread 3. After all");
-            logger.debug("  dataBase.someTableInDB = {}", someTableInDB);
+            logger.debug("  dataBase.someTableInDB = {}", workDbTable);
         }
 
-        Assertions.assertEquals(oneRecordTable, someTableInDB);
+        Assertions.assertEquals(ONE_RECORD_IMMUTABLE_DB_TABLE, workDbTable);
     }
 
 /*

@@ -1,13 +1,13 @@
 package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
 import com.timmax.training_demo.transaction_isolation_level.SomeRecordInDB;
-import com.timmax.training_demo.transaction_isolation_level.SomeTableInDB;
+import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 
 public class SQLCommandInsert extends SQLCommand {
     protected SomeRecordInDB someRecordInDB;
 
-    public SQLCommandInsert(SomeTableInDB someTableInDB, SomeRecordInDB someRecordInDB) {
-        super(someTableInDB);
+    public SQLCommandInsert(BaseDbTable baseDbTable, SomeRecordInDB someRecordInDB) {
+        super(baseDbTable);
 
         this.someRecordInDB = someRecordInDB;
 
@@ -15,7 +15,7 @@ public class SQLCommandInsert extends SQLCommand {
             try {
                 synchronized (this) {
                     logger.debug("Insert thread 1. Before sleep");
-                    logger.debug("  someTableInDB =  {}", someTableInDB);
+                    logger.debug("  baseDbTable =  {}", baseDbTable);
                 }
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -23,12 +23,12 @@ public class SQLCommandInsert extends SQLCommand {
             }
             synchronized (this) {
                 logger.debug("Insert thread 2. After sleep and before insert");
-                logger.debug("  someTableInDB =  {}", someTableInDB);
+                logger.debug("  baseDbTable =  {}", baseDbTable);
             }
-            someTableInDB.insert(someRecordInDB);
+            baseDbTable.insert(someRecordInDB);
             synchronized (this) {
                 logger.debug("Insert thread 3. After insert");
-                logger.debug("  someTableInDB =  {}", someTableInDB);
+                logger.debug("  baseDbTable =  {}", baseDbTable);
             }
         });
     }

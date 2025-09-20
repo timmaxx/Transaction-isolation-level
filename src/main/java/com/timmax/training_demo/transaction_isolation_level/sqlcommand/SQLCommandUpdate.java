@@ -1,10 +1,10 @@
 package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
-import com.timmax.training_demo.transaction_isolation_level.SomeTableInDB;
+import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 
 public class SQLCommandUpdate extends SQLCommand {
-    public SQLCommandUpdate(SomeTableInDB someTableInDB) {
-        super(someTableInDB);
+    public SQLCommandUpdate(BaseDbTable baseDbTable) {
+        super(baseDbTable);
 
         thread = new Thread(() -> {
             try {
@@ -13,7 +13,7 @@ public class SQLCommandUpdate extends SQLCommand {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            someTableInDB.updateSetField1EqualToField1Plus111(1);
+            baseDbTable.updateSetField1EqualToField1Plus111(1);
         });
     }
 }
