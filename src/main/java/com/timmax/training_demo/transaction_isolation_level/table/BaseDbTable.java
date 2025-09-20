@@ -11,7 +11,7 @@ public abstract class BaseDbTable {
     protected static final Logger logger = LoggerFactory.getLogger(BaseDbTable.class);
 
     protected Integer rowId;
-    protected final Map<Integer, SomeRecordInDB> someRecordInDBMap;
+    protected final Map<Integer, DbRecord> someRecordInDBMap;
 
     public BaseDbTable() {
         this.someRecordInDBMap = new HashMap<>();
@@ -23,7 +23,7 @@ public abstract class BaseDbTable {
         this.someRecordInDBMap = new HashMap<>(baseDbTable.someRecordInDBMap);
     }
 
-    abstract public void insert(SomeRecordInDB someRecordInDB);
+    abstract public void insert(DbRecord dbRecord);
 
     abstract public void updateSetField1EqualToField1Plus111(Integer rowId);
 

@@ -5,13 +5,13 @@ public class ImmutableDbTable extends BaseDbTable {
         super();
     }
 
-    private ImmutableDbTable(SomeRecordInDB someRecordInDB) {
+    private ImmutableDbTable(DbRecord dbRecord) {
         super();
-        someRecordInDBMap.put(++rowId, someRecordInDB);
+        someRecordInDBMap.put(++rowId, dbRecord);
     }
 
     @Override
-    public void insert(SomeRecordInDB someRecordInDB) {
+    public void insert(DbRecord dbRecord) {
         throw new UnsupportedOperationException();
     }
 
@@ -24,7 +24,7 @@ public class ImmutableDbTable extends BaseDbTable {
         return new ImmutableDbTable();
     }
 
-    public static ImmutableDbTable getImmutableTableInDB(SomeRecordInDB someRecordInDB) {
-        return new ImmutableDbTable(someRecordInDB);
+    public static ImmutableDbTable getImmutableTableInDB(DbRecord dbRecord) {
+        return new ImmutableDbTable(dbRecord);
     }
 }

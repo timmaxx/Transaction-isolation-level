@@ -6,9 +6,9 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public void insert(SomeRecordInDB someRecordInDB) {
+    public void insert(DbRecord dbRecord) {
         logger.debug("i1 in thread");
-        someRecordInDBMap.put(++rowId, someRecordInDB);
+        someRecordInDBMap.put(++rowId, dbRecord);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class DbTable extends BaseDbTable {
                 throw new RuntimeException(e);
             }
             logger.debug("u2 in thread, value = {}", value);
-            someRecordInDBMap.put(rowId, new SomeRecordInDB(value + 111));
+            someRecordInDBMap.put(rowId, new DbRecord(value + 111));
         }
     }
 }

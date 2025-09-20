@@ -2,10 +2,10 @@ package com.timmax.training_demo.transaction_isolation_level.table;
 
 import java.util.Objects;
 
-public class SomeRecordInDB {
+public class DbRecord {
     private final int field1;
 
-    public SomeRecordInDB(int field1) {
+    public DbRecord(int field1) {
         this.field1 = field1;
     }
 
@@ -15,7 +15,7 @@ public class SomeRecordInDB {
 
     @Override
     public String toString() {
-        return "SomeRecordInDB{" +
+        return "DbRecord{" +
                 "field1=" + field1 +
                 '}';
     }
@@ -23,7 +23,7 @@ public class SomeRecordInDB {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        SomeRecordInDB that = (SomeRecordInDB) o;
+        DbRecord that = (DbRecord) o;
         return field1 == that.field1;
     }
 
