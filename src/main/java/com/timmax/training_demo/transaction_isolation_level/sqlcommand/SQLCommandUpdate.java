@@ -8,11 +8,11 @@ public class SQLCommandUpdate extends SQLCommand {
 
         thread = new Thread(() -> {
             try {
-                logger.debug("Update thread 1. Before sleep");
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
             baseDbTable.updateSetField1EqualToField1Plus111(1);
         });
     }
