@@ -14,24 +14,15 @@ public class DataBaseTest {
     private static final Logger logger = LoggerFactory.getLogger(DataBaseTest.class);
 
     private final SomeTableInDB someTableInDB = new SomeTableInDB();
-    private int sessionId = 0;
-
-    public int createSession() {
-        return sessionId++;
-    }
 
     @Test
     public void insertOneRecordIntoEmptyTable() {
-        DataBaseTest dataBaseTest = new DataBaseTest();
-        int session1 = dataBaseTest.createSession();
-
         synchronized (this) {
             logger.debug("Main thread 1. Before insert");
             logger.debug("  dataBase.someTableInDB = {}", someTableInDB);
         }
 
         SQLCommand sqlCommand = new SQLCommandInsert(
-                session1,
                 someTableInDB,
                 recordForOneInsert
         );

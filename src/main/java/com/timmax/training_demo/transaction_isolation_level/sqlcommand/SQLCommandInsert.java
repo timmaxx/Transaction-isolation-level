@@ -6,8 +6,8 @@ import com.timmax.training_demo.transaction_isolation_level.SomeTableInDB;
 public class SQLCommandInsert extends SQLCommand {
     protected SomeRecordInDB someRecordInDB;
 
-    public SQLCommandInsert(int sessionId, SomeTableInDB someTableInDB, SomeRecordInDB someRecordInDB) {
-        super(sessionId, someTableInDB);
+    public SQLCommandInsert(SomeTableInDB someTableInDB, SomeRecordInDB someRecordInDB) {
+        super(someTableInDB);
 
         this.someRecordInDB = someRecordInDB;
 
