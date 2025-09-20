@@ -17,41 +17,23 @@ public class SomeTableInDB {
         someRecordInDBMap = new HashMap<>();
     }
 
-    void insert(int sessionId, SomeRecordInDB someRecordInDB) {
-        new Thread(() -> {
-            try {
-                logger.info("sessionId = {} 1 in thread", sessionId);
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            logger.info("sessionId = {} 2 in thread", sessionId);
-            someRecordInDBMap.put(++rowId, someRecordInDB);
-            logger.info("sessionId = {} 3 in thread", sessionId);
-        }).start();
+    public void insert(SomeRecordInDB someRecordInDB) {
+        logger.info("i1 in thread");
+        someRecordInDBMap.put(++rowId, someRecordInDB);
     }
 
-    void updateSetField1EqualToField1Plus111(int sessionId, Integer rowId) {
-        new Thread(() -> {
+    public void updateSetField1EqualToField1Plus111(Integer rowId) {
+        if (someRecordInDBMap.containsKey(rowId)) {
+            int value = someRecordInDBMap.get(rowId).getField1();
+            logger.info("u1 in thread, value = {}", value);
             try {
-                logger.info("sessionId = {} 1 in thread", sessionId);
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            if (someRecordInDBMap.containsKey(rowId)) {
-                // someRecordInDBMap.put(rowId, someRecordInDB);
-                int value = someRecordInDBMap.get(rowId).getField1();
-                logger.info("sessionId = {} 2 in thread, value = {}", sessionId, value);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                logger.info("sessionId = {} 2 in thread, value = {}", sessionId, value);
-                someRecordInDBMap.put(rowId, new SomeRecordInDB(value + 111));
-            }
-        }).start();
+            logger.info("u2 in thread, value = {}", value);
+            someRecordInDBMap.put(rowId, new SomeRecordInDB(value + 111));
+        }
     }
 
     @Override
