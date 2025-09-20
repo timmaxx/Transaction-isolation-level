@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SomeTableInDB {
     private static final Logger logger = LoggerFactory.getLogger(SomeTableInDB.class);
@@ -18,20 +19,20 @@ public class SomeTableInDB {
     }
 
     public void insert(SomeRecordInDB someRecordInDB) {
-        logger.info("i1 in thread");
+        logger.debug("i1 in thread");
         someRecordInDBMap.put(++rowId, someRecordInDB);
     }
 
     public void updateSetField1EqualToField1Plus111(Integer rowId) {
         if (someRecordInDBMap.containsKey(rowId)) {
             int value = someRecordInDBMap.get(rowId).getField1();
-            logger.info("u1 in thread, value = {}", value);
+            logger.debug("u1 in thread, value = {}", value);
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            logger.info("u2 in thread, value = {}", value);
+            logger.debug("u2 in thread, value = {}", value);
             someRecordInDBMap.put(rowId, new SomeRecordInDB(value + 111));
         }
     }
@@ -42,5 +43,17 @@ public class SomeTableInDB {
                 "rowId=" + rowId +
                 ", someRecordInDBMap=" + someRecordInDBMap +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        SomeTableInDB that = (SomeTableInDB) o;
+        return Objects.equals(rowId, that.rowId) && Objects.equals(someRecordInDBMap, that.someRecordInDBMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rowId, someRecordInDBMap);
     }
 }

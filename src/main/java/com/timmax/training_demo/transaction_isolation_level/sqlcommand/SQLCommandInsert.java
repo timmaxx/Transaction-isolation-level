@@ -13,14 +13,23 @@ public class SQLCommandInsert extends SQLCommand {
 
         thread = new Thread(() -> {
             try {
-                logger.info("sessionId = {} i1 in thread", sessionId);
+                synchronized (this) {
+                    logger.debug("Insert thread 1. Before sleep");
+                    logger.debug("  someTableInDB =  {}", someTableInDB);
+                }
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            logger.info("sessionId = {} i2 in thread", sessionId);
+            synchronized (this) {
+                logger.debug("Insert thread 2. After sleep and before insert");
+                logger.debug("  someTableInDB =  {}", someTableInDB);
+            }
             someTableInDB.insert(someRecordInDB);
-            logger.info("sessionId = {} i3 in thread", sessionId);
+            synchronized (this) {
+                logger.debug("Insert thread 3. After insert");
+                logger.debug("  someTableInDB =  {}", someTableInDB);
+            }
         });
     }
 }

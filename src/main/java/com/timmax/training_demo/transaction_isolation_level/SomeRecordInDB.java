@@ -1,5 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level;
 
+import java.util.Objects;
+
 public class SomeRecordInDB {
     private final int field1;
 
@@ -16,5 +18,17 @@ public class SomeRecordInDB {
         return "SomeRecordInDB{" +
                 "field1=" + field1 +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        SomeRecordInDB that = (SomeRecordInDB) o;
+        return field1 == that.field1;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(field1);
     }
 }

@@ -16,7 +16,15 @@ public abstract class SQLCommand {
         this.someTableInDB = someTableInDB;
     }
 
-    public final void execute() {
+    public final void startThread() {
         thread.start();
+    }
+
+    public final void joinToThread() {
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
