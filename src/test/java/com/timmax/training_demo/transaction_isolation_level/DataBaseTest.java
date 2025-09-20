@@ -2,6 +2,7 @@ package com.timmax.training_demo.transaction_isolation_level;
 
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommand;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandInsert;
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandUpdate;
 import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class DataBaseTest {
         sqlCommand.startThread();
 
         synchronized (this) {
-            logger.debug("Main thread 2. Just after calling insert.execute, but might be before fact executing");
+            logger.debug("Main thread 2. Just after calling insert-thread.start, but might be before fact executing");
             logger.debug("  dataBase.someTableInDB = {}", workDbTable);
         }
 
@@ -40,7 +41,36 @@ public class DataBaseTest {
             logger.debug("  dataBase.someTableInDB = {}", workDbTable);
         }
 
-        Assertions.assertEquals(ONE_RECORD_IMMUTABLE_DB_TABLE, workDbTable);
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
+    }
+
+    @Test
+    public void updateOneRecordInOneRecordTable() {
+        final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
+
+        synchronized (this) {
+            logger.debug("Main thread 1. Before update");
+            logger.debug("  dataBase.someTableInDB = {}", workDbTable);
+        }
+
+        SQLCommand sqlCommand = new SQLCommandUpdate(
+                workDbTable
+        );
+        sqlCommand.startThread();
+
+        synchronized (this) {
+            logger.debug("Main thread 2. Just after calling update-thread.start, but might be before fact executing");
+            logger.debug("  dataBase.someTableInDB = {}", workDbTable);
+        }
+
+        sqlCommand.joinToThread();
+
+        synchronized (this) {
+            logger.debug("Main thread 3. After all");
+            logger.debug("  dataBase.someTableInDB = {}", workDbTable);
+        }
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
     }
 
 /*
