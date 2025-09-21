@@ -6,7 +6,7 @@ public class SQLCommandUpdate extends SQLCommand {
     public SQLCommandUpdate(BaseDbTable baseDbTable) {
         super(baseDbTable);
 
-        thread = new Thread(() -> {
+        runnable = () -> {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -14,6 +14,6 @@ public class SQLCommandUpdate extends SQLCommand {
             }
 
             baseDbTable.updateSetField1EqualToField1Plus111(1);
-        });
+        };
     }
 }

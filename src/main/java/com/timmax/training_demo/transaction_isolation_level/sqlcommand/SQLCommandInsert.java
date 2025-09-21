@@ -11,7 +11,7 @@ public class SQLCommandInsert extends SQLCommand {
 
         this.dbRecord = dbRecord;
 
-        thread = new Thread(() -> {
+        runnable = () -> {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -19,6 +19,6 @@ public class SQLCommandInsert extends SQLCommand {
             }
 
             baseDbTable.insert(dbRecord);
-        });
+        };
     }
 }

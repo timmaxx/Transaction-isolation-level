@@ -1,6 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level;
 
-import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommand;
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandInsert;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandUpdate;
 import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
@@ -14,13 +14,15 @@ public class DataBaseTest {
     public void insertOneRecordIntoEmptyTable() {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
-        SQLCommand sqlCommand = new SQLCommandInsert(
-                workDbTable,
-                recordForOneInsert
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
+        sqlCommandQueue.add(
+                new SQLCommandInsert(
+                        workDbTable,
+                        recordForOneInsert
+                )
         );
-        sqlCommand.startThread();
-
-        sqlCommand.joinToThread();
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
 
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
     }
@@ -29,12 +31,14 @@ public class DataBaseTest {
     public void updateOneRecordInOneRecordTable() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        SQLCommand sqlCommand = new SQLCommandUpdate(
-                workDbTable
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
+        sqlCommandQueue.add(
+                new SQLCommandUpdate(
+                        workDbTable
+                )
         );
-        sqlCommand.startThread();
-
-        sqlCommand.joinToThread();
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
 
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
     }
@@ -43,18 +47,22 @@ public class DataBaseTest {
     public void lostUpdateProblem() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        SQLCommand sqlCommand1 = new SQLCommandUpdate(
-                workDbTable
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+        sqlCommandQueue1.add(
+                new SQLCommandUpdate(
+                        workDbTable
+                )
         );
-        sqlCommand1.startThread();
+        sqlCommandQueue1.startThread();
 
-        SQLCommand sqlCommand2 = new SQLCommandUpdate(
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
+        sqlCommandQueue2.add(new SQLCommandUpdate(
                 workDbTable
-        );
-        sqlCommand2.startThread();
+        ));
+        sqlCommandQueue2.startThread();
 
-        sqlCommand1.joinToThread();
-        sqlCommand2.joinToThread();
+        sqlCommandQueue1.joinToThread();
+        sqlCommandQueue2.joinToThread();
 
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
     }
