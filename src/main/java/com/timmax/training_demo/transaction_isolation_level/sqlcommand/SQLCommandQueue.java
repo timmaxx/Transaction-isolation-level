@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Queue;
 
 import static com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueState.*;
@@ -14,6 +15,7 @@ public class SQLCommandQueue {
     private final Queue<SQLCommand> sqlCommandQueue = new LinkedList<>();
     private SQLCommandQueueState sqlCommandQueueState = IN_PREPARATION;
     private Thread thread;
+    SQLCommandQueueLog sqlCommandQueueLog = new SQLCommandQueueLog();
 
     public void add(SQLCommand sqlCommand) {
         if (sqlCommandQueueState != IN_PREPARATION) {
@@ -29,12 +31,16 @@ public class SQLCommandQueue {
         sqlCommandQueueState = STARTED;
         thread = new Thread(() -> {
             for (SQLCommand sqlCommand : sqlCommandQueue) {
-                sqlCommand.run();
+                Optional<SQLCommandQueueLogElement> optionalSQLCommandQueueLogElement = sqlCommand.run();
+                optionalSQLCommandQueueLogElement.ifPresent(
+                        sqlCommandQueueLogElement -> sqlCommandQueueLog.push(sqlCommandQueueLogElement)
+                );
             }
         });
         thread.setUncaughtExceptionHandler((t, throwable) -> {
-            sqlCommandQueueState = MALFUNCTIONED_ROLLED_BACK;
             logger.error("Uncaught exception in thread = {}, throwable = {}", t, throwable.toString());
+            // rollback();
+            sqlCommandQueueState = MALFUNCTIONED_ROLLED_BACK;
             try {
                 throw throwable;
             } catch (Throwable ex) {

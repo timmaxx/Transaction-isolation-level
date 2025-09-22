@@ -1,5 +1,9 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElement;
+
+import java.util.Optional;
+
 public class ImmutableDbTable extends BaseDbTable {
     private ImmutableDbTable() {
         super();
@@ -11,7 +15,7 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public void insert(DbRecord newDbRecord) {
+    public Optional<SQLCommandQueueLogElement> insert(DbRecord newDbRecord) {
         throw new UnsupportedOperationException();
     }
 

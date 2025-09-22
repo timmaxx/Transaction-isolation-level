@@ -1,11 +1,13 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class BaseDbTable {
     protected static final Logger logger = LoggerFactory.getLogger(BaseDbTable.class);
@@ -23,7 +25,7 @@ public abstract class BaseDbTable {
         this.someRecordInDBMap = new HashMap<>(baseDbTable.someRecordInDBMap);
     }
 
-    public abstract void insert(DbRecord newDbRecord);
+    public abstract Optional<SQLCommandQueueLogElement> insert(DbRecord newDbRecord);
 
     public abstract void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
 

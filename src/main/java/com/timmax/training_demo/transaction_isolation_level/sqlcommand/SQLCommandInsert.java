@@ -18,7 +18,7 @@ public class SQLCommandInsert extends SQLCommand {
                 throw new RuntimeException(e);
             }
 
-            baseDbTable.insert(newDbRecord);
-       };
+            return baseDbTable.insert(newDbRecord);
+        };
     }
 }
