@@ -36,4 +36,16 @@ public class DbTable extends BaseDbTable {
     private void update0(Integer rowId, DbRecord dbRecord) {
         someRecordInDBMap.put(rowId, dbRecord);
     }
+
+    @Override
+    public void delete(Integer rowId) {
+        if (!someRecordInDBMap.containsKey(rowId)) {
+            return;
+        }
+        delete0(rowId);
+    }
+
+    private void delete0(Integer rowId) {
+        someRecordInDBMap.remove(rowId);
+    }
 }

@@ -20,6 +20,11 @@ public class ImmutableDbTable extends BaseDbTable {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void delete(Integer rowId) {
+        throw new UnsupportedOperationException();
+    }
+
     public static ImmutableDbTable getImmutableTableInDB() {
         return new ImmutableDbTable();
     }

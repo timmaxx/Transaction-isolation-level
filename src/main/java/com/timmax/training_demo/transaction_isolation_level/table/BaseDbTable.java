@@ -27,6 +27,8 @@ public abstract class BaseDbTable {
 
     public abstract void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
 
+    public abstract void delete(Integer rowId);
+
     @Override
     public String toString() {
         return "BaseDbTable{" +
@@ -38,7 +40,7 @@ public abstract class BaseDbTable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof BaseDbTable that)) return false;
-        return Objects.equals(rowId, that.rowId) && Objects.equals(someRecordInDBMap, that.someRecordInDBMap);
+        return Objects.equals(someRecordInDBMap, that.someRecordInDBMap);
     }
 
     @Override

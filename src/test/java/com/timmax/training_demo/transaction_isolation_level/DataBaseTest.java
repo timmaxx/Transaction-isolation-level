@@ -3,6 +3,7 @@ package com.timmax.training_demo.transaction_isolation_level;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandInsert;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandUpdate;
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandDelete;
 import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import org.junit.jupiter.api.Assertions;
@@ -44,6 +45,23 @@ public class DataBaseTest {
         sqlCommandQueue.joinToThread();
 
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
+    }
+
+    @Test
+    public void deleteOneRecordFromOneRecordTable() {
+        final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
+
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
+        sqlCommandQueue.add(
+                new SQLCommandDelete(
+                        workDbTable,
+                        1
+                )
+        );
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
+
+        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
     }
 
     @Test
