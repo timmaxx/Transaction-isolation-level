@@ -25,7 +25,7 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public void delete(Integer rowId) {
+    public Optional<SQLCommandQueueLogElement> delete(Integer rowId) {
         throw new UnsupportedOperationException();
     }
 

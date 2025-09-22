@@ -61,11 +61,21 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public void delete(Integer rowId) {
+    public Optional<SQLCommandQueueLogElement> delete(Integer rowId) {
         if (!someRecordInDBMap.containsKey(rowId)) {
-            return;
+            return Optional.empty();
         }
+        DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
         delete0(rowId);
+
+        return Optional.of(
+                new SQLCommandQueueLogElement(
+                        SQLCommandQueueLogElementType.DELETE,
+                        this,
+                        rowId,
+                        oldDbRecord,
+                        null)
+        );
     }
 
     private void delete0(Integer rowId) {

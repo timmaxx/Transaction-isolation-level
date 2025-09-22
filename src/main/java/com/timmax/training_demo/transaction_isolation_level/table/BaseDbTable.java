@@ -29,7 +29,7 @@ public abstract class BaseDbTable {
 
     public abstract Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
 
-    public abstract void delete(Integer rowId);
+    public abstract Optional<SQLCommandQueueLogElement> delete(Integer rowId);
 
     @Override
     public String toString() {
