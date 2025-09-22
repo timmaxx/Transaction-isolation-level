@@ -19,8 +19,7 @@ public class DbTable extends BaseDbTable {
                         SQLCommandQueueLogElementType.INSERT,
                         this,
                         rowId,
-                        null,
-                        newDbRecord
+                        null
                 )
         );
     }
@@ -56,8 +55,8 @@ public class DbTable extends BaseDbTable {
                         SQLCommandQueueLogElementType.UPDATE,
                         this,
                         rowId,
-                        oldDbRecord,
-                        newDbRecord)
+                        oldDbRecord
+                )
         );
     }
 
@@ -83,8 +82,8 @@ public class DbTable extends BaseDbTable {
                         SQLCommandQueueLogElementType.DELETE,
                         this,
                         rowId,
-                        oldDbRecord,
-                        null)
+                        oldDbRecord
+                )
         );
     }
 

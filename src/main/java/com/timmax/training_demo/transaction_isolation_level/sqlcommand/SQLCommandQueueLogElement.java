@@ -8,19 +8,16 @@ public class SQLCommandQueueLogElement {
     private final BaseDbTable baseDbTable;
     private final Integer rowId;
     private final DbRecord oldDbRecord;
-    private final DbRecord newDbRecord;
 
     public SQLCommandQueueLogElement(
             SQLCommandQueueLogElementType sqlCommandQueueLogElementType,
             BaseDbTable baseDbTable,
             Integer rowId,
-            DbRecord oldDbRecord,
-            DbRecord newDbRecord) {
+            DbRecord oldDbRecord) {
         this.sqlCommandQueueLogElementType = sqlCommandQueueLogElementType;
         this.baseDbTable = baseDbTable;
         this.rowId = rowId;
         this.oldDbRecord = oldDbRecord;
-        this.newDbRecord = newDbRecord;
     }
 
     public SQLCommandQueueLogElementType getSqlCommandQueueLogElementType() {
