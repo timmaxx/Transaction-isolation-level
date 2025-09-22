@@ -4,7 +4,7 @@ import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 
 import java.util.Optional;
 
-public abstract class SQLCommand {
+public abstract class SQLCommand implements RunnableWithResultOptionalSQLCommandQueueLogElement {
     protected final BaseDbTable baseDbTable;
     protected RunnableWithResultOptionalSQLCommandQueueLogElement runnable;
 
@@ -12,7 +12,8 @@ public abstract class SQLCommand {
         this.baseDbTable = baseDbTable;
     }
 
-    Optional<SQLCommandQueueLogElement> run() {
+    @Override
+    public Optional<SQLCommandQueueLogElement> run() {
         return runnable.run();
     }
 }
