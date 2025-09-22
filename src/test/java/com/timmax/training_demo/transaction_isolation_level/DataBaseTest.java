@@ -66,6 +66,7 @@ public class DataBaseTest {
 
     @Test
     public void insertOneRecordIntoEmptyTable_Rollback() {
+//  ToDo: delete copy-paste code
 //  begin like insertOneRecordIntoEmptyTable()
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
@@ -88,7 +89,33 @@ public class DataBaseTest {
     }
 
     @Test
+    public void updateOneRecordInOneRecordTable_Rollback() {
+//  ToDo: delete copy-paste code
+//  begin like updateOneRecordInOneRecordTable
+        final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
+
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
+        sqlCommandQueue.add(
+                new SQLCommandUpdate(
+                        workDbTable,
+                        1,
+                        oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
+                )
+        );
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
+//  end like updateOneRecordInOneRecordTable
+        sqlCommandQueue.rollback();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
+    }
+
+    @Test
     public void deleteOneRecordFromOneRecordTable_Rollback() {
+//  ToDo: delete copy-paste code
+//  begin like deleteOneRecordFromOneRecordTable
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
@@ -102,7 +129,7 @@ public class DataBaseTest {
         sqlCommandQueue.joinToThread();
 
         Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
-
+//  end like deleteOneRecordFromOneRecordTable
         sqlCommandQueue.rollback();
 
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);

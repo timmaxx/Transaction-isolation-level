@@ -30,6 +30,8 @@ public abstract class BaseDbTable {
     public abstract void rollback_insert(Integer rowId, DbRecord oldDbRecord);
 
     public abstract Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
+    //  ToDo: Не должен быть public
+    public abstract void rollback_update(Integer rowId, DbRecord oldDbRecord);
 
     public abstract Optional<SQLCommandQueueLogElement> delete(Integer rowId);
     //  ToDo: Не должен быть public

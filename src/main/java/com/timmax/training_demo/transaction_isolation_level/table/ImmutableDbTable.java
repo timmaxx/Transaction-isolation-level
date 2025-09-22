@@ -30,6 +30,11 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
+    public void rollback_update(Integer rowId, DbRecord oldDbRecord) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Optional<SQLCommandQueueLogElement> delete(Integer rowId) {
         throw new UnsupportedOperationException();
     }

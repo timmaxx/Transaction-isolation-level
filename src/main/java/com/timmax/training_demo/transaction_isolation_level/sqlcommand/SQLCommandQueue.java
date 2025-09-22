@@ -68,6 +68,10 @@ public class SQLCommandQueue {
                 sqlCommandQueueLogElement
                         .getBaseDbTable()
                         .rollback_delete(rowId);
+            } else if (sqlCommandQueueLogElement.getSqlCommandQueueLogElementType() == UPDATE) {
+                sqlCommandQueueLogElement
+                        .getBaseDbTable()
+                        .rollback_update(rowId, sqlCommandQueueLogElement.getOldDbRecord());
             } else if (sqlCommandQueueLogElement.getSqlCommandQueueLogElementType() == DELETE) {
                 sqlCommandQueueLogElement
                         .getBaseDbTable()
