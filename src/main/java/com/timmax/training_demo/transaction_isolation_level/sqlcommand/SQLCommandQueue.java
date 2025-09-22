@@ -63,19 +63,19 @@ public class SQLCommandQueue {
             } catch (EmptyStackException ese) {
                 break;
             }
-            int rowId = sqlCommandQueueLogElement.getRowId();
-            if (sqlCommandQueueLogElement.getSqlCommandQueueLogElementType() == INSERT) {
+            int rowId = sqlCommandQueueLogElement.rowId();
+            if (sqlCommandQueueLogElement.sqlCommandQueueLogElementType() == INSERT) {
                 sqlCommandQueueLogElement
-                        .getBaseDbTable()
+                        .baseDbTable()
                         .rollback_delete(rowId);
-            } else if (sqlCommandQueueLogElement.getSqlCommandQueueLogElementType() == UPDATE) {
+            } else if (sqlCommandQueueLogElement.sqlCommandQueueLogElementType() == UPDATE) {
                 sqlCommandQueueLogElement
-                        .getBaseDbTable()
-                        .rollback_update(rowId, sqlCommandQueueLogElement.getOldDbRecord());
-            } else if (sqlCommandQueueLogElement.getSqlCommandQueueLogElementType() == DELETE) {
+                        .baseDbTable()
+                        .rollback_update(rowId, sqlCommandQueueLogElement.oldDbRecord());
+            } else if (sqlCommandQueueLogElement.sqlCommandQueueLogElementType() == DELETE) {
                 sqlCommandQueueLogElement
-                        .getBaseDbTable()
-                        .rollback_insert(rowId, sqlCommandQueueLogElement.getOldDbRecord());
+                        .baseDbTable()
+                        .rollback_insert(rowId, sqlCommandQueueLogElement.oldDbRecord());
             } else {
                 throw new UnsupportedOperationException();
             }
