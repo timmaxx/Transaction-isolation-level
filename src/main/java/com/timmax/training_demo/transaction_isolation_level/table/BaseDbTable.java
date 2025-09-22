@@ -27,7 +27,7 @@ public abstract class BaseDbTable {
 
     public abstract Optional<SQLCommandQueueLogElement> insert(DbRecord newDbRecord);
 
-    public abstract void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
+    public abstract Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
 
     public abstract void delete(Integer rowId);
 

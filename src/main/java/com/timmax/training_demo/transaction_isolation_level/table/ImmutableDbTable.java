@@ -20,7 +20,7 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+    public Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         throw new UnsupportedOperationException();
     }
 

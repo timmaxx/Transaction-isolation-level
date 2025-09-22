@@ -30,9 +30,9 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+    public Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         if (!someRecordInDBMap.containsKey(rowId)) {
-            return;
+            return Optional.empty();
         }
 
         DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
@@ -45,6 +45,15 @@ public class DbTable extends BaseDbTable {
         DbRecord newDbRecord = updateSetCalcFunc.setCalcFunc(oldDbRecord);
 
         update0(rowId, newDbRecord);
+
+        return Optional.of(
+                new SQLCommandQueueLogElement(
+                        SQLCommandQueueLogElementType.UPDATE,
+                        this,
+                        rowId,
+                        oldDbRecord,
+                        newDbRecord)
+        );
     }
 
     private void update0(Integer rowId, DbRecord dbRecord) {
