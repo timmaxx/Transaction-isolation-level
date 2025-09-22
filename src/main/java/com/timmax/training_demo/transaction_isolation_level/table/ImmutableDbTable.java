@@ -11,12 +11,12 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public void insert(DbRecord dbRecord) {
+    public void insert(DbRecord newDbRecord) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void updateSetField1EqualToField1Plus111(Integer rowId) {
+    public void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         throw new UnsupportedOperationException();
     }
 

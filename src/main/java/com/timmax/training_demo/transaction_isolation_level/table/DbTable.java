@@ -6,23 +6,34 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public void insert(DbRecord dbRecord) {
-        logger.debug("i1 in thread");
-        someRecordInDBMap.put(++rowId, dbRecord);
+    public void insert(DbRecord newDbRecord) {
+        ++rowId;
+        insert0(rowId, newDbRecord);
+    }
+
+    private void insert0(Integer rowId, DbRecord dbRecord) {
+        someRecordInDBMap.put(rowId, dbRecord);
     }
 
     @Override
-    public void updateSetField1EqualToField1Plus111(Integer rowId) {
-        if (someRecordInDBMap.containsKey(rowId)) {
-            int value = someRecordInDBMap.get(rowId).getField1();
-            logger.debug("u1 in thread, value = {}", value);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            logger.debug("u2 in thread, value = {}", value);
-            someRecordInDBMap.put(rowId, new DbRecord(value + 111));
+    public void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+        if (!someRecordInDBMap.containsKey(rowId)) {
+            return;
         }
+
+        DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        DbRecord newDbRecord = updateSetCalcFunc.setCalcFunc(oldDbRecord);
+
+        update0(rowId, newDbRecord);
+    }
+
+    private void update0(Integer rowId, DbRecord dbRecord) {
+        someRecordInDBMap.put(rowId, dbRecord);
     }
 }

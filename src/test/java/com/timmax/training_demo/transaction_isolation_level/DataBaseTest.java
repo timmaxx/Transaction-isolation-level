@@ -3,6 +3,7 @@ package com.timmax.training_demo.transaction_isolation_level;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandInsert;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandUpdate;
+import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,9 @@ public class DataBaseTest {
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
         sqlCommandQueue.add(
                 new SQLCommandUpdate(
-                        workDbTable
+                        workDbTable,
+                        1,
+                        oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
                 )
         );
         sqlCommandQueue.startThread();
@@ -50,14 +53,18 @@ public class DataBaseTest {
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
                 new SQLCommandUpdate(
-                        workDbTable
+                        workDbTable,
+                        1,
+                        oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
                 )
         );
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(new SQLCommandUpdate(
-                workDbTable
+                workDbTable,
+                1,
+                oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
         ));
         sqlCommandQueue2.startThread();
 

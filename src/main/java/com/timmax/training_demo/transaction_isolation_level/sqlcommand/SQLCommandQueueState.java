@@ -4,5 +4,7 @@ public enum SQLCommandQueueState {
     IN_PREPARATION,
     STARTED,
     STOPPED,
-    MALFUNCTIONED   // остановлен с ошибкой
+    MALFUNCTIONED_ROLLED_BACK,// остановлен с ошибкой
+    COMMITTED,
+    ROLLED_BACK
 }

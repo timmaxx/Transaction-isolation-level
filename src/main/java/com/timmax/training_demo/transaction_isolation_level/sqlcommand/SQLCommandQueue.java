@@ -33,7 +33,7 @@ public class SQLCommandQueue {
             }
         });
         thread.setUncaughtExceptionHandler((t, throwable) -> {
-            sqlCommandQueueState = MALFUNCTIONED;
+            sqlCommandQueueState = MALFUNCTIONED_ROLLED_BACK;
             logger.error("Uncaught exception in thread = {}, throwable = {}", t, throwable.toString());
             try {
                 throw throwable;

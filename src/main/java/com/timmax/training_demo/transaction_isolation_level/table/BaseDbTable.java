@@ -23,9 +23,9 @@ public abstract class BaseDbTable {
         this.someRecordInDBMap = new HashMap<>(baseDbTable.someRecordInDBMap);
     }
 
-    abstract public void insert(DbRecord dbRecord);
+    public abstract void insert(DbRecord newDbRecord);
 
-    abstract public void updateSetField1EqualToField1Plus111(Integer rowId);
+    public abstract void update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
 
     @Override
     public String toString() {
