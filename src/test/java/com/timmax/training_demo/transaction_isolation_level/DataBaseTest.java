@@ -7,7 +7,6 @@ import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLComman
 import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.timmax.training_demo.transaction_isolation_level.TestData.*;
@@ -89,7 +88,6 @@ public class DataBaseTest {
     }
 
     @Test
-    @Disabled
     public void deleteOneRecordFromOneRecordTable_Rollback() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
@@ -107,7 +105,7 @@ public class DataBaseTest {
 
         sqlCommandQueue.rollback();
 
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable); // ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
     }
 
     @Test

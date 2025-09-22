@@ -25,6 +25,11 @@ public class DbTable extends BaseDbTable {
         );
     }
 
+    @Override
+    public void rollback_insert(Integer rowId, DbRecord oldDbRecord) {
+        insert0(rowId, oldDbRecord);
+    }
+
     private void insert0(Integer rowId, DbRecord dbRecord) {
         someRecordInDBMap.put(rowId, dbRecord);
     }

@@ -68,6 +68,10 @@ public class SQLCommandQueue {
                 sqlCommandQueueLogElement
                         .getBaseDbTable()
                         .rollback_delete(rowId);
+            } else if (sqlCommandQueueLogElement.getSqlCommandQueueLogElementType() == DELETE) {
+                sqlCommandQueueLogElement
+                        .getBaseDbTable()
+                        .rollback_insert(rowId, sqlCommandQueueLogElement.getOldDbRecord());
             } else {
                 throw new UnsupportedOperationException();
             }

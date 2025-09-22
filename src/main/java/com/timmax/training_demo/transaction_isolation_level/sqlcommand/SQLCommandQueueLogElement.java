@@ -34,4 +34,8 @@ public class SQLCommandQueueLogElement {
     public Integer getRowId() {
         return rowId;
     }
+
+    public DbRecord getOldDbRecord() {
+        return oldDbRecord;
+    }
 }

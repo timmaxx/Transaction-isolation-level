@@ -26,6 +26,8 @@ public abstract class BaseDbTable {
     }
 
     public abstract Optional<SQLCommandQueueLogElement> insert(DbRecord newDbRecord);
+    //  ToDo: Не должен быть public
+    public abstract void rollback_insert(Integer rowId, DbRecord oldDbRecord);
 
     public abstract Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
 

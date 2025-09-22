@@ -20,6 +20,11 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
+    public void rollback_insert(Integer rowId, DbRecord oldDbRecord) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         throw new UnsupportedOperationException();
     }
