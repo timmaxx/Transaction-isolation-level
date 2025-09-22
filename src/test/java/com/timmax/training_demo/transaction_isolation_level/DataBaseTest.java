@@ -38,7 +38,7 @@ public class DataBaseTest {
                 new SQLCommandUpdate(
                         workDbTable,
                         1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
+                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
                 )
         );
         sqlCommandQueue.startThread();
@@ -99,7 +99,7 @@ public class DataBaseTest {
                 new SQLCommandUpdate(
                         workDbTable,
                         1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
+                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
                 )
         );
         sqlCommandQueue.startThread();
@@ -144,7 +144,7 @@ public class DataBaseTest {
                 new SQLCommandUpdate(
                         workDbTable,
                         1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
+                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
                 )
         );
         sqlCommandQueue1.startThread();
@@ -153,7 +153,7 @@ public class DataBaseTest {
         sqlCommandQueue2.add(new SQLCommandUpdate(
                 workDbTable,
                 1,
-                oldDbRecord -> new DbRecord(oldDbRecord.getField1() + 111)
+                oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
         ));
         sqlCommandQueue2.startThread();
 
