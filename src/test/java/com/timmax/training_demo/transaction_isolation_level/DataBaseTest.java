@@ -7,6 +7,7 @@ import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLComman
 import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.timmax.training_demo.transaction_isolation_level.TestData.*;
@@ -62,6 +63,51 @@ public class DataBaseTest {
         sqlCommandQueue.joinToThread();
 
         Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
+    }
+
+    @Test
+    public void insertOneRecordIntoEmptyTable_Rollback() {
+//  begin like insertOneRecordIntoEmptyTable()
+        final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
+
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
+        sqlCommandQueue.add(
+                new SQLCommandInsert(
+                        workDbTable,
+                        recordForOneInsert
+                )
+        );
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
+//  end like insertOneRecordIntoEmptyTable()
+
+        sqlCommandQueue.rollback();
+
+        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
+    }
+
+    @Test
+    @Disabled
+    public void deleteOneRecordFromOneRecordTable_Rollback() {
+        final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
+
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
+        sqlCommandQueue.add(
+                new SQLCommandDelete(
+                        workDbTable,
+                        1
+                )
+        );
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
+
+        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
+
+        sqlCommandQueue.rollback();
+
+        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable); // ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE
     }
 
     @Test

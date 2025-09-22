@@ -30,6 +30,8 @@ public abstract class BaseDbTable {
     public abstract Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
 
     public abstract Optional<SQLCommandQueueLogElement> delete(Integer rowId);
+    //  ToDo: Не должен быть public
+    public abstract void rollback_delete(Integer rowId);
 
     @Override
     public String toString() {

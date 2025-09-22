@@ -3,10 +3,12 @@ package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
+import static com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElementType.*;
 import static com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueState.*;
 
 public class SQLCommandQueue {
@@ -39,7 +41,7 @@ public class SQLCommandQueue {
         });
         thread.setUncaughtExceptionHandler((t, throwable) -> {
             logger.error("Uncaught exception in thread = {}, throwable = {}", t, throwable.toString());
-            // rollback();
+            rollback();
             sqlCommandQueueState = MALFUNCTIONED_ROLLED_BACK;
             try {
                 throw throwable;
@@ -48,6 +50,29 @@ public class SQLCommandQueue {
             }
         });
         thread.start();
+    }
+
+    public void rollback() {
+        if (thread.getState() != Thread.State.TERMINATED) {
+            throw new UnsupportedOperationException();
+        }
+        while (true) {
+            SQLCommandQueueLogElement sqlCommandQueueLogElement;
+            try {
+                sqlCommandQueueLogElement = sqlCommandQueueLog.pop();
+            } catch (EmptyStackException ese) {
+                break;
+            }
+            int rowId = sqlCommandQueueLogElement.getRowId();
+            if (sqlCommandQueueLogElement.getSqlCommandQueueLogElementType() == INSERT) {
+                sqlCommandQueueLogElement
+                        .getBaseDbTable()
+                        .rollback_delete(rowId);
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+        sqlCommandQueueState = ROLLED_BACK;
     }
 
     public void joinToThread() {

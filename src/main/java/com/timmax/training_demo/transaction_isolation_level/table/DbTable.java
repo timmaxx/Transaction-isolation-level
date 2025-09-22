@@ -78,6 +78,11 @@ public class DbTable extends BaseDbTable {
         );
     }
 
+    @Override
+    public void rollback_delete(Integer rowId) {
+        delete0(rowId);
+    }
+
     private void delete0(Integer rowId) {
         someRecordInDBMap.remove(rowId);
     }

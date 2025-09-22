@@ -7,19 +7,31 @@ public class SQLCommandQueueLogElement {
     private final SQLCommandQueueLogElementType sqlCommandQueueLogElementType;
     private final BaseDbTable baseDbTable;
     private final Integer rowId;
-    private final DbRecord beforeDbRecord;
-    private final DbRecord afterDbRecord;
+    private final DbRecord oldDbRecord;
+    private final DbRecord newDbRecord;
 
     public SQLCommandQueueLogElement(
             SQLCommandQueueLogElementType sqlCommandQueueLogElementType,
             BaseDbTable baseDbTable,
             Integer rowId,
-            DbRecord beforeDbRecord,
-            DbRecord afterDbRecord) {
+            DbRecord oldDbRecord,
+            DbRecord newDbRecord) {
         this.sqlCommandQueueLogElementType = sqlCommandQueueLogElementType;
         this.baseDbTable = baseDbTable;
         this.rowId = rowId;
-        this.beforeDbRecord = beforeDbRecord;
-        this.afterDbRecord = afterDbRecord;
+        this.oldDbRecord = oldDbRecord;
+        this.newDbRecord = newDbRecord;
+    }
+
+    public SQLCommandQueueLogElementType getSqlCommandQueueLogElementType() {
+        return sqlCommandQueueLogElementType;
+    }
+
+    public BaseDbTable getBaseDbTable() {
+        return baseDbTable;
+    }
+
+    public Integer getRowId() {
+        return rowId;
     }
 }

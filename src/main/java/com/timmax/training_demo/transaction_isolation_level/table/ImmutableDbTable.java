@@ -29,6 +29,11 @@ public class ImmutableDbTable extends BaseDbTable {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void rollback_delete(Integer rowId) {
+        throw new UnsupportedOperationException();
+    }
+
     public static ImmutableDbTable getImmutableTableInDB() {
         return new ImmutableDbTable();
     }

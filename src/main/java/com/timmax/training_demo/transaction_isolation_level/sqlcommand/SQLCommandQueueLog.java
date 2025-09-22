@@ -8,4 +8,8 @@ public class SQLCommandQueueLog {
     void push(SQLCommandQueueLogElement sqlCommandQueueLogElement) {
         sqlCommandQueueLogElementStack.push(sqlCommandQueueLogElement);
     }
+
+    SQLCommandQueueLogElement pop() {
+        return sqlCommandQueueLogElementStack.pop();
+    }
 }
