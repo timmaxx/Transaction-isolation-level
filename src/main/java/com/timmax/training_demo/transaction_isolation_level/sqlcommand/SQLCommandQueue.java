@@ -1,5 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
+import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,5 +99,9 @@ public class SQLCommandQueue {
             throw new RuntimeException(e);
         }
         sqlCommandQueueState = STOPPED;
+    }
+
+    public DbRecord popFromDbRecordResultLog() {
+        return dbRecordResultLog.pop();
     }
 }

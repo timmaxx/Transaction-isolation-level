@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class BaseDbTable {
     protected static final Logger logger = LoggerFactory.getLogger(BaseDbTable.class);
@@ -22,6 +23,14 @@ public abstract class BaseDbTable {
     public BaseDbTable(BaseDbTable baseDbTable) {
         this.rowId = baseDbTable.rowId;
         this.someRecordInDBMap = new HashMap<>(baseDbTable.someRecordInDBMap);
+    }
+
+    public LogAndDataResultOfSQLCommand select(Integer rowId) {
+        return new LogAndDataResultOfSQLCommand(Optional.empty(), select0(rowId));
+    }
+
+    private Optional<DbRecord> select0(Integer rowId) {
+        return Optional.of(someRecordInDBMap.get(rowId));
     }
 
     public abstract LogAndDataResultOfSQLCommand insert(DbRecord newDbRecord);

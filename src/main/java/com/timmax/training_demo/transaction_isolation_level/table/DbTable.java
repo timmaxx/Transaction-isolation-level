@@ -7,6 +7,10 @@ import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLComman
 import java.util.Optional;
 
 public class DbTable extends BaseDbTable {
+    public DbTable() {
+        super();
+    }
+
     public DbTable(BaseDbTable baseDbTable) {
         super(baseDbTable);
     }
@@ -44,6 +48,8 @@ public class DbTable extends BaseDbTable {
         }
 
         DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
+        //  ToDo:   Возможно сделать этот метод с настраиваемой внутренней паузой.
+        //          Пауза сильно нужна для lostUpdateProblem, но не для dirtyReadProblem
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
