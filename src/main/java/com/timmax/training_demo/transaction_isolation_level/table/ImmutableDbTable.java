@@ -1,8 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
-import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElement;
-
-import java.util.Optional;
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.LogAndDataResultOfSQLCommand;
 
 public class ImmutableDbTable extends BaseDbTable {
     private ImmutableDbTable() {
@@ -15,7 +13,7 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public Optional<SQLCommandQueueLogElement> insert(DbRecord newDbRecord) {
+    public LogAndDataResultOfSQLCommand insert(DbRecord newDbRecord) {
         throw new UnsupportedOperationException();
     }
 
@@ -25,7 +23,7 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+    public LogAndDataResultOfSQLCommand update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         throw new UnsupportedOperationException();
     }
 
@@ -35,7 +33,7 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public Optional<SQLCommandQueueLogElement> delete(Integer rowId) {
+    public LogAndDataResultOfSQLCommand delete(Integer rowId) {
         throw new UnsupportedOperationException();
     }
 

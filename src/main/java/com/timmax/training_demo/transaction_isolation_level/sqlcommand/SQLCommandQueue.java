@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.EmptyStackException;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.Queue;
 
 import static com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElementType.*;
@@ -18,6 +17,7 @@ public class SQLCommandQueue {
     private SQLCommandQueueState sqlCommandQueueState = IN_PREPARATION;
     private Thread thread;
     SQLCommandQueueLog sqlCommandQueueLog = new SQLCommandQueueLog();
+    DbRecordResultLog dbRecordResultLog = new DbRecordResultLog();
 
     public void add(SQLCommand sqlCommand) {
         if (sqlCommandQueueState != IN_PREPARATION) {
@@ -33,9 +33,13 @@ public class SQLCommandQueue {
         sqlCommandQueueState = STARTED;
         thread = new Thread(() -> {
             for (SQLCommand sqlCommand : sqlCommandQueue) {
-                Optional<SQLCommandQueueLogElement> optionalSQLCommandQueueLogElement = sqlCommand.run();
-                optionalSQLCommandQueueLogElement.ifPresent(
+                LogAndDataResultOfSQLCommand logAndDataResultOfSQLCommand = sqlCommand.run();
+
+                logAndDataResultOfSQLCommand.logResult().ifPresent(
                         sqlCommandQueueLogElement -> sqlCommandQueueLog.push(sqlCommandQueueLogElement)
+                );
+                logAndDataResultOfSQLCommand.dbRecordResult().ifPresent(
+                        dbRecordResult -> dbRecordResultLog.push(dbRecordResult)
                 );
             }
         });

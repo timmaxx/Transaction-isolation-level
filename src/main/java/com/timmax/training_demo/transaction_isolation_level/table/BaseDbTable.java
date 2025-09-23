@@ -1,13 +1,12 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
-import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElement;
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.LogAndDataResultOfSQLCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public abstract class BaseDbTable {
     protected static final Logger logger = LoggerFactory.getLogger(BaseDbTable.class);
@@ -25,15 +24,15 @@ public abstract class BaseDbTable {
         this.someRecordInDBMap = new HashMap<>(baseDbTable.someRecordInDBMap);
     }
 
-    public abstract Optional<SQLCommandQueueLogElement> insert(DbRecord newDbRecord);
+    public abstract LogAndDataResultOfSQLCommand insert(DbRecord newDbRecord);
     //  ToDo: Не должен быть public
     public abstract void rollback_insert(Integer rowId, DbRecord oldDbRecord);
 
-    public abstract Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
+    public abstract LogAndDataResultOfSQLCommand update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
     //  ToDo: Не должен быть public
     public abstract void rollback_update(Integer rowId, DbRecord oldDbRecord);
 
-    public abstract Optional<SQLCommandQueueLogElement> delete(Integer rowId);
+    public abstract LogAndDataResultOfSQLCommand delete(Integer rowId);
     //  ToDo: Не должен быть public
     public abstract void rollback_delete(Integer rowId);
 

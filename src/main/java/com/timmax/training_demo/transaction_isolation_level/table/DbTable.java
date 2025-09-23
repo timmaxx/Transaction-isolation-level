@@ -1,5 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.LogAndDataResultOfSQLCommand;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElement;
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueueLogElementType;
 
@@ -11,16 +12,19 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public Optional<SQLCommandQueueLogElement> insert(DbRecord newDbRecord) {
+    public LogAndDataResultOfSQLCommand insert(DbRecord newDbRecord) {
         ++rowId;
         insert0(rowId, newDbRecord);
-        return Optional.of(
-                new SQLCommandQueueLogElement(
-                        SQLCommandQueueLogElementType.INSERT,
-                        this,
-                        rowId,
-                        null
-                )
+        return new LogAndDataResultOfSQLCommand(
+                Optional.of(
+                        new SQLCommandQueueLogElement(
+                                SQLCommandQueueLogElementType.INSERT,
+                                this,
+                                rowId,
+                                null
+                        )
+                ),
+                Optional.empty()
         );
     }
 
@@ -34,9 +38,9 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public Optional<SQLCommandQueueLogElement> update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+    public LogAndDataResultOfSQLCommand update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         if (!someRecordInDBMap.containsKey(rowId)) {
-            return Optional.empty();
+            return new LogAndDataResultOfSQLCommand(Optional.empty(), Optional.empty());
         }
 
         DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
@@ -50,13 +54,16 @@ public class DbTable extends BaseDbTable {
 
         update0(rowId, newDbRecord);
 
-        return Optional.of(
-                new SQLCommandQueueLogElement(
-                        SQLCommandQueueLogElementType.UPDATE,
-                        this,
-                        rowId,
-                        oldDbRecord
-                )
+        return new LogAndDataResultOfSQLCommand(
+                Optional.of(
+                        new SQLCommandQueueLogElement(
+                                SQLCommandQueueLogElementType.UPDATE,
+                                this,
+                                rowId,
+                                oldDbRecord
+                        )
+                ),
+                Optional.empty()
         );
     }
 
@@ -70,20 +77,23 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public Optional<SQLCommandQueueLogElement> delete(Integer rowId) {
+    public LogAndDataResultOfSQLCommand delete(Integer rowId) {
         if (!someRecordInDBMap.containsKey(rowId)) {
-            return Optional.empty();
+            return new LogAndDataResultOfSQLCommand(Optional.empty(), Optional.empty());
         }
         DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
         delete0(rowId);
 
-        return Optional.of(
-                new SQLCommandQueueLogElement(
-                        SQLCommandQueueLogElementType.DELETE,
-                        this,
-                        rowId,
-                        oldDbRecord
-                )
+        return new LogAndDataResultOfSQLCommand(
+                Optional.of(
+                        new SQLCommandQueueLogElement(
+                                SQLCommandQueueLogElementType.DELETE,
+                                this,
+                                rowId,
+                                oldDbRecord
+                        )
+                ),
+                Optional.empty()
         );
     }
 
