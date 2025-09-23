@@ -1,9 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level;
 
-import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandQueue;
-import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandInsert;
-import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandUpdate;
-import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLCommandDelete;
+import com.timmax.training_demo.transaction_isolation_level.sqlcommand.*;
 import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import org.junit.jupiter.api.Assertions;
@@ -147,9 +144,19 @@ public class DataBaseTest {
                         oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
                 )
         );
+        sqlCommandQueue1.add(
+                new SQLCommandSleep(
+                        null,
+                        200
+                ));
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
+        sqlCommandQueue2.add(
+                new SQLCommandSleep(
+                        null,
+                        10
+                ));
         sqlCommandQueue2.add(
                 new SQLCommandUpdate(
                         workDbTable,

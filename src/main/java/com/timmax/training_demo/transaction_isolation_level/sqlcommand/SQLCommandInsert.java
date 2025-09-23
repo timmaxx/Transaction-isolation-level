@@ -7,14 +7,6 @@ public class SQLCommandInsert extends SQLCommand {
     public SQLCommandInsert(BaseDbTable baseDbTable, DbRecord newDbRecord) {
         super(baseDbTable);
 
-        runnable = () -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            return baseDbTable.insert(newDbRecord);
-        };
+        runnable = () -> baseDbTable.insert(newDbRecord);
     }
 }

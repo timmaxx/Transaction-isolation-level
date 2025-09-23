@@ -6,14 +6,6 @@ public class SQLCommandDelete extends SQLCommand {
     public SQLCommandDelete(BaseDbTable baseDbTable, Integer rowId) {
         super(baseDbTable);
 
-        runnable = () -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            return baseDbTable.delete(rowId);
-        };
+        runnable = () -> baseDbTable.delete(rowId);
     }
 }

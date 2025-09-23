@@ -7,14 +7,6 @@ public class SQLCommandUpdate extends SQLCommand {
     public SQLCommandUpdate(BaseDbTable baseDbTable, Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         super(baseDbTable);
 
-        runnable = () -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            return baseDbTable.update(rowId, updateSetCalcFunc);
-        };
+        runnable = () -> baseDbTable.update(rowId, updateSetCalcFunc);
     }
 }
