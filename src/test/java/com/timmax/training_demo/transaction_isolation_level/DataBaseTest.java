@@ -150,11 +150,13 @@ public class DataBaseTest {
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
-        sqlCommandQueue2.add(new SQLCommandUpdate(
-                workDbTable,
-                1,
-                oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
-        ));
+        sqlCommandQueue2.add(
+                new SQLCommandUpdate(
+                        workDbTable,
+                        1,
+                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
+                )
+        );
         sqlCommandQueue2.startThread();
 
         sqlCommandQueue1.joinToThread();

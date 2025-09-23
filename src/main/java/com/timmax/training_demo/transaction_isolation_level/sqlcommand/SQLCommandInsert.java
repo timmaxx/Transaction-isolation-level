@@ -4,12 +4,8 @@ import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 
 public class SQLCommandInsert extends SQLCommand {
-    protected DbRecord dbRecord;
-
     public SQLCommandInsert(BaseDbTable baseDbTable, DbRecord newDbRecord) {
         super(baseDbTable);
-
-        this.dbRecord = newDbRecord;
 
         runnable = () -> {
             try {
