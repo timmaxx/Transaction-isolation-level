@@ -48,7 +48,7 @@ public abstract class BaseDbTable {
     @Override
     public String toString() {
         return "BaseDbTable{" +
-                "rowId=" + lastInsertedRowId +
+                "lastInsertedRowId=" + lastInsertedRowId +
                 ", someRecordInDBMap=" + someRecordInDBMap +
                 '}';
     }
