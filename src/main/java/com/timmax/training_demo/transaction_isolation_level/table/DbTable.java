@@ -17,14 +17,14 @@ public class DbTable extends BaseDbTable {
 
     @Override
     public LogAndDataResultOfSQLCommand insert(DbRecord newDbRecord) {
-        ++rowId;
-        insert0(rowId, newDbRecord);
+        ++lastInsertedRowId;
+        insert0(lastInsertedRowId, newDbRecord);
         return new LogAndDataResultOfSQLCommand(
                 Optional.of(
                         new SQLCommandQueueLogElement(
                                 SQLCommandQueueLogElementType.INSERT,
                                 this,
-                                rowId,
+                                lastInsertedRowId,
                                 null
                         )
                 ),

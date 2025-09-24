@@ -12,16 +12,16 @@ import java.util.Optional;
 public abstract class BaseDbTable {
     protected static final Logger logger = LoggerFactory.getLogger(BaseDbTable.class);
 
-    protected Integer rowId;
+    protected Integer lastInsertedRowId;
     protected final Map<Integer, DbRecord> someRecordInDBMap;
 
     public BaseDbTable() {
         this.someRecordInDBMap = new HashMap<>();
-        this.rowId = 0;
+        this.lastInsertedRowId = 0;
     }
 
     public BaseDbTable(BaseDbTable baseDbTable) {
-        this.rowId = baseDbTable.rowId;
+        this.lastInsertedRowId = baseDbTable.lastInsertedRowId;
         this.someRecordInDBMap = new HashMap<>(baseDbTable.someRecordInDBMap);
     }
 
@@ -48,7 +48,7 @@ public abstract class BaseDbTable {
     @Override
     public String toString() {
         return "BaseDbTable{" +
-                "rowId=" + rowId +
+                "rowId=" + lastInsertedRowId +
                 ", someRecordInDBMap=" + someRecordInDBMap +
                 '}';
     }
@@ -61,6 +61,6 @@ public abstract class BaseDbTable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(rowId, someRecordInDBMap);
+        return Objects.hash(lastInsertedRowId, someRecordInDBMap);
     }
 }

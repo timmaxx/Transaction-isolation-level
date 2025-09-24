@@ -9,7 +9,7 @@ public class ImmutableDbTable extends BaseDbTable {
 
     private ImmutableDbTable(DbRecord dbRecord) {
         super();
-        someRecordInDBMap.put(++rowId, dbRecord);
+        someRecordInDBMap.put(++lastInsertedRowId, dbRecord);
     }
 
     @Override
