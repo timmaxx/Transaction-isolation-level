@@ -4,6 +4,7 @@ import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -20,11 +21,11 @@ public class SQLCommandQueue {
     SQLCommandQueueLog sqlCommandQueueLog = new SQLCommandQueueLog();
     DbRecordResultLog dbRecordResultLog = new DbRecordResultLog();
 
-    public void add(SQLCommand sqlCommand) {
+    public void add(SQLCommand... sqlCommands) {
         if (sqlCommandQueueState != IN_PREPARATION) {
             throw new UnsupportedOperationException();
         }
-        sqlCommandQueue.add(sqlCommand);
+        Collections.addAll(sqlCommandQueue, sqlCommands);
     }
 
     public void startThread() {

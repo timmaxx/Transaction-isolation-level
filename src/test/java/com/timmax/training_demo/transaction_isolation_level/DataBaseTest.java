@@ -19,10 +19,7 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
         sqlCommandQueue.add(
-                new SQLCommandInsert(
-                        workDbTable,
-                        recordForOneInsert
-                )
+                new SQLCommandInsert(workDbTable, recordForOneInsert)
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
@@ -36,11 +33,7 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
         sqlCommandQueue.add(
-                new SQLCommandUpdate(
-                        workDbTable,
-                        1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
-                )
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
@@ -54,10 +47,7 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
         sqlCommandQueue.add(
-                new SQLCommandDelete(
-                        workDbTable,
-                        1
-                )
+                new SQLCommandDelete(workDbTable, 1)
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
@@ -73,10 +63,7 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
         sqlCommandQueue.add(
-                new SQLCommandInsert(
-                        workDbTable,
-                        recordForOneInsert
-                )
+                new SQLCommandInsert(workDbTable, recordForOneInsert)
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
@@ -97,11 +84,7 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
         sqlCommandQueue.add(
-                new SQLCommandUpdate(
-                        workDbTable,
-                        1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
-                )
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
@@ -121,10 +104,7 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
         sqlCommandQueue.add(
-                new SQLCommandDelete(
-                        workDbTable,
-                        1
-                )
+                new SQLCommandDelete(workDbTable, 1)
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
@@ -142,31 +122,15 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
-                new SQLCommandUpdate(
-                        workDbTable,
-                        1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
-                )
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)),
+                new SQLCommandSleep(null, 200)
         );
-        sqlCommandQueue1.add(
-                new SQLCommandSleep(
-                        null,
-                        200
-                ));
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(
-                        null,
-                        10
-                ));
-        sqlCommandQueue2.add(
-                new SQLCommandUpdate(
-                        workDbTable,
-                        1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
-                )
+                new SQLCommandSleep(null, 10),
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue2.startThread();
 
@@ -182,30 +146,16 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
-                new SQLCommandUpdate(
-                        workDbTable,
-                        1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
-                )
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)),
+                new SQLCommandSleep(null, 300)
         );
-        sqlCommandQueue1.add(
-                new SQLCommandSleep(
-                        null,
-                        300
-                ));
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(
-                        null,
-                        200
-                ));
-        sqlCommandQueue2.add(
-                new SQLCommandSelect(
-                        workDbTable,
-                        1
-                ));
+                new SQLCommandSleep(null, 200),
+                new SQLCommandSelect(workDbTable, 1)
+        );
         sqlCommandQueue2.startThread();
 
         sqlCommandQueue1.joinToThread();
@@ -224,34 +174,16 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
-                new SQLCommandSelect(
-                        workDbTable,
-                        1
-                ));
-        sqlCommandQueue1.add(
-                new SQLCommandSleep(
-                        null,
-                        200
-                ));
-        sqlCommandQueue1.add(
-                new SQLCommandSelect(
-                        workDbTable,
-                        1
-                ));
+                new SQLCommandSelect(workDbTable, 1),
+                new SQLCommandSleep(null, 200),
+                new SQLCommandSelect(workDbTable, 1)
+        );
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(
-                        null,
-                        50
-                ));
-        sqlCommandQueue2.add(
-                new SQLCommandUpdate(
-                        workDbTable,
-                        1,
-                        oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)
-                )
+                new SQLCommandSleep(null, 50),
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue2.startThread();
 
