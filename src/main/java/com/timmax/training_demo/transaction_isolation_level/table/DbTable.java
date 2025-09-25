@@ -38,7 +38,7 @@ public class DbTable extends BaseDbTable {
     }
 
     @Override
-    public LogAndDataResultOfSQLCommand update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+    public LogAndDataResultOfSQLCommand update(Long millsInsideUpdate, Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         if (!someRecordInDBMap.containsKey(rowId)) {
             return new LogAndDataResultOfSQLCommand(
                     Optional.empty(),
@@ -47,12 +47,14 @@ public class DbTable extends BaseDbTable {
         }
 
         DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
-        //  ToDo:   Возможно сделать этот метод с настраиваемой внутренней паузой.
-        //          Пауза сильно нужна для lostUpdateProblem, но не для dirtyReadProblem
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+
+        //  Пауза сильно нужна для демонстрации lostUpdateProblem, но не для других проблем
+        if (millsInsideUpdate > 0) {
+            try {
+                Thread.sleep(millsInsideUpdate);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         DbRecord newDbRecord = updateSetCalcFunc.setCalcFunc(oldDbRecord);

@@ -30,7 +30,7 @@ public class ImmutableDbTable extends BaseDbTable {
     }
 
     @Override
-    public LogAndDataResultOfSQLCommand update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+    public LogAndDataResultOfSQLCommand update(Long millsInsideUpdate, Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         throw new UnsupportedOperationException();
     }
 

@@ -5,8 +5,11 @@ import com.timmax.training_demo.transaction_isolation_level.table.UpdateSetCalcF
 
 public class SQLCommandUpdate extends SQLCommand {
     public SQLCommandUpdate(BaseDbTable baseDbTable, Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
-        super(baseDbTable);
+        this(0L, 0L, baseDbTable, rowId, updateSetCalcFunc);
+    }
 
-        runnable = () -> baseDbTable.update(rowId, updateSetCalcFunc);
+    public SQLCommandUpdate(Long millsBeforeRun, Long millsInsideUpdate, BaseDbTable baseDbTable, Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
+        super(millsBeforeRun, baseDbTable);
+        runnable = () -> baseDbTable.update(millsInsideUpdate, rowId, updateSetCalcFunc);
     }
 }

@@ -15,13 +15,22 @@ import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 public abstract class SQLCommand implements RunnableWithLogAndDataResultOfSQLCommand {
     protected final BaseDbTable baseDbTable;
     protected RunnableWithLogAndDataResultOfSQLCommand runnable;
+    private final Long millsBeforeRun;
 
-    public SQLCommand(BaseDbTable baseDbTable) {
+    public SQLCommand(Long millsBeforeRun, BaseDbTable baseDbTable) {
         this.baseDbTable = baseDbTable;
+        this.millsBeforeRun = millsBeforeRun;
     }
 
     @Override
     public LogAndDataResultOfSQLCommand run() {
+        if (millsBeforeRun > 0) {
+            try {
+                Thread.sleep(millsBeforeRun);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return runnable.run();
     }
 }

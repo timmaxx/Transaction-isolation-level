@@ -231,15 +231,15 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
-                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)),
-                new SQLCommandSleep(null, 200)
+                //  Пауза внутри update сильно нужна для демонстрации lostUpdateProblem, но не для других проблем.
+                //  И она должна быть больше, чем пауза перед стартом update в другой транзакции.
+                new SQLCommandUpdate(0L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(null, 10),
-                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
+                new SQLCommandUpdate(10L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue2.startThread();
 
@@ -255,15 +255,13 @@ public class DataBaseTest {
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
-                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)),
-                new SQLCommandSleep(null, 300)
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(null, 200),
-                new SQLCommandSelect(workDbTable, Set.of(1))
+                new SQLCommandSelect(200L, workDbTable, Set.of(1))
         );
         sqlCommandQueue2.startThread();
 
@@ -283,15 +281,13 @@ public class DataBaseTest {
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
                 new SQLCommandSelect(workDbTable, Set.of(1)),
-                new SQLCommandSleep(null, 200),
-                new SQLCommandSelect(workDbTable, Set.of(1))
+                new SQLCommandSelect(200L, workDbTable, Set.of(1))
         );
         sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(null, 50),
-                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
+                new SQLCommandUpdate(100L, 0L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue2.startThread();
 
@@ -314,14 +310,12 @@ public class DataBaseTest {
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
                 new SQLCommandSelect(workDbTable, Set.of(0, 1, 2)),
-                new SQLCommandSleep(null, 200),
-                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
+                new SQLCommandSelect(200L, workDbTable, Set.of(0, 1, 2))
         );
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(null, 50),
-                new SQLCommandInsert(workDbTable, recordAfterOneUpdate)
+                new SQLCommandInsert(100L, workDbTable, recordAfterOneUpdate)
         );
 
         sqlCommandQueue1.startThread();
@@ -329,13 +323,12 @@ public class DataBaseTest {
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
-        ImmutableDbTable dbTableResultInTransaction3 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-        sqlCommandQueue1.popFromImmutableDbTableResultLog();
+        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         logger.info("dbTableResultInTransaction1 = {}", dbTableResultInTransaction1);
-        logger.info("dbTableResultInTransaction3 = {}", dbTableResultInTransaction3);
-        Assertions.assertNotEquals(dbTableResultInTransaction1.count(), dbTableResultInTransaction3.count());
+        logger.info("dbTableResultInTransaction2 = {}", dbTableResultInTransaction2);
+        Assertions.assertNotEquals(dbTableResultInTransaction1.count(), dbTableResultInTransaction2.count());
     }
 
     @Test
@@ -346,14 +339,12 @@ public class DataBaseTest {
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
                 new SQLCommandSelect(workDbTable, Set.of(0, 1, 2)),
-                new SQLCommandSleep(null, 200),
-                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
+                new SQLCommandSelect(200L, workDbTable, Set.of(0, 1, 2))
         );
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
-                new SQLCommandSleep(null, 50),
-                new SQLCommandInsert(workDbTable, recordAfterOneUpdate)
+                new SQLCommandInsert(100L, workDbTable, recordAfterOneUpdate)
         );
 
         sqlCommandQueue1.startThread();
@@ -361,12 +352,11 @@ public class DataBaseTest {
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
-        ImmutableDbTable dbTableResultInTransaction3 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-        sqlCommandQueue1.popFromImmutableDbTableResultLog();
+        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         logger.info("dbTableResultInTransaction1 = {}", dbTableResultInTransaction1);
-        logger.info("dbTableResultInTransaction3 = {}", dbTableResultInTransaction3);
-        Assertions.assertNotEquals(dbTableResultInTransaction1.count(), dbTableResultInTransaction3.count());
+        logger.info("dbTableResultInTransaction2 = {}", dbTableResultInTransaction2);
+        Assertions.assertNotEquals(dbTableResultInTransaction1.count(), dbTableResultInTransaction2.count());
     }
 }

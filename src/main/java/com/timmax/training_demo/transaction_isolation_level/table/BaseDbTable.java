@@ -40,7 +40,7 @@ public abstract class BaseDbTable {
     //  ToDo: Не должен быть public
     public abstract void rollback_insert(Integer rowId, DbRecord oldDbRecord);
 
-    public abstract LogAndDataResultOfSQLCommand update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
+    public abstract LogAndDataResultOfSQLCommand update(Long millsInsideUpdate, Integer rowId, UpdateSetCalcFunc updateSetCalcFunc);
     //  ToDo: Не должен быть public
     public abstract void rollback_update(Integer rowId, DbRecord oldDbRecord);
 
