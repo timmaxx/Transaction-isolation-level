@@ -6,16 +6,12 @@ import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import com.timmax.training_demo.transaction_isolation_level.table.ImmutableDbTable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 import static com.timmax.training_demo.transaction_isolation_level.TestData.*;
 
 public class DataBaseTest {
-    protected static final Logger logger = LoggerFactory.getLogger(DataBaseTest.class);
-
     @Test
     public void testSelectFromEmptyTableWhereRowIdSetIsEmpty() {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
@@ -235,14 +231,14 @@ public class DataBaseTest {
                 //  И она должна быть больше, чем пауза перед стартом update в другой транзакции.
                 new SQLCommandUpdate(0L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
-        sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
                 new SQLCommandUpdate(10L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
-        sqlCommandQueue2.startThread();
 
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue2.startThread();
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
@@ -257,14 +253,14 @@ public class DataBaseTest {
         sqlCommandQueue1.add(
                 new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
-        sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
                 new SQLCommandSelect(200L, workDbTable, Set.of(1))
         );
-        sqlCommandQueue2.startThread();
 
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue2.startThread();
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
@@ -283,29 +279,26 @@ public class DataBaseTest {
                 new SQLCommandSelect(workDbTable, Set.of(1)),
                 new SQLCommandSelect(200L, workDbTable, Set.of(1))
         );
-        sqlCommandQueue1.startThread();
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
         sqlCommandQueue2.add(
                 new SQLCommandUpdate(100L, 0L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
-        sqlCommandQueue2.startThread();
 
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue2.startThread();
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
         ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
-        logger.debug("dbTableResultInTransaction1 = {}", dbTableResultInTransaction1);
-        logger.debug("dbTableResultInTransaction2 = {}", dbTableResultInTransaction2);
         Assertions.assertNotEquals(dbTableResultInTransaction1, dbTableResultInTransaction2);
     }
 
     @Test
     public void PhantomReadsProblemForZeroToOneRow() {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
-        logger.info("workDbTable = {}", workDbTable);
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
@@ -326,15 +319,12 @@ public class DataBaseTest {
         ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
-        logger.info("dbTableResultInTransaction1 = {}", dbTableResultInTransaction1);
-        logger.info("dbTableResultInTransaction2 = {}", dbTableResultInTransaction2);
         Assertions.assertNotEquals(dbTableResultInTransaction1.count(), dbTableResultInTransaction2.count());
     }
 
     @Test
     public void PhantomReadsProblemForOneToTwoRows() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
-        logger.info("workDbTable = {}", workDbTable);
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue1.add(
@@ -355,8 +345,6 @@ public class DataBaseTest {
         ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
-        logger.info("dbTableResultInTransaction1 = {}", dbTableResultInTransaction1);
-        logger.info("dbTableResultInTransaction2 = {}", dbTableResultInTransaction2);
         Assertions.assertNotEquals(dbTableResultInTransaction1.count(), dbTableResultInTransaction2.count());
     }
 }
