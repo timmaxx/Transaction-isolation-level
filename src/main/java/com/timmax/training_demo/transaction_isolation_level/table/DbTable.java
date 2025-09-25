@@ -7,10 +7,6 @@ import com.timmax.training_demo.transaction_isolation_level.sqlcommand.SQLComman
 import java.util.Optional;
 
 public class DbTable extends BaseDbTable {
-    public DbTable() {
-        super();
-    }
-
     public DbTable(BaseDbTable baseDbTable) {
         super(baseDbTable);
     }
@@ -28,7 +24,7 @@ public class DbTable extends BaseDbTable {
                                 null
                         )
                 ),
-                Optional.empty()
+                ImmutableDbTable.getImmutableTableInDB()
         );
     }
 
@@ -44,7 +40,10 @@ public class DbTable extends BaseDbTable {
     @Override
     public LogAndDataResultOfSQLCommand update(Integer rowId, UpdateSetCalcFunc updateSetCalcFunc) {
         if (!someRecordInDBMap.containsKey(rowId)) {
-            return new LogAndDataResultOfSQLCommand(Optional.empty(), Optional.empty());
+            return new LogAndDataResultOfSQLCommand(
+                    Optional.empty(),
+                    ImmutableDbTable.getImmutableTableInDB()
+            );
         }
 
         DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
@@ -69,7 +68,7 @@ public class DbTable extends BaseDbTable {
                                 oldDbRecord
                         )
                 ),
-                Optional.empty()
+                ImmutableDbTable.getImmutableTableInDB()
         );
     }
 
@@ -85,7 +84,10 @@ public class DbTable extends BaseDbTable {
     @Override
     public LogAndDataResultOfSQLCommand delete(Integer rowId) {
         if (!someRecordInDBMap.containsKey(rowId)) {
-            return new LogAndDataResultOfSQLCommand(Optional.empty(), Optional.empty());
+            return new LogAndDataResultOfSQLCommand(
+                    Optional.empty(),
+                    ImmutableDbTable.getImmutableTableInDB()
+            );
         }
         DbRecord oldDbRecord = someRecordInDBMap.get(rowId);
         delete0(rowId);
@@ -99,7 +101,7 @@ public class DbTable extends BaseDbTable {
                                 oldDbRecord
                         )
                 ),
-                Optional.empty()
+                ImmutableDbTable.getImmutableTableInDB()
         );
     }
 

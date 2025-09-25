@@ -1,17 +1,10 @@
 package com.timmax.training_demo.transaction_isolation_level.table;
 
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.LogAndDataResultOfSQLCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class BaseDbTable {
-    protected static final Logger logger = LoggerFactory.getLogger(BaseDbTable.class);
-
     protected Integer lastInsertedRowId;
     protected final Map<Integer, DbRecord> someRecordInDBMap;
 
@@ -25,12 +18,22 @@ public abstract class BaseDbTable {
         this.someRecordInDBMap = new HashMap<>(baseDbTable.someRecordInDBMap);
     }
 
-    public LogAndDataResultOfSQLCommand select(Integer rowId) {
-        return new LogAndDataResultOfSQLCommand(Optional.empty(), select0(rowId));
+    public int count() {
+        return someRecordInDBMap.size();
     }
 
-    private Optional<DbRecord> select0(Integer rowId) {
-        return Optional.of(someRecordInDBMap.get(rowId));
+    public LogAndDataResultOfSQLCommand select(Set<Integer> rowIdSet) {
+        return new LogAndDataResultOfSQLCommand(Optional.empty(), select0(rowIdSet));
+    }
+
+    private ImmutableDbTable select0(Set<Integer> rowIdSet) {
+        Map<Integer, DbRecord> recordsInDBMap = new HashMap<>();
+        for (Integer rowId : rowIdSet) {
+            if (someRecordInDBMap.get(rowId) != null) {
+                recordsInDBMap.put(rowId, someRecordInDBMap.get(rowId));
+            }
+        }
+        return ImmutableDbTable.getImmutableTableInDB(recordsInDBMap);
     }
 
     public abstract LogAndDataResultOfSQLCommand insert(DbRecord newDbRecord);
@@ -61,6 +64,6 @@ public abstract class BaseDbTable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(lastInsertedRowId, someRecordInDBMap);
+        return Objects.hash(someRecordInDBMap);
     }
 }

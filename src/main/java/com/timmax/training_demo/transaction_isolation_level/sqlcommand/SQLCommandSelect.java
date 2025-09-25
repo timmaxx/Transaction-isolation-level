@@ -2,10 +2,12 @@ package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
 import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
 
+import java.util.Set;
+
 public class SQLCommandSelect extends SQLCommand {
-    public SQLCommandSelect(BaseDbTable baseDbTable, Integer rowId) {
+    public SQLCommandSelect(BaseDbTable baseDbTable, Set<Integer> rowIdSet) {
         super(baseDbTable);
 
-        runnable = () -> baseDbTable.select(rowId);
+        runnable = () -> baseDbTable.select(rowIdSet);
     }
 }

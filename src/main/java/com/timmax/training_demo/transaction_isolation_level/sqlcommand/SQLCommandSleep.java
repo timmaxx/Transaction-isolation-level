@@ -1,6 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
 import com.timmax.training_demo.transaction_isolation_level.table.BaseDbTable;
+import com.timmax.training_demo.transaction_isolation_level.table.ImmutableDbTable;
 
 import java.util.Optional;
 
@@ -16,7 +17,10 @@ public class SQLCommandSleep extends SQLCommand {
                 throw new RuntimeException(e);
             }
 
-            return new LogAndDataResultOfSQLCommand(Optional.empty(), Optional.empty());
+            return new LogAndDataResultOfSQLCommand(
+                    Optional.empty(),
+                    ImmutableDbTable.getImmutableTableInDB()
+            );
         };
     }
 }

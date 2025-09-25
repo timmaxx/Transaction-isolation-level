@@ -1,6 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.sqlcommand;
 
-import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
+import com.timmax.training_demo.transaction_isolation_level.table.ImmutableDbTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class SQLCommandQueue {
     private SQLCommandQueueState sqlCommandQueueState = IN_PREPARATION;
     private Thread thread;
     SQLCommandQueueLog sqlCommandQueueLog = new SQLCommandQueueLog();
-    DbRecordResultLog dbRecordResultLog = new DbRecordResultLog();
+    ImmutableDbTableResultLog immutableDbTableResultLog = new ImmutableDbTableResultLog();
 
     public void add(SQLCommand... sqlCommands) {
         if (sqlCommandQueueState != IN_PREPARATION) {
@@ -40,9 +40,7 @@ public class SQLCommandQueue {
                 logAndDataResultOfSQLCommand.logResult().ifPresent(
                         sqlCommandQueueLogElement -> sqlCommandQueueLog.push(sqlCommandQueueLogElement)
                 );
-                logAndDataResultOfSQLCommand.dbRecordResult().ifPresent(
-                        dbRecordResult -> dbRecordResultLog.push(dbRecordResult)
-                );
+                immutableDbTableResultLog.push(logAndDataResultOfSQLCommand.dqlResult());
             }
         });
         thread.setUncaughtExceptionHandler((t, throwable) -> {
@@ -102,7 +100,7 @@ public class SQLCommandQueue {
         sqlCommandQueueState = STOPPED;
     }
 
-    public DbRecord popFromDbRecordResultLog() {
-        return dbRecordResultLog.pop();
+    public ImmutableDbTable popFromImmutableDbTableResultLog() {
+        return immutableDbTableResultLog.pop();
     }
 }

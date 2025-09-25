@@ -2,14 +2,20 @@ package com.timmax.training_demo.transaction_isolation_level.table;
 
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.LogAndDataResultOfSQLCommand;
 
+import java.util.Map;
+
 public class ImmutableDbTable extends BaseDbTable {
     private ImmutableDbTable() {
         super();
     }
 
-    private ImmutableDbTable(DbRecord dbRecord) {
+    private ImmutableDbTable(Map<Integer, DbRecord> integerDbRecordMap) {
         super();
-        someRecordInDBMap.put(++lastInsertedRowId, dbRecord);
+        for (Map.Entry<Integer, DbRecord> integerDbRecordEntry : integerDbRecordMap.entrySet()) {
+            if (integerDbRecordEntry.getValue() != null) {
+                someRecordInDBMap.put(integerDbRecordEntry.getKey(), integerDbRecordEntry.getValue());
+            }
+        }
     }
 
     @Override
@@ -46,7 +52,7 @@ public class ImmutableDbTable extends BaseDbTable {
         return new ImmutableDbTable();
     }
 
-    public static ImmutableDbTable getImmutableTableInDB(DbRecord dbRecord) {
-        return new ImmutableDbTable(dbRecord);
+    public static ImmutableDbTable getImmutableTableInDB(Map<Integer, DbRecord> integerDbRecordMap) {
+        return new ImmutableDbTable(integerDbRecordMap);
     }
 }
