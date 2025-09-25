@@ -13,7 +13,8 @@ public class ImmutableDbTable extends BaseDbTable {
         super();
         for (Map.Entry<Integer, DbRecord> integerDbRecordEntry : integerDbRecordMap.entrySet()) {
             if (integerDbRecordEntry.getValue() != null) {
-                someRecordInDBMap.put(integerDbRecordEntry.getKey(), integerDbRecordEntry.getValue());
+                lastInsertedRowId = integerDbRecordEntry.getKey();
+                someRecordInDBMap.put(lastInsertedRowId, integerDbRecordEntry.getValue());
             }
         }
     }
