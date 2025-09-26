@@ -49,7 +49,10 @@ public class DataBaseTest {
 
     private void testSelect(ImmutableDbTable immutableDbTableAllRows, Set<Integer> rowIdSet, ImmutableDbTable immutableDbTableResult) {
         final DbTable workDbTable = new DbTable(immutableDbTableAllRows);
+        testSelect(workDbTable, rowIdSet, immutableDbTableResult);
+    }
 
+    private void testSelect(DbTable workDbTable, Set<Integer> rowIdSet, ImmutableDbTable immutableDbTableResult) {
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, rowIdSet)
         );
@@ -75,15 +78,7 @@ public class DataBaseTest {
 
         sqlCommandQueue.rollback();
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
-        );
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue2.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction2);
+        testSelect(workDbTable, Set.of(0, 1, 2), EMPTY_IMMUTABLE_DB_TABLE);
     }
 
     private SQLCommandQueue insertOneRecord(DbTable workDbTable, ImmutableDbTable immutableDbTableEnd) {
@@ -114,15 +109,7 @@ public class DataBaseTest {
 
         sqlCommandQueue.rollback();
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
-        );
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue2.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction2);
+        testSelect(workDbTable, Set.of(0, 1, 2), ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
     }
 
     private SQLCommandQueue updateOneRecord(DbTable workDbTable, ImmutableDbTable immutableDbTableEnd) {
@@ -153,15 +140,7 @@ public class DataBaseTest {
 
         sqlCommandQueue.rollback();
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
-        );
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue2.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction2);
+        testSelect(workDbTable, Set.of(0, 1, 2), ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
     }
 
     private SQLCommandQueue deleteOneRecord(DbTable workDbTable, ImmutableDbTable immutableDbTableEnd) {
