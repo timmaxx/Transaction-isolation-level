@@ -21,6 +21,7 @@ public class DataBaseTest {
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
+
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
@@ -35,6 +36,7 @@ public class DataBaseTest {
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
+
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
@@ -49,6 +51,7 @@ public class DataBaseTest {
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
+
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
@@ -63,6 +66,7 @@ public class DataBaseTest {
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
+
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
@@ -77,6 +81,7 @@ public class DataBaseTest {
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
+
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
@@ -91,6 +96,7 @@ public class DataBaseTest {
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
+
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
@@ -105,6 +111,7 @@ public class DataBaseTest {
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
+
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
         Assertions.assertEquals(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
@@ -116,12 +123,15 @@ public class DataBaseTest {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
-                new SQLCommandInsert(workDbTable, recordForOneInsert)
+                new SQLCommandInsert(workDbTable, recordForOneInsert),
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
+        ImmutableDbTable dbTableResultInTransaction = sqlCommandQueue.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction);
     }
 
     @Test
@@ -129,12 +139,15 @@ public class DataBaseTest {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
-                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)),
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
+        ImmutableDbTable dbTableResultInTransaction = sqlCommandQueue.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, dbTableResultInTransaction);
     }
 
     @Test
@@ -142,12 +155,15 @@ public class DataBaseTest {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
-                new SQLCommandDelete(workDbTable, 1)
+                new SQLCommandDelete(workDbTable, 1),
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
+        ImmutableDbTable dbTableResultInTransaction = sqlCommandQueue.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction);
     }
 
     @Test
@@ -157,17 +173,27 @@ public class DataBaseTest {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
-                new SQLCommandInsert(workDbTable, recordForOneInsert)
+                new SQLCommandInsert(workDbTable, recordForOneInsert),
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
+        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
 //  end like insertOneRecordIntoEmptyTable()
 
         sqlCommandQueue.rollback();
 
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
+        );
+        sqlCommandQueue2.startThread();
+        sqlCommandQueue2.joinToThread();
+        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction2);
     }
 
     @Test
@@ -177,16 +203,28 @@ public class DataBaseTest {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
-                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
+                new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)),
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
+        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
 //  end like updateOneRecordInOneRecordTable
+
         sqlCommandQueue.rollback();
 
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
+        );
+        sqlCommandQueue2.startThread();
+        sqlCommandQueue2.joinToThread();
+
+        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction2);
     }
 
     @Test
@@ -196,16 +234,28 @@ public class DataBaseTest {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
         final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
-                new SQLCommandDelete(workDbTable, 1)
+                new SQLCommandDelete(workDbTable, 1),
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, workDbTable);
+        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
 //  end like deleteOneRecordFromOneRecordTable
+
         sqlCommandQueue.rollback();
 
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, workDbTable);
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
+        );
+        sqlCommandQueue2.startThread();
+        sqlCommandQueue2.joinToThread();
+
+        ImmutableDbTable dbTableResultInTransaction2 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction2);
     }
 
     @Test
@@ -219,7 +269,8 @@ public class DataBaseTest {
         );
 
         final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
-                new SQLCommandUpdate(10L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
+                new SQLCommandUpdate(10L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111)),
+                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
 
         sqlCommandQueue1.startThread();
@@ -227,7 +278,9 @@ public class DataBaseTest {
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, workDbTable);
+        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
+
+        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
     }
 
     @Test
@@ -250,6 +303,7 @@ public class DataBaseTest {
         sqlCommandQueue1.rollback();
 
         ImmutableDbTable middleDbTableResultInTransaction2 = sqlCommandQueue2.popFromImmutableDbTableResultLog();
+
         Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_UPDATE_IMMUTABLE_DB_TABLE, middleDbTableResultInTransaction2);
     }
 
