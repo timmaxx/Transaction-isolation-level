@@ -14,107 +14,51 @@ import static com.timmax.training_demo.transaction_isolation_level.TestData.*;
 public class DataBaseTest {
     @Test
     public void testSelectFromEmptyTableWhereRowIdSetIsEmpty() {
-        final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
-
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of())
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
+        testSelect(EMPTY_IMMUTABLE_DB_TABLE, Set.of(), EMPTY_IMMUTABLE_DB_TABLE);
     }
 
     @Test
     public void testSelectFromEmptyTableWhereRowIdEquals1or2() {
-        final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
-
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
+        testSelect(EMPTY_IMMUTABLE_DB_TABLE, Set.of(1, 2), EMPTY_IMMUTABLE_DB_TABLE);
     }
 
     @Test
     public void testSelectFromOneRecordTableWhereRowIdSetIsEmpty() {
-        final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
-
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of())
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
+        testSelect(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, Set.of(), EMPTY_IMMUTABLE_DB_TABLE);
     }
 
     @Test
     public void testSelectFromOneRecordTableWhereRowIdEquals1() {
-        final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
-
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of(1))
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
+        testSelect(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, Set.of(1), ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
     }
 
     @Test
     public void testSelectFromTwoRecordsTableWhereRowIdSetIsEmpty() {
-        final DbTable workDbTable = new DbTable(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE);
-
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of())
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(EMPTY_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
+        testSelect(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE, Set.of(), EMPTY_IMMUTABLE_DB_TABLE);
     }
 
     @Test
     public void testSelectFromTwoRecordsTableWhereRowIdEquals1() {
-        final DbTable workDbTable = new DbTable(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE);
-
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of(1))
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
-
-        Assertions.assertEquals(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
+        testSelect(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE, Set.of(1), ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
     }
 
     @Test
     public void testSelectFromTwoRecordsTableWhereRowIdEquals1or2() {
-        final DbTable workDbTable = new DbTable(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE);
+        testSelect(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE, Set.of(1, 2), TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE);
+    }
+
+    private void testSelect(ImmutableDbTable immutableDbTableAllRows, Set<Integer> rowIdSet, ImmutableDbTable immutableDbTableResult) {
+        final DbTable workDbTable = new DbTable(immutableDbTableAllRows);
 
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new SQLCommandSelect(workDbTable, Set.of(1, 2))
+                new SQLCommandSelect(workDbTable, rowIdSet)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
 
         ImmutableDbTable dbTableResultInTransaction1 = sqlCommandQueue1.popFromImmutableDbTableResultLog();
 
-        Assertions.assertEquals(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE, dbTableResultInTransaction1);
+        Assertions.assertEquals(immutableDbTableResult, dbTableResultInTransaction1);
     }
 
     //----------------------------------
