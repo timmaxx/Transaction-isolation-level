@@ -21,6 +21,11 @@ public class SQLCommandQueue {
     SQLCommandQueueLog sqlCommandQueueLog = new SQLCommandQueueLog();
     ImmutableDbTableResultLog immutableDbTableResultLog = new ImmutableDbTableResultLog();
 
+    public SQLCommandQueue(SQLCommand... sqlCommands) {
+        super();
+        add(sqlCommands);
+    }
+
     public void add(SQLCommand... sqlCommands) {
         if (sqlCommandQueueState != IN_PREPARATION) {
             throw new UnsupportedOperationException();

@@ -16,8 +16,7 @@ public class DataBaseTest {
     public void testSelectFromEmptyTableWhereRowIdSetIsEmpty() {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of())
         );
         sqlCommandQueue1.startThread();
@@ -31,8 +30,7 @@ public class DataBaseTest {
     public void testSelectFromEmptyTableWhereRowIdEquals1or2() {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of(0, 1, 2))
         );
         sqlCommandQueue1.startThread();
@@ -46,8 +44,7 @@ public class DataBaseTest {
     public void testSelectFromOneRecordTableWhereRowIdSetIsEmpty() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of())
         );
         sqlCommandQueue1.startThread();
@@ -61,8 +58,7 @@ public class DataBaseTest {
     public void testSelectFromOneRecordTableWhereRowIdEquals1() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of(1))
         );
         sqlCommandQueue1.startThread();
@@ -76,8 +72,7 @@ public class DataBaseTest {
     public void testSelectFromTwoRecordsTableWhereRowIdSetIsEmpty() {
         final DbTable workDbTable = new DbTable(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of())
         );
         sqlCommandQueue1.startThread();
@@ -91,8 +86,7 @@ public class DataBaseTest {
     public void testSelectFromTwoRecordsTableWhereRowIdEquals1() {
         final DbTable workDbTable = new DbTable(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of(1))
         );
         sqlCommandQueue1.startThread();
@@ -106,8 +100,7 @@ public class DataBaseTest {
     public void testSelectFromTwoRecordsTableWhereRowIdEquals1or2() {
         final DbTable workDbTable = new DbTable(TWO_RECORDS_AFTER_TWO_INSERTS_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of(1, 2))
         );
         sqlCommandQueue1.startThread();
@@ -122,8 +115,7 @@ public class DataBaseTest {
     public void insertOneRecordIntoEmptyTable() {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
-        sqlCommandQueue.add(
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
                 new SQLCommandInsert(workDbTable, recordForOneInsert)
         );
         sqlCommandQueue.startThread();
@@ -136,8 +128,7 @@ public class DataBaseTest {
     public void updateOneRecordInOneRecordTable() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
-        sqlCommandQueue.add(
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
                 new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue.startThread();
@@ -150,8 +141,7 @@ public class DataBaseTest {
     public void deleteOneRecordFromOneRecordTable() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
-        sqlCommandQueue.add(
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
                 new SQLCommandDelete(workDbTable, 1)
         );
         sqlCommandQueue.startThread();
@@ -166,8 +156,7 @@ public class DataBaseTest {
 //  begin like insertOneRecordIntoEmptyTable()
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
-        sqlCommandQueue.add(
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
                 new SQLCommandInsert(workDbTable, recordForOneInsert)
         );
         sqlCommandQueue.startThread();
@@ -187,8 +176,7 @@ public class DataBaseTest {
 //  begin like updateOneRecordInOneRecordTable
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
-        sqlCommandQueue.add(
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
                 new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
         sqlCommandQueue.startThread();
@@ -207,8 +195,7 @@ public class DataBaseTest {
 //  begin like deleteOneRecordFromOneRecordTable
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue();
-        sqlCommandQueue.add(
+        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
                 new SQLCommandDelete(workDbTable, 1)
         );
         sqlCommandQueue.startThread();
@@ -225,15 +212,13 @@ public class DataBaseTest {
     public void lostUpdateProblem() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 //  Пауза внутри update сильно нужна для демонстрации lostUpdateProblem, но не для других проблем.
                 //  И она должна быть больше, чем пауза перед стартом update в другой транзакции.
                 new SQLCommandUpdate(0L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
-        sqlCommandQueue2.add(
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
                 new SQLCommandUpdate(10L, 100L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
 
@@ -249,13 +234,11 @@ public class DataBaseTest {
     public void dirtyReadProblem() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandUpdate(workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
-        sqlCommandQueue2.add(
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
                 new SQLCommandSelect(200L, workDbTable, Set.of(1))
         );
 
@@ -274,14 +257,12 @@ public class DataBaseTest {
     public void NonRepeatableReadProblem() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of(1)),
                 new SQLCommandSelect(200L, workDbTable, Set.of(1))
         );
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
-        sqlCommandQueue2.add(
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
                 new SQLCommandUpdate(100L, 0L, workDbTable, 1, oldDbRecord -> new DbRecord(oldDbRecord.field1() + 111))
         );
 
@@ -300,14 +281,12 @@ public class DataBaseTest {
     public void PhantomReadsProblemForZeroToOneRow() {
         final DbTable workDbTable = new DbTable(EMPTY_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of(0, 1, 2)),
                 new SQLCommandSelect(200L, workDbTable, Set.of(0, 1, 2))
         );
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
-        sqlCommandQueue2.add(
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
                 new SQLCommandInsert(100L, workDbTable, recordAfterOneUpdate)
         );
 
@@ -326,14 +305,12 @@ public class DataBaseTest {
     public void PhantomReadsProblemForOneToTwoRows() {
         final DbTable workDbTable = new DbTable(ONE_RECORD_AFTER_FIRST_INSERT_IMMUTABLE_DB_TABLE);
 
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
-        sqlCommandQueue1.add(
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new SQLCommandSelect(workDbTable, Set.of(0, 1, 2)),
                 new SQLCommandSelect(200L, workDbTable, Set.of(0, 1, 2))
         );
 
-        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue();
-        sqlCommandQueue2.add(
+        final SQLCommandQueue sqlCommandQueue2 = new SQLCommandQueue(
                 new SQLCommandInsert(100L, workDbTable, recordAfterOneUpdate)
         );
 
