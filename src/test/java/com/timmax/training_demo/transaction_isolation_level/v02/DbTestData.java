@@ -23,7 +23,6 @@ public class DbTestData {
     );
     static {
         dbTablePersonWithOneRow.insert(
-                new DbFieldNames("id", "name"),
                 new DbRec(Map.of("id", 1, "name", "Bob"))
         );
         dbTablePersonWithOneRow.setReadOnly();

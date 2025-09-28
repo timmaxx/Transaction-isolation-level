@@ -14,18 +14,28 @@ public class DbTab extends DbNamedObject {
         this.dbFields = dbFields;
     }
 
+    public DbTab(DbTab dbTab) {
+        super(dbTab.getName());
+        this.dbFields = dbTab.dbFields;
+    }
+
     public void setReadOnly() {
         readOnly = true;
     }
 
-    void insert(DbFieldNames dbFieldNames, DbRec dbRec) {
+    public void insert(DbRec dbRec) {
         if (readOnly) {
             throw new RuntimeException("Read only");
         }
-        if (dbFieldNames.size() != dbRec.size()) {
-            throw new RuntimeException("dbFieldNames.size() != values.length");
-        }
         dbRecs.add(dbRec);
+    }
+
+    public DbTab select() {
+        DbTab dbTabResult = new DbTab(this);
+        for (DbRec dbRec : dbRecs) {
+            dbTabResult.insert(dbRec);
+        }
+        return dbTabResult;
     }
 
     @Override

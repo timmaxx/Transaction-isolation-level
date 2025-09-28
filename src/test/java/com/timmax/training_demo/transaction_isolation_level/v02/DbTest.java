@@ -28,6 +28,22 @@ public class DbTest {
     }
 
     @Test
+    public void selectFromEmptyTable() {
+        DbTab dbTablePerson = new DbTab(
+                "person",
+                new DbFields(
+                        new DbField("id", Integer.class),
+                        new DbField("name", String.class)
+                )
+        );
+        //  SELECT *
+        //    FROM person
+        DbTab dbTablePerson2 = dbTablePerson.select();
+
+        Assertions.assertEquals(dbTablePersonEmpty, dbTablePerson2);
+    }
+
+    @Test
     public void insertOneRowIntoEmptyTable() {
         DbTab dbTablePerson = new DbTab(
                 "person",
@@ -43,10 +59,28 @@ public class DbTest {
         //      1, "Bob"
         //  )
         dbTablePerson.insert(
-                new DbFieldNames("id", "name"),
                 new DbRec(Map.of("id", 1, "name", "Bob"))
         );
 
         Assertions.assertEquals(dbTablePersonWithOneRow, dbTablePerson);
+    }
+
+    @Test
+    public void selectFromOneRowTable() {
+        DbTab dbTablePerson = new DbTab(
+                "person",
+                new DbFields(
+                        new DbField("id", Integer.class),
+                        new DbField("name", String.class)
+                )
+        );
+        dbTablePerson.insert(
+                new DbRec(Map.of("id", 1, "name", "Bob"))
+        );
+        //  SELECT *
+        //    FROM person
+        DbTab dbTablePerson2 = dbTablePerson.select();
+
+        Assertions.assertEquals(dbTablePersonWithOneRow, dbTablePerson2);
     }
 }
