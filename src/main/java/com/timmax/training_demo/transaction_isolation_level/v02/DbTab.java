@@ -1,6 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class DbTab {
@@ -27,5 +28,16 @@ public class DbTab {
                 ", dbFields=" + dbFields +
                 ", dbRecs=" + dbRecs +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DbTab dbTab)) return false;
+        return Objects.equals(Name, dbTab.Name) && Objects.equals(dbFields, dbTab.dbFields) && Objects.equals(dbRecs, dbTab.dbRecs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Name, dbFields, dbRecs);
     }
 }
