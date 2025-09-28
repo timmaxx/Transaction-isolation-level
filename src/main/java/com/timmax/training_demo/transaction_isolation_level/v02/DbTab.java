@@ -4,14 +4,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class DbTab {
-    private final String Name;
+public class DbTab extends DbNamedObject {
+    private boolean readOnly = false;
     private final  DbFields dbFields;
     private final Set<DbRec> dbRecs = new HashSet<>();
-    private boolean readOnly = false;
 
     public DbTab(String name, DbFields dbFields) {
-        Name = name;
+        super(name);
         this.dbFields = dbFields;
     }
 
@@ -32,7 +31,7 @@ public class DbTab {
     @Override
     public String toString() {
         return "DbTab{" +
-                "Name='" + Name + '\'' +
+                "name='" + getName() + '\'' +
                 ", readOnly=" + readOnly +
                 ", dbFields=" + dbFields +
                 ", dbRecs=" + dbRecs +
@@ -41,12 +40,16 @@ public class DbTab {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof DbTab dbTab)) return false;
-        return Objects.equals(Name, dbTab.Name) && Objects.equals(dbFields, dbTab.dbFields) && Objects.equals(dbRecs, dbTab.dbRecs);
+        if (!(o instanceof DbTab dbTab))
+            return false;
+        return Objects.equals(getName(), dbTab.getName()) &&
+                Objects.equals(dbFields, dbTab.dbFields) &&
+                Objects.equals(dbRecs, dbTab.dbRecs)
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Name, dbFields, dbRecs);
+        return Objects.hash(getName(), dbFields, dbRecs);
     }
 }
