@@ -8,13 +8,21 @@ public class DbTab {
     private final String Name;
     private final  DbFields dbFields;
     private final Set<DbRec> dbRecs = new HashSet<>();
+    private boolean readOnly = false;
 
     public DbTab(String name, DbFields dbFields) {
         Name = name;
         this.dbFields = dbFields;
     }
 
+    public void setReadOnly() {
+        readOnly = true;
+    }
+
     void insert(DbFieldNames dbFieldNames, DbRec dbRec) {
+        if (readOnly) {
+            throw new RuntimeException("Read only");
+        }
         if (dbFieldNames.size() != dbRec.size()) {
             throw new RuntimeException("dbFieldNames.size() != values.length");
         }
@@ -25,6 +33,7 @@ public class DbTab {
     public String toString() {
         return "DbTab{" +
                 "Name='" + Name + '\'' +
+                ", readOnly=" + readOnly +
                 ", dbFields=" + dbFields +
                 ", dbRecs=" + dbRecs +
                 '}';

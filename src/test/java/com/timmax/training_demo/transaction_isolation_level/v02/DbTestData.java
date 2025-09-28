@@ -10,6 +10,9 @@ public class DbTestData {
                     new DbField("name", String.class)
             )
     );
+    static {
+        dbTablePersonEmpty.setReadOnly();
+    }
 
     public static final DbTab dbTablePersonWithOneRow = new DbTab(
             "person",
@@ -23,5 +26,6 @@ public class DbTestData {
                 new DbFieldNames("id", "name"),
                 new DbRec(Map.of("id", 1, "name", "Bob"))
         );
+        dbTablePersonWithOneRow.setReadOnly();
     }
 }
