@@ -1,4 +1,4 @@
-package com.timmax.training_demo.transaction_isolation_level;
+package com.timmax.training_demo.transaction_isolation_level.v01;
 
 import com.timmax.training_demo.transaction_isolation_level.sqlcommand.*;
 import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static com.timmax.training_demo.transaction_isolation_level.TestData.*;
+import static com.timmax.training_demo.transaction_isolation_level.v01.TestData.*;
 
 public class DataBaseTest {
     @Test

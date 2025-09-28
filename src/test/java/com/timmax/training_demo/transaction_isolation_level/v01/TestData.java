@@ -1,4 +1,4 @@
-package com.timmax.training_demo.transaction_isolation_level;
+package com.timmax.training_demo.transaction_isolation_level.v01;
 
 import com.timmax.training_demo.transaction_isolation_level.table.ImmutableDbTable;
 import com.timmax.training_demo.transaction_isolation_level.table.DbRecord;
