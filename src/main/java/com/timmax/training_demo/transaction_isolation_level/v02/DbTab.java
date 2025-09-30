@@ -20,6 +20,28 @@ public non-sealed class DbTab extends DbTableLike {
         insert0(dbRec);
     }
 
+    public void delete() {
+        if (readOnly) {
+            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot delete any row from this table.");
+        }
+        delete0();
+    }
+
+    public void delete(WhereFunc whereFunc) {
+        if (readOnly) {
+            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot delete any row from this table.");
+        }
+        delete0(whereFunc);
+    }
+
+    private void delete0() {
+        dbRecs.clear();
+    }
+
+    private void delete0(WhereFunc whereFunc) {
+        dbRecs.removeIf(whereFunc::where);
+    }
+
     @Override
     public String toString() {
         return "DbTab{" +

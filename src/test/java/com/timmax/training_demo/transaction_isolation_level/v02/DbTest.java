@@ -47,7 +47,8 @@ public class DbTest {
                 )
         );
 
-        //  INSERT INTO person (
+        //  INSERT
+        //    INTO person (
         //      id, name
         //      ) values (
         //      1, "Bob"
@@ -86,6 +87,73 @@ public class DbTest {
         //    FROM person
         //   WHERE id = 1
         DbSelect dbSelect = dbTabPersonWithOneRow.select(dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1));
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void deleteFromEmptyTable() {
+        DbTab dbTabPerson = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
+        );
+
+        //  DELETE
+        //    FROM person
+        dbTabPerson.delete();
+
+        DbSelect dbSelect = dbTabPerson.select();
+
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void deleteFromOneRowTable() {
+        DbTab dbTabPerson = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
+        );
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
+        );
+
+        //  DELETE
+        //    FROM person
+        dbTabPerson.delete();
+
+        DbSelect dbSelect = dbTabPerson.select();
+
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void deleteFromTwoRowsTableWithWhereIdEq2() {
+        DbTab dbTabPerson = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
+        );
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
+        );
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"))
+        );
+
+        //  DELETE
+        //    FROM person
+        //   WHERE id = 1
+        dbTabPerson.delete(dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2));
+
+        DbSelect dbSelect = dbTabPerson.select();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
