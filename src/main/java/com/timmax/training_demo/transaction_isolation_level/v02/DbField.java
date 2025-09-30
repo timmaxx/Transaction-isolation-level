@@ -17,7 +17,7 @@ public class DbField<T> {
         return dbFieldName;
     }
 
-    public Class<?> getType() {
+    public Class<T> getType() {
         return type;
     }
 }

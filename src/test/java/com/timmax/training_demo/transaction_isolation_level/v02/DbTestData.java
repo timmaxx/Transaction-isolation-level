@@ -4,10 +4,10 @@ import java.util.Map;
 
 public class DbTestData {
     public static final DbFieldName DB_FIELD_NAME_ID = new DbFieldName("id");
-    public static final DbField DB_FIELD_ID = new DbField(DB_FIELD_NAME_ID, Integer.class);
+    public static final DbField<Integer> DB_FIELD_ID = new DbField<>(DB_FIELD_NAME_ID, Integer.class);
 
     public static final DbFieldName DB_FIELD_NAME_NAME = new DbFieldName("name");
-    public static final DbField DB_FIELD_NAME = new DbField(DB_FIELD_NAME_NAME, String.class);
+    public static final DbField<String> DB_FIELD_NAME = new DbField<>(DB_FIELD_NAME_NAME, String.class);
 
     public static final DbTabName DB_TAB_NAME_PERSON = new DbTabName("person");
 
