@@ -18,6 +18,10 @@ public class DbRec {
         return recMap.size();
     }
 
+    public Object getValue(DbFieldName fieldName) {
+        return recMap.get(fieldName);
+    }
+
     @Override
     public String toString() {
         return "DbRec{" +

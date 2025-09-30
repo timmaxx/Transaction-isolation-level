@@ -1,15 +1,15 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-public class DbField {
+public class DbField<T> {
     private final DbFieldName dbFieldName;
-    private final Class<?> type;
+    private final Class<T> type;
 
-    public DbField(String name, Class<?> type) {
+    public DbField(String name, Class<T> type) {
         this.dbFieldName = new DbFieldName(name);
         this.type = type;
     }
 
-    public DbField(DbFieldName dbFieldName, Class<?> type) {
+    public DbField(DbFieldName dbFieldName, Class<T> type) {
         this(dbFieldName.getName(), type);
     }
 

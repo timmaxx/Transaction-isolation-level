@@ -69,4 +69,24 @@ public class DbTest {
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
+
+    @Test
+    public void selectFromEmptyTableWhereIdEq1() {
+        //  SELECT *
+        //    FROM person
+        //   WHERE id = 1
+        DbSelect dbSelect = dbTabPersonEmpty.select(dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1));
+
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void selectFromOneRowTableWhereIdEq1() {
+        //  SELECT *
+        //    FROM person
+        //   WHERE id = 1
+        DbSelect dbSelect = dbTabPersonWithOneRow.select(dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1));
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
 }

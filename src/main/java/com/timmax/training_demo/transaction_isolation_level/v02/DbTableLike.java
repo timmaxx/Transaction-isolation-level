@@ -12,6 +12,24 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         this.dbFields = dbFields;
     }
 
+    public DbSelect select() {
+        return select0(null);
+    }
+
+    public DbSelect select(WhereFunc whereFunc) {
+        return select0(whereFunc);
+    }
+
+    private DbSelect select0(WhereFunc whereFunc) {
+        DbSelect dbSelect = new DbSelect(this.dbFields);
+        for (DbRec dbRec : dbRecs) {
+            if (whereFunc == null || whereFunc.where(dbRec)) {
+                dbSelect.insert0(dbRec);
+            }
+        }
+        return dbSelect;
+    }
+
     protected void insert0(DbRec dbRec) {
         dbRecs.add(new DbRec(dbRec));
     }

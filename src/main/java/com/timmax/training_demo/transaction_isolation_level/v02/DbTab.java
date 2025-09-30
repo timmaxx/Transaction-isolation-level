@@ -20,14 +20,6 @@ public non-sealed class DbTab extends DbTableLike {
         insert0(dbRec);
     }
 
-    public DbSelect select() {
-        DbSelect dbSelect = new DbSelect(this.dbFields);
-        for (DbRec dbRec : dbRecs) {
-            dbSelect.insert0(dbRec);
-        }
-        return dbSelect;
-    }
-
     @Override
     public String toString() {
         return "DbTab{" +
