@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.dbTablePersonEmpty;
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.dbTablePersonWithOneRow;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
 public class DbTest {
     @Test
@@ -15,41 +14,36 @@ public class DbTest {
         //      id INT,
         //      name VARCHAR(50)
         //  )
-
-        DbTab dbTablePerson = new DbTab(
-                "person",
+        DbTab dbTabPerson = new DbTab(
+                DB_TAB_NAME_PERSON,
                 new DbFields(
-                        new DbField("id", Integer.class),
-                        new DbField("name", String.class)
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
                 )
         );
 
-        Assertions.assertEquals(dbTablePersonEmpty, dbTablePerson);
+        Assertions.assertEquals(dbTabPersonEmpty, dbTabPerson);
+
+        //  DbSelect dbSelect = dbTabPerson.select();
+        //  Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
     public void selectFromEmptyTable() {
-        DbTab dbTablePerson = new DbTab(
-                "person",
-                new DbFields(
-                        new DbField("id", Integer.class),
-                        new DbField("name", String.class)
-                )
-        );
         //  SELECT *
         //    FROM person
-        DbTab dbTablePerson2 = dbTablePerson.select();
+        DbSelect dbSelect = dbTabPersonEmpty.select();
 
-        Assertions.assertEquals(dbTablePersonEmpty, dbTablePerson2);
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
     public void insertOneRowIntoEmptyTable() {
-        DbTab dbTablePerson = new DbTab(
-                "person",
+        DbTab dbTabPerson = new DbTab(
+                DB_TAB_NAME_PERSON,
                 new DbFields(
-                        new DbField("id", Integer.class),
-                        new DbField("name", String.class)
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
                 )
         );
 
@@ -58,29 +52,21 @@ public class DbTest {
         //      ) values (
         //      1, "Bob"
         //  )
-        dbTablePerson.insert(
-                new DbRec(Map.of("id", 1, "name", "Bob"))
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
         );
 
-        Assertions.assertEquals(dbTablePersonWithOneRow, dbTablePerson);
+        DbSelect dbSelect = dbTabPerson.select();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
     @Test
     public void selectFromOneRowTable() {
-        DbTab dbTablePerson = new DbTab(
-                "person",
-                new DbFields(
-                        new DbField("id", Integer.class),
-                        new DbField("name", String.class)
-                )
-        );
-        dbTablePerson.insert(
-                new DbRec(Map.of("id", 1, "name", "Bob"))
-        );
         //  SELECT *
         //    FROM person
-        DbTab dbTablePerson2 = dbTablePerson.select();
+        DbSelect dbSelect = dbTabPersonWithOneRow.select();
 
-        Assertions.assertEquals(dbTablePersonWithOneRow, dbTablePerson2);
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 }

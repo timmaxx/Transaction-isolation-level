@@ -5,30 +5,30 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DbFields {
-    private final Map<String, Class<?>> fields;
+    private final Map<DbFieldName, Class<?>> dbFields;
 
     public DbFields(DbField... dbFields) {
-        fields = new HashMap<>();
+        this.dbFields = new HashMap<>();
         for (DbField dbField : dbFields) {
-            fields.put(dbField.getName(), dbField.getType());
+            this.dbFields.put(dbField.getDbFieldName(), dbField.getType());
         }
     }
 
     @Override
     public String toString() {
         return "DbFields{" +
-                "fields=" + fields +
+                "dbFields=" + dbFields +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof DbFields dbFields)) return false;
-        return Objects.equals(fields, dbFields.fields);
+        if (!(o instanceof DbFields dbFields1)) return false;
+        return Objects.equals(dbFields, dbFields1.dbFields);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(fields);
+        return Objects.hashCode(dbFields);
     }
 }

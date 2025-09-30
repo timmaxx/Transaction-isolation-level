@@ -4,31 +4,35 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DbRec {
-    private final Map<String, Object> rec;
+    private final Map<DbFieldName, Object> recMap;
 
-    public DbRec(Map<String, Object> rec) {
-        this.rec = rec;
+    public DbRec(Map<DbFieldName, Object> recMap) {
+        this.recMap = recMap;
+    }
+
+    public DbRec(DbRec rec) {
+        this(rec.recMap);
     }
 
     public int size() {
-        return rec.size();
+        return recMap.size();
     }
 
     @Override
     public String toString() {
         return "DbRec{" +
-                "rec=" + rec +
+                "recMap=" + recMap +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DbRec dbRec)) return false;
-        return Objects.equals(rec, dbRec.rec);
+        return Objects.equals(recMap, dbRec.recMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(rec);
+        return Objects.hashCode(recMap);
     }
 }

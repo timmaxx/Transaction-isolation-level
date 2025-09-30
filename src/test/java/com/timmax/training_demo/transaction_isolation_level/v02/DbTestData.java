@@ -3,28 +3,42 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import java.util.Map;
 
 public class DbTestData {
-    public static final DbTab dbTablePersonEmpty = new DbTab(
-            "person",
-            new DbFields(
-                    new DbField("id", Integer.class),
-                    new DbField("name", String.class)
-            )
-    );
+    public static final DbFieldName DB_FIELD_NAME_ID = new DbFieldName("id");
+    public static final DbField DB_FIELD_ID = new DbField(DB_FIELD_NAME_ID, Integer.class);
+
+    public static final DbFieldName DB_FIELD_NAME_NAME = new DbFieldName("name");
+    public static final DbField DB_FIELD_NAME = new DbField(DB_FIELD_NAME_NAME, String.class);
+
+    public static final DbTabName DB_TAB_NAME_PERSON = new DbTabName("person");
+
+    public static final DbTab dbTabPersonEmpty;
+    public static final DbSelect dbSelectPersonEmpty;
     static {
-        dbTablePersonEmpty.setReadOnly();
+        dbTabPersonEmpty = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
+        );
+        dbTabPersonEmpty.setReadOnly();
+        dbSelectPersonEmpty = dbTabPersonEmpty.select();
     }
 
-    public static final DbTab dbTablePersonWithOneRow = new DbTab(
-            "person",
-            new DbFields(
-                    new DbField("id", Integer.class),
-                    new DbField("name", String.class)
-            )
-    );
+    public static final DbTab dbTabPersonWithOneRow;
+    public static final DbSelect dbSelectPersonWithOneRow;
     static {
-        dbTablePersonWithOneRow.insert(
-                new DbRec(Map.of("id", 1, "name", "Bob"))
+        dbTabPersonWithOneRow = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
         );
-        dbTablePersonWithOneRow.setReadOnly();
+        dbTabPersonWithOneRow.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
+        );
+        dbTabPersonWithOneRow.setReadOnly();
+        dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
     }
 }

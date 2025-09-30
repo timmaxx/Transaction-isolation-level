@@ -1,22 +1,12 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-public class DbTab extends DbNamedObject {
+public non-sealed class DbTab extends DbTableLike {
+    private final DbTabName dbTabName;
     private boolean readOnly = false;
-    private final  DbFields dbFields;
-    private final Set<DbRec> dbRecs = new HashSet<>();
 
-    public DbTab(String name, DbFields dbFields) {
-        super(name);
-        this.dbFields = dbFields;
-    }
-
-    public DbTab(DbTab dbTab) {
-        super(dbTab.getName());
-        this.dbFields = dbTab.dbFields;
+    public DbTab(DbTabName dbTabName, DbFields dbFields) {
+        super(dbFields);
+        this.dbTabName = dbTabName;
     }
 
     public void setReadOnly() {
@@ -25,41 +15,26 @@ public class DbTab extends DbNamedObject {
 
     public void insert(DbRec dbRec) {
         if (readOnly) {
-            throw new RuntimeException("Read only");
+            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot insert any row into this table.");
         }
-        dbRecs.add(dbRec);
+        insert0(dbRec);
     }
 
-    public DbTab select() {
-        DbTab dbTabResult = new DbTab(this);
+    public DbSelect select() {
+        DbSelect dbSelect = new DbSelect(this.dbFields);
         for (DbRec dbRec : dbRecs) {
-            dbTabResult.insert(dbRec);
+            dbSelect.insert0(dbRec);
         }
-        return dbTabResult;
+        return dbSelect;
     }
 
     @Override
     public String toString() {
         return "DbTab{" +
-                "name='" + getName() + '\'' +
-                ", readOnly=" + readOnly +
+                "dbTabName='" + dbTabName + '\'' +
+                 ", readOnly=" + readOnly +
                 ", dbFields=" + dbFields +
                 ", dbRecs=" + dbRecs +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof DbTab dbTab))
-            return false;
-        return Objects.equals(getName(), dbTab.getName()) &&
-                Objects.equals(dbFields, dbTab.dbFields) &&
-                Objects.equals(dbRecs, dbTab.dbRecs)
-                ;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), dbFields, dbRecs);
     }
 }
