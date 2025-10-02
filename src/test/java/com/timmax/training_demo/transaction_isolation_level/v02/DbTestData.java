@@ -38,7 +38,11 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithOneRow.insert(dbRec1_Bob);
+        try {
+            dbTabPersonWithOneRow.insert(dbRec1_Bob);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         dbTabPersonWithOneRow.setReadOnly();
         dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
     }
@@ -55,8 +59,12 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithTwoRows.insert(dbRec1_Bob);
-        dbTabPersonWithTwoRows.insert(dbRec2_Alice);
+        try {
+            dbTabPersonWithTwoRows.insert(dbRec1_Bob);
+            dbTabPersonWithTwoRows.insert(dbRec2_Alice);
+        } catch (DataAccessException dae) {
+            throw new RuntimeException(dae);
+        }
         dbTabPersonWithTwoRows.setReadOnly();
         dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select();
     }
@@ -74,8 +82,12 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithTwoRowsAllUpdated.insert(dbRec1_BobBob);
-        dbTabPersonWithTwoRowsAllUpdated.insert(dbRec2_AliceAlice);
+        try {
+            dbTabPersonWithTwoRowsAllUpdated.insert(dbRec1_BobBob);
+            dbTabPersonWithTwoRowsAllUpdated.insert(dbRec2_AliceAlice);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         dbTabPersonWithTwoRowsAllUpdated.setReadOnly();
         dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
     }
@@ -91,8 +103,12 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec1_Bob);
-        dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec2_AliceAlice);
+        try {
+            dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec1_Bob);
+            dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec2_AliceAlice);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         dbTabPersonWithTwoRowsIdEq2Updated.setReadOnly();
         dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
     }

@@ -18,25 +18,25 @@ public non-sealed class DbTab extends DbTableLike {
         readOnly = true;
     }
 
-    private void validateReadOnlyTable(String msgInsUpdDel) {
+    private void validateReadOnlyTable(String msgInsUpdDel) throws DataAccessException {
         if (!readOnly) {
             return;
         }
-        String msg = String.format(TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel;
-        throw new InsUpdDelReadOnlyDbTabException(msg);
+        String reason = String.format(TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel;
+        throw new DataAccessException(reason);
     }
 
-    public void insert(DbRec dbRec) {
+    public void insert(DbRec dbRec) throws DataAccessException {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
         insert0(dbRec);
     }
 
-    public void delete() {
+    public void delete() throws DataAccessException {
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         delete0();
     }
 
-    public void delete(WhereFunc whereFunc) {
+    public void delete(WhereFunc whereFunc) throws DataAccessException {
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         delete0(whereFunc);
     }
@@ -49,12 +49,12 @@ public non-sealed class DbTab extends DbTableLike {
         dbRecs.removeIf(whereFunc::where);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc) {
+    public void update(UpdateSetCalcFunc updateSetCalcFunc) throws DataAccessException {
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, null);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) throws DataAccessException {
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, whereFunc);
     }

@@ -34,17 +34,17 @@ public class DbTest {
 
     @Test
     public void insertIntoReadOnlyTable() {
-        Assertions.assertThrows(InsUpdDelReadOnlyDbTabException.class, () -> dbTabPersonEmpty.insert(null));
+        Assertions.assertThrows(DataAccessException.class, () -> dbTabPersonEmpty.insert(null));
     }
 
     @Test
     public void updateReadOnlyTable() {
-        Assertions.assertThrows(InsUpdDelReadOnlyDbTabException.class, () -> dbTabPersonEmpty.update(null));
+        Assertions.assertThrows(DataAccessException.class, () -> dbTabPersonEmpty.update(null));
     }
 
     @Test
     public void deleteFromReadOnlyTable() {
-        Assertions.assertThrows(InsUpdDelReadOnlyDbTabException.class, () -> dbTabPersonEmpty.delete(null));
+        Assertions.assertThrows(DataAccessException.class, () -> dbTabPersonEmpty.delete(null));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class DbTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTable() {
+    public void insertOneRowIntoEmptyTable() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
@@ -109,7 +109,7 @@ public class DbTest {
     }
 
     @Test
-    public void deleteFromEmptyTable() {
+    public void deleteFromEmptyTable() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
@@ -128,7 +128,7 @@ public class DbTest {
     }
 
     @Test
-    public void deleteFromOneRowTable() {
+    public void deleteFromOneRowTable() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
@@ -148,7 +148,7 @@ public class DbTest {
     }
 
     @Test
-    public void deleteFromTwoRowsTableWhereIdEq2() {
+    public void deleteFromTwoRowsTableWhereIdEq2() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
@@ -170,7 +170,7 @@ public class DbTest {
     }
 
     @Test
-    public void updateTwoRowsTable() {
+    public void updateTwoRowsTable() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
@@ -198,7 +198,7 @@ public class DbTest {
     }
 
     @Test
-    public void updateTwoRowsTableWhereIdEq2() {
+    public void updateTwoRowsTableWhereIdEq2() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
