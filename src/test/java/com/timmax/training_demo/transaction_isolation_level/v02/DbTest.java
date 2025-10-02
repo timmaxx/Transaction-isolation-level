@@ -33,6 +33,21 @@ public class DbTest {
     }
 
     @Test
+    public void insertIntoReadOnlyTable() {
+        Assertions.assertThrows(InsUpdDelReadOnlyDbTabException.class, () -> dbTabPersonEmpty.insert(null));
+    }
+
+    @Test
+    public void updateReadOnlyTable() {
+        Assertions.assertThrows(InsUpdDelReadOnlyDbTabException.class, () -> dbTabPersonEmpty.update(null));
+    }
+
+    @Test
+    public void deleteFromReadOnlyTable() {
+        Assertions.assertThrows(InsUpdDelReadOnlyDbTabException.class, () -> dbTabPersonEmpty.delete(null));
+    }
+
+    @Test
     public void selectFromEmptyTable() {
         //  SELECT *
         //    FROM person

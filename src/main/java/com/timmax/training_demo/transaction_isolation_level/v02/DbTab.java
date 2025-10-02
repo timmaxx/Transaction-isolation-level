@@ -1,6 +1,11 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 public non-sealed class DbTab extends DbTableLike {
+    private static final String TABLE_IS_RO = "The table '%s' is read only.";
+    private static final String YOU_CANNOT_INSERT = "You cannot insert any row into this table.";
+    private static final String YOU_CANNOT_UPDATE = "You cannot update any row in this table.";
+    private static final String YOU_CANNOT_DELETE = "You cannot delete any row from this table.";
+
     private final DbTabName dbTabName;
     private boolean readOnly = false;
 
@@ -13,24 +18,26 @@ public non-sealed class DbTab extends DbTableLike {
         readOnly = true;
     }
 
-    public void insert(DbRec dbRec) {
-        if (readOnly) {
-            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot insert any row into this table.");
+    private void validateReadOnlyTable(String msgInsUpdDel) {
+        if (!readOnly) {
+            return;
         }
+        String msg = String.format(TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel;
+        throw new InsUpdDelReadOnlyDbTabException(msg);
+    }
+
+    public void insert(DbRec dbRec) {
+        validateReadOnlyTable(YOU_CANNOT_INSERT);
         insert0(dbRec);
     }
 
     public void delete() {
-        if (readOnly) {
-            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot delete any row from this table.");
-        }
+        validateReadOnlyTable(YOU_CANNOT_DELETE);
         delete0();
     }
 
     public void delete(WhereFunc whereFunc) {
-        if (readOnly) {
-            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot delete any row from this table.");
-        }
+        validateReadOnlyTable(YOU_CANNOT_DELETE);
         delete0(whereFunc);
     }
 
@@ -43,16 +50,12 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     public void update(UpdateSetCalcFunc updateSetCalcFunc) {
-        if (readOnly) {
-            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot update any row in this table.");
-        }
+        validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, null);
     }
 
     public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        if (readOnly) {
-            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot update any row in this table.");
-        }
+        validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, whereFunc);
     }
 
