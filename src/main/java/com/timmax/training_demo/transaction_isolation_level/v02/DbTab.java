@@ -42,6 +42,19 @@ public non-sealed class DbTab extends DbTableLike {
         dbRecs.removeIf(whereFunc::where);
     }
 
+    public void update(UpdateSetCalcFunc updateSetCalcFunc) {
+        if (readOnly) {
+            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot update any row in this table.");
+        }
+        update0(updateSetCalcFunc);
+    }
+
+    private void update0(UpdateSetCalcFunc updateSetCalcFunc) {
+        for(DbRec dbRec : dbRecs) {
+            dbRec.setAll(updateSetCalcFunc.setCalcFunc(dbRec));
+        }
+    }
+
     @Override
     public String toString() {
         return "DbTab{" +

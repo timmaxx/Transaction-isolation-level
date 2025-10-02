@@ -2,12 +2,16 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
 public class DbTest {
+    protected static final Logger logger = LoggerFactory.getLogger(DbTest.class);
+
     @Test
     public void createDbTab() {
         //  CREATE TABLE person(
@@ -156,5 +160,37 @@ public class DbTest {
         DbSelect dbSelect = dbTabPerson.select();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void updateOneRecordInOneRecordTable() {
+        DbTab dbTabPerson = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
+        );
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
+        );
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"))
+        );
+
+        //  UPDATE person
+        //     SET name = name || ' ' || name
+        dbTabPerson.update(
+                oldDbRec -> new DbRec(
+                        Map.of(
+                                DB_FIELD_NAME_ID, oldDbRec.getValue(DB_FIELD_NAME_ID),
+                                DB_FIELD_NAME_NAME, oldDbRec.getValue(DB_FIELD_NAME_NAME) + " " + oldDbRec.getValue(DB_FIELD_NAME_NAME)
+                        )
+                )
+        );
+        DbSelect dbSelect = dbTabPerson.select();
+
+        logger.info("dbSelect = {}", dbSelect);
+        Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
 }
