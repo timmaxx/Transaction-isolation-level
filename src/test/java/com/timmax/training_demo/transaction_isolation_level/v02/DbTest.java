@@ -163,7 +163,7 @@ public class DbTest {
     }
 
     @Test
-    public void updateOneRecordInOneRecordTable() {
+    public void updateAllRecordsInTwoRecordsTable() {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
