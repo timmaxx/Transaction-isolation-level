@@ -13,7 +13,7 @@ public class DbTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbTest.class);
 
     @Test
-    public void createDbTab() {
+    public void createTable() {
         //  CREATE TABLE person(
         //      id INT,
         //      name VARCHAR(50)
@@ -57,9 +57,7 @@ public class DbTest {
         //      ) values (
         //      1, "Bob"
         //  )
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
-        );
+        dbTabPerson.insert(dbRec1_Bob);
 
         DbSelect dbSelect = dbTabPerson.select();
 
@@ -123,9 +121,7 @@ public class DbTest {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
-        );
+        dbTabPerson.insert(dbRec1_Bob);
 
         //  DELETE
         //    FROM person
@@ -137,7 +133,7 @@ public class DbTest {
     }
 
     @Test
-    public void deleteFromTwoRowsTableWithWhereIdEq2() {
+    public void deleteFromTwoRowsTableWhereIdEq2() {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
@@ -145,12 +141,8 @@ public class DbTest {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
-        );
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"))
-        );
+        dbTabPerson.insert(dbRec1_Bob);
+        dbTabPerson.insert(dbRec2_Alice);
 
         //  DELETE
         //    FROM person
@@ -163,7 +155,7 @@ public class DbTest {
     }
 
     @Test
-    public void updateAllRecordsInTwoRecordsTable() {
+    public void updateTwoRowsTable() {
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
                 new DbFields(
@@ -171,26 +163,22 @@ public class DbTest {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
-        );
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"))
-        );
+        dbTabPerson.insert(dbRec1_Bob);
+        dbTabPerson.insert(dbRec2_Alice);
 
         //  UPDATE person
         //     SET name = name || ' ' || name
         dbTabPerson.update(
-                oldDbRec -> new DbRec(
+                dbRec -> new DbRec(
                         Map.of(
-                                DB_FIELD_NAME_ID, oldDbRec.getValue(DB_FIELD_NAME_ID),
-                                DB_FIELD_NAME_NAME, oldDbRec.getValue(DB_FIELD_NAME_NAME) + " " + oldDbRec.getValue(DB_FIELD_NAME_NAME)
+                                DB_FIELD_NAME_ID, dbRec.getValue(DB_FIELD_NAME_ID),
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         )
                 )
         );
+
         DbSelect dbSelect = dbTabPerson.select();
 
-        logger.info("dbSelect = {}", dbSelect);
         Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
 
@@ -203,27 +191,23 @@ public class DbTest {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
-        );
-        dbTabPerson.insert(
-                new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"))
-        );
+        dbTabPerson.insert(dbRec1_Bob);
+        dbTabPerson.insert(dbRec2_Alice);
 
         //  UPDATE person
         //     SET name = name || ' ' || name
         //   WHERE id = 2
         dbTabPerson.update(
-                oldDbRec -> new DbRec(
+                dbRec -> new DbRec(
                         Map.of(
-                                DB_FIELD_NAME_ID, oldDbRec.getValue(DB_FIELD_NAME_ID),
-                                DB_FIELD_NAME_NAME, oldDbRec.getValue(DB_FIELD_NAME_NAME) + " " + oldDbRec.getValue(DB_FIELD_NAME_NAME)
+                                DB_FIELD_NAME_ID, dbRec.getValue(DB_FIELD_NAME_ID),
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         )
                 ), dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
         );
+
         DbSelect dbSelect = dbTabPerson.select();
 
-        logger.info("dbSelect = {}", dbSelect);
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 }

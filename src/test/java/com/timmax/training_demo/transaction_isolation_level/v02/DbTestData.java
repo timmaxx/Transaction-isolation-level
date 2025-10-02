@@ -38,9 +38,7 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithOneRow.insert(
-                dbRec1_Bob
-        );
+        dbTabPersonWithOneRow.insert(dbRec1_Bob);
         dbTabPersonWithOneRow.setReadOnly();
         dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
     }
@@ -57,12 +55,8 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithTwoRows.insert(
-                dbRec1_Bob
-        );
-        dbTabPersonWithTwoRows.insert(
-                dbRec2_Alice
-        );
+        dbTabPersonWithTwoRows.insert(dbRec1_Bob);
+        dbTabPersonWithTwoRows.insert(dbRec2_Alice);
         dbTabPersonWithTwoRows.setReadOnly();
         dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select();
     }
@@ -80,12 +74,8 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithTwoRowsAllUpdated.insert(
-                dbRec1_BobBob
-        );
-        dbTabPersonWithTwoRowsAllUpdated.insert(
-                dbRec2_AliceAlice
-        );
+        dbTabPersonWithTwoRowsAllUpdated.insert(dbRec1_BobBob);
+        dbTabPersonWithTwoRowsAllUpdated.insert(dbRec2_AliceAlice);
         dbTabPersonWithTwoRowsAllUpdated.setReadOnly();
         dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
     }
@@ -101,14 +91,9 @@ public class DbTestData {
                         DB_FIELD_NAME
                 )
         );
-        dbTabPersonWithTwoRowsIdEq2Updated.insert(
-                dbRec1_Bob
-        );
-        dbTabPersonWithTwoRowsIdEq2Updated.insert(
-                dbRec2_AliceAlice
-        );
+        dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec1_Bob);
+        dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec2_AliceAlice);
         dbTabPersonWithTwoRowsIdEq2Updated.setReadOnly();
         dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
     }
-
 }
