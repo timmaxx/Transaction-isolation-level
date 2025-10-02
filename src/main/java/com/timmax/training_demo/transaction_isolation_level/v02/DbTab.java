@@ -46,12 +46,21 @@ public non-sealed class DbTab extends DbTableLike {
         if (readOnly) {
             throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot update any row in this table.");
         }
-        update0(updateSetCalcFunc);
+        update0(updateSetCalcFunc, null);
     }
 
-    private void update0(UpdateSetCalcFunc updateSetCalcFunc) {
+    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        if (readOnly) {
+            throw new RuntimeException("The table '" + dbTabName + "' is read only. You cannot update any row in this table.");
+        }
+        update0(updateSetCalcFunc, whereFunc);
+    }
+
+    private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         for(DbRec dbRec : dbRecs) {
-            dbRec.setAll(updateSetCalcFunc.setCalcFunc(dbRec));
+            if (whereFunc == null || whereFunc.where(dbRec)) {
+                dbRec.setAll(updateSetCalcFunc.setCalcFunc(dbRec));
+            }
         }
     }
 

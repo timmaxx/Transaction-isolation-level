@@ -89,4 +89,26 @@ public class DbTestData {
         dbTabPersonWithTwoRowsAllUpdated.setReadOnly();
         dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
     }
+
+
+    public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated;
+    public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated;
+    static {
+        dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
+        );
+        dbTabPersonWithTwoRowsIdEq2Updated.insert(
+                dbRec1_Bob
+        );
+        dbTabPersonWithTwoRowsIdEq2Updated.insert(
+                dbRec2_AliceAlice
+        );
+        dbTabPersonWithTwoRowsIdEq2Updated.setReadOnly();
+        dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
+    }
+
 }

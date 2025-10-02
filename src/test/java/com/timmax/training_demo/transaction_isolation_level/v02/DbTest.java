@@ -193,4 +193,37 @@ public class DbTest {
         logger.info("dbSelect = {}", dbSelect);
         Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
+
+    @Test
+    public void updateTwoRowsTableWhereIdEq2() {
+        DbTab dbTabPerson = new DbTab(
+                DB_TAB_NAME_PERSON,
+                new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_NAME
+                )
+        );
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"))
+        );
+        dbTabPerson.insert(
+                new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"))
+        );
+
+        //  UPDATE person
+        //     SET name = name || ' ' || name
+        //   WHERE id = 2
+        dbTabPerson.update(
+                oldDbRec -> new DbRec(
+                        Map.of(
+                                DB_FIELD_NAME_ID, oldDbRec.getValue(DB_FIELD_NAME_ID),
+                                DB_FIELD_NAME_NAME, oldDbRec.getValue(DB_FIELD_NAME_NAME) + " " + oldDbRec.getValue(DB_FIELD_NAME_NAME)
+                        )
+                ), dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+        );
+        DbSelect dbSelect = dbTabPerson.select();
+
+        logger.info("dbSelect = {}", dbSelect);
+        Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+    }
 }
