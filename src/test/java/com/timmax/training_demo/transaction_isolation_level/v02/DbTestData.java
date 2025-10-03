@@ -11,6 +11,11 @@ public class DbTestData {
 
     public static final DbTabName DB_TAB_NAME_PERSON = new DbTabName("person");
 
+    public static final DbRec dbRec1_Bob = new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"));
+    public static final DbRec dbRec2_Alice = new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"));
+    public static final DbRec dbRec1_BobBob = new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob Bob"));
+    public static final DbRec dbRec2_AliceAlice = new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice Alice"));
+
 
     public static final DbTab dbTabPersonEmpty;
     public static final DbSelect dbSelectPersonEmpty;
@@ -29,15 +34,8 @@ public class DbTestData {
 
     public static final DbTab dbTabPersonWithOneRow;
     public static final DbSelect dbSelectPersonWithOneRow;
-    public static final DbRec dbRec1_Bob = new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob"));
     static {
-        dbTabPersonWithOneRow = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                )
-        );
+        dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty);
         try {
             dbTabPersonWithOneRow.insert(dbRec1_Bob);
         } catch (DataAccessException e) {
@@ -50,17 +48,9 @@ public class DbTestData {
 
     public static final DbTab dbTabPersonWithTwoRows;
     public static final DbSelect dbSelectPersonWithTwoRows;
-    public static final DbRec dbRec2_Alice = new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice"));
     static {
-        dbTabPersonWithTwoRows = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                )
-        );
+        dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow);
         try {
-            dbTabPersonWithTwoRows.insert(dbRec1_Bob);
             dbTabPersonWithTwoRows.insert(dbRec2_Alice);
         } catch (DataAccessException dae) {
             throw new RuntimeException(dae);
@@ -72,16 +62,8 @@ public class DbTestData {
 
     public static final DbTab dbTabPersonWithTwoRowsAllUpdated;
     public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated;
-    public static final DbRec dbRec1_BobBob = new DbRec(Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob Bob"));
-    public static final DbRec dbRec2_AliceAlice = new DbRec(Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice Alice"));
     static {
-        dbTabPersonWithTwoRowsAllUpdated = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                )
-        );
+        dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty);
         try {
             dbTabPersonWithTwoRowsAllUpdated.insert(dbRec1_BobBob);
             dbTabPersonWithTwoRowsAllUpdated.insert(dbRec2_AliceAlice);
@@ -96,15 +78,8 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated;
     public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated;
     static {
-        dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                )
-        );
+        dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow);
         try {
-            dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec1_Bob);
             dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec2_AliceAlice);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);

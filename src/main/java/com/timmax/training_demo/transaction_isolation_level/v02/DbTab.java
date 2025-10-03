@@ -14,6 +14,11 @@ public non-sealed class DbTab extends DbTableLike {
         this.dbTabName = dbTabName;
     }
 
+    public DbTab(DbTab dbTab) {
+        this(dbTab.dbTabName, dbTab.dbFields);
+        this.dbRecs.addAll(dbTab.dbRecs);
+    }
+
     public void setReadOnly() {
         readOnly = true;
     }
