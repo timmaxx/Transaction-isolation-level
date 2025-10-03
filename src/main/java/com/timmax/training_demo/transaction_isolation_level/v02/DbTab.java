@@ -1,5 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
+import java.util.Set;
+
 public non-sealed class DbTab extends DbTableLike {
     private static final String TABLE_IS_RO = "The table '%s' is read only.";
     private static final String YOU_CANNOT_INSERT = "You cannot insert any row into this table.";
@@ -14,9 +16,19 @@ public non-sealed class DbTab extends DbTableLike {
         this.dbTabName = dbTabName;
     }
 
+    public DbTab(DbTabName dbTabName, DbFields dbFields, Set<DbRec> dbRecs) {
+        this(dbTabName, dbFields);
+        this.dbRecs.addAll(dbRecs);
+    }
+
     public DbTab(DbTab dbTab) {
         this(dbTab.dbTabName, dbTab.dbFields);
         this.dbRecs.addAll(dbTab.dbRecs);
+    }
+
+    public DbTab(DbTab dbTab, Set<DbRec> dbRecs) {
+        this(dbTab);
+        this.dbRecs.addAll(dbRecs);
     }
 
     public void setReadOnly() {

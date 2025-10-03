@@ -1,6 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import java.util.Map;
+import java.util.Set;
 
 public class DbTestData {
     public static final DbFieldName DB_FIELD_NAME_ID = new DbFieldName("id");
@@ -35,12 +36,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithOneRow;
     public static final DbSelect dbSelectPersonWithOneRow;
     static {
-        dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty);
-        try {
-            dbTabPersonWithOneRow.insert(dbRec1_Bob);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, Set.of(dbRec1_Bob));
         dbTabPersonWithOneRow.setReadOnly();
         dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
     }
@@ -49,12 +45,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRows;
     public static final DbSelect dbSelectPersonWithTwoRows;
     static {
-        dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow);
-        try {
-            dbTabPersonWithTwoRows.insert(dbRec2_Alice);
-        } catch (DataAccessException dae) {
-            throw new RuntimeException(dae);
-        }
+        dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, Set.of(dbRec2_Alice));
         dbTabPersonWithTwoRows.setReadOnly();
         dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select();
     }
@@ -63,13 +54,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRowsAllUpdated;
     public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated;
     static {
-        dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty);
-        try {
-            dbTabPersonWithTwoRowsAllUpdated.insert(dbRec1_BobBob);
-            dbTabPersonWithTwoRowsAllUpdated.insert(dbRec2_AliceAlice);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, Set.of(dbRec1_BobBob, dbRec2_AliceAlice));
         dbTabPersonWithTwoRowsAllUpdated.setReadOnly();
         dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
     }
@@ -78,12 +63,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated;
     public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated;
     static {
-        dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow);
-        try {
-            dbTabPersonWithTwoRowsIdEq2Updated.insert(dbRec2_AliceAlice);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, Set.of(dbRec2_AliceAlice));
         dbTabPersonWithTwoRowsIdEq2Updated.setReadOnly();
         dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
     }
