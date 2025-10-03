@@ -9,25 +9,26 @@ public non-sealed class DbTab extends DbTableLike {
     private static final String YOU_CANNOT_DELETE = "You cannot delete any row from this table.";
 
     private final DbTabName dbTabName;
-    private boolean readOnly = false;
+    private boolean readOnly;
 
-    public DbTab(DbTabName dbTabName, DbFields dbFields) {
+    public DbTab(DbTabName dbTabName, DbFields dbFields, boolean readOnly) {
         super(dbFields);
         this.dbTabName = dbTabName;
+        this.readOnly = readOnly;
     }
 
-    public DbTab(DbTabName dbTabName, DbFields dbFields, Set<DbRec> dbRecs) {
-        this(dbTabName, dbFields);
+    public DbTab(DbTabName dbTabName, DbFields dbFields, boolean readOnly, Set<DbRec> dbRecs) {
+        this(dbTabName, dbFields, readOnly);
         this.dbRecs.addAll(dbRecs);
     }
 
-    public DbTab(DbTab dbTab) {
-        this(dbTab.dbTabName, dbTab.dbFields);
+    public DbTab(DbTab dbTab, boolean readOnly) {
+        this(dbTab.dbTabName, dbTab.dbFields, readOnly);
         this.dbRecs.addAll(dbTab.dbRecs);
     }
 
-    public DbTab(DbTab dbTab, Set<DbRec> dbRecs) {
-        this(dbTab);
+    public DbTab(DbTab dbTab, boolean readOnly, Set<DbRec> dbRecs) {
+        this(dbTab, readOnly);
         this.dbRecs.addAll(dbRecs);
     }
 

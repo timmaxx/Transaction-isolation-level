@@ -23,7 +23,7 @@ public class DbTest {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ), true
         );
 
         Assertions.assertEquals(dbTabPersonEmpty, dbTabPerson);
@@ -63,7 +63,7 @@ public class DbTest {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ), false
         );
 
         //  INSERT
@@ -115,7 +115,7 @@ public class DbTest {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ), false
         );
 
         //  DELETE
@@ -134,7 +134,7 @@ public class DbTest {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ), false
         );
         dbTabPerson.insert(dbRec1_Bob);
 
@@ -154,7 +154,7 @@ public class DbTest {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ), false
         );
         dbTabPerson.insert(dbRec1_Bob);
         dbTabPerson.insert(dbRec2_Alice);
@@ -176,7 +176,7 @@ public class DbTest {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ), false
         );
         dbTabPerson.insert(dbRec1_Bob);
         dbTabPerson.insert(dbRec2_Alice);
@@ -204,7 +204,7 @@ public class DbTest {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ), false
         );
         dbTabPerson.insert(dbRec1_Bob);
         dbTabPerson.insert(dbRec2_Alice);

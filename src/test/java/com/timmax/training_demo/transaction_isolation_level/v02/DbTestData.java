@@ -26,9 +26,9 @@ public class DbTestData {
                 new DbFields(
                         DB_FIELD_ID,
                         DB_FIELD_NAME
-                )
+                ),
+                true
         );
-        dbTabPersonEmpty.setReadOnly();
         dbSelectPersonEmpty = dbTabPersonEmpty.select();
     }
 
@@ -36,8 +36,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithOneRow;
     public static final DbSelect dbSelectPersonWithOneRow;
     static {
-        dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, Set.of(dbRec1_Bob));
-        dbTabPersonWithOneRow.setReadOnly();
+        dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_Bob));
         dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
     }
 
@@ -45,8 +44,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRows;
     public static final DbSelect dbSelectPersonWithTwoRows;
     static {
-        dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, Set.of(dbRec2_Alice));
-        dbTabPersonWithTwoRows.setReadOnly();
+        dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_Alice));
         dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select();
     }
 
@@ -54,8 +52,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRowsAllUpdated;
     public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated;
     static {
-        dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, Set.of(dbRec1_BobBob, dbRec2_AliceAlice));
-        dbTabPersonWithTwoRowsAllUpdated.setReadOnly();
+        dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_BobBob, dbRec2_AliceAlice));
         dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
     }
 
@@ -63,8 +60,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated;
     public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated;
     static {
-        dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, Set.of(dbRec2_AliceAlice));
-        dbTabPersonWithTwoRowsIdEq2Updated.setReadOnly();
+        dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_AliceAlice));
         dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
     }
 }
