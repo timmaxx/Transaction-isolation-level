@@ -11,7 +11,14 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 
 public class DbTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbTest.class);
+    @Test
+    public void dbTabCopyWithoutDbTabRec() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        logger.info("dbTabPersonWithOneRow.dbRecs.stream().findAny().get() = {}", dbTabPersonWithOneRow.dbRecs.stream().findAny().get());
+        logger.info("dbTabPerson.dbRecs.stream().findAny().get()           = {}", dbTabPerson.dbRecs.stream().findAny().get());
 
+        Assertions.assertNotSame(dbTabPersonWithOneRow.dbRecs.stream().findAny().get(), dbTabPerson.dbRecs.stream().findAny().get());
+    }
 /*
     @Test
     public void createTable() {
