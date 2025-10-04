@@ -29,9 +29,11 @@ public class DbRec {
     }
 
     public void setAll(DbRec rec) {
-        for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
-            if (!entry.getValue().equals(rec.getValue(entry.getKey()))) {
-                entry.setValue(rec.getValue(entry.getKey()));
+        for (DbFieldName dbFieldName : recMap.keySet()) {
+            Object oldValue = recMap.get(dbFieldName);
+            Object newValue = rec.recMap.get(dbFieldName);
+            if (!oldValue.equals(newValue)) {
+                recMap.put(dbFieldName, newValue);
             }
         }
     }
@@ -46,7 +48,9 @@ public class DbRec {
 
     @Override
     public String toString() {
-        return "DbRec{" +
+        return super.toString() + " " +
+                System.identityHashCode(this) + " " +
+                "DbRec{" +
                 "recMap=" + recMap +
                 '}';
     }

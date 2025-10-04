@@ -36,7 +36,9 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     @Override
     public String toString() {
-        return "DbTableLike{" +
+        return super.toString() + " " +
+                System.identityHashCode(this) + " " +
+                "DbTableLike{" +
                 "dbFields=" + dbFields +
                 ", dbRecs=" + dbRecs +
                 '}';
