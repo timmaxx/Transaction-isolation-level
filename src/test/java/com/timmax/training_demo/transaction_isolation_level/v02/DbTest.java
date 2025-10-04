@@ -14,12 +14,10 @@ public class DbTest {
     @Test
     public void dbTabCopyWithoutDbTabRec() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
-        logger.info("dbTabPersonWithOneRow.dbRecs.stream().findAny().get() = {}", dbTabPersonWithOneRow.dbRecs.stream().findAny().get());
-        logger.info("dbTabPerson.dbRecs.stream().findAny().get()           = {}", dbTabPerson.dbRecs.stream().findAny().get());
 
         Assertions.assertNotSame(dbTabPersonWithOneRow.dbRecs.stream().findAny().get(), dbTabPerson.dbRecs.stream().findAny().get());
     }
-/*
+
     @Test
     public void createTable() {
         //  CREATE TABLE person(
@@ -66,13 +64,7 @@ public class DbTest {
 
     @Test
     public void insertOneRowIntoEmptyTable() throws DataAccessException {
-        DbTab dbTabPerson = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                ), false
-        );
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
         //    INTO person (
@@ -118,13 +110,7 @@ public class DbTest {
 
     @Test
     public void deleteFromEmptyTable() throws DataAccessException {
-        DbTab dbTabPerson = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                ), false
-        );
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  DELETE
         //    FROM person
@@ -137,14 +123,7 @@ public class DbTest {
 
     @Test
     public void deleteFromOneRowTable() throws DataAccessException {
-        DbTab dbTabPerson = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                ), false
-        );
-        dbTabPerson.insert(dbRec1_Bob);
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
 
         //  DELETE
         //    FROM person
@@ -157,15 +136,7 @@ public class DbTest {
 
     @Test
     public void deleteFromTwoRowsTableWhereIdEq2() throws DataAccessException {
-        DbTab dbTabPerson = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                ), false
-        );
-        dbTabPerson.insert(dbRec1_Bob);
-        dbTabPerson.insert(dbRec2_Alice);
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  DELETE
         //    FROM person
@@ -176,12 +147,10 @@ public class DbTest {
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
-*/
 
     @Test
     public void updateTwoRowsTable() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
-        logger.info("dbTabPerson = {}", dbTabPerson);
 
         //  UPDATE person
         //     SET name = name || ' ' || name
@@ -196,28 +165,12 @@ public class DbTest {
 
         DbSelect dbSelect = dbTabPerson.select();
 
-        logger.info("dbSelectPersonWithTwoRowsAllUpdated = {}", dbSelectPersonWithTwoRowsAllUpdated);
-        logger.info("                           dbSelect = {}", dbSelect);
-        logger.info("dbTabPersonWithTwoRows = {}", dbTabPersonWithTwoRows);
         Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
 
     @Test
     public void updateTwoRowsTableWhereIdEq2() throws DataAccessException {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
-        logger.info("dbTabPersonWithTwoRows = {}", dbTabPersonWithTwoRows);
-        logger.info("dbTabPerson            = {}", dbTabPerson);
-/*
-        DbTab dbTabPerson = new DbTab(
-                DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                ), false
-        );
-        dbTabPerson.insert(dbRec1_Bob);
-        dbTabPerson.insert(dbRec2_Alice);
-*/
 
         //  UPDATE person
         //     SET name = name || ' ' || name
@@ -233,8 +186,6 @@ public class DbTest {
 
         DbSelect dbSelect = dbTabPerson.select();
 
-        logger.info("dbTabPersonWithTwoRows = {}", dbTabPersonWithTwoRows);
-        logger.info("dbTabPerson            = {}", dbTabPerson);
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 }

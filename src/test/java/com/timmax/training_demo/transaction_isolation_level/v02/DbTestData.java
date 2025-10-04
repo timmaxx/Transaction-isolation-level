@@ -33,27 +33,15 @@ public class DbTestData {
     );
     public static final DbSelect dbSelectPersonEmpty = dbTabPersonEmpty.select();
 
-    //public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_Bob));
-    public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, (Set.copyOf(Set.of(dbRec1_Bob))));
+    public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_Bob));
     public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
 
-//    public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, /*new HashSet<>*/(Set.copyOf(Set.of(dbRec2_Alice))));
-    public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonEmpty, true, (Set.copyOf(Set.of(dbRec1_Bob, dbRec2_Alice))));
+    public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_Alice));
     public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select();
 
-    public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, (Set.copyOf(Set.of(dbRec1_BobBob, dbRec2_AliceAlice))));
+    public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_BobBob, dbRec2_AliceAlice));
     public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
 
-//     public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, /*new HashSet<>*/(Set.copyOf(Set.of(dbRec2_AliceAlice))));
-    public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonEmpty, true, (Set.copyOf(Set.of(dbRec1_Bob, dbRec2_AliceAlice))));
+    public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_AliceAlice));
     public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
-
-    static {
-        logger.info("dbTabPersonEmpty                   = {}", dbTabPersonEmpty);
-        logger.info("dbTabPersonWithOneRow              = {}", dbTabPersonWithOneRow);
-        logger.info("dbTabPersonWithTwoRows             = {}", dbTabPersonWithTwoRows);
-        logger.info("dbTabPersonWithTwoRowsAllUpdated   = {}", dbTabPersonWithTwoRowsAllUpdated);
-        logger.info("dbTabPersonWithTwoRowsIdEq2Updated = {}", dbTabPersonWithTwoRowsIdEq2Updated);
-        logger.info("");
-    }
 }

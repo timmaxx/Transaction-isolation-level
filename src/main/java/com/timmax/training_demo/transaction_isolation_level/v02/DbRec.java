@@ -10,6 +10,10 @@ import java.util.Objects;
 public class DbRec {
     protected static final Logger logger = LoggerFactory.getLogger(DbRec.class);
 
+    //  ToDo:   Или в этом классе ввести поле DbTab, которое будет указывать на таблицу, которой принадлежит запись.
+    //          Или создать отдельный класс.
+    //          Собственно из-за этого-то и была проблема с копиями записей в разных таблицах.
+
     private final Map<DbFieldName, Object> recMap;
 
     public DbRec() {
@@ -18,9 +22,6 @@ public class DbRec {
 
     public DbRec(Map<DbFieldName, Object> recMap) {
         this();
-        //  for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
-        //      this.recMap.put(entry.getKey(), entry.getValue());
-        //  }
         this.recMap.putAll(recMap);
     }
 
@@ -48,9 +49,7 @@ public class DbRec {
 
     @Override
     public String toString() {
-        return super.toString() + " " +
-                System.identityHashCode(this) + " " +
-                "DbRec{" +
+        return "DbRec{" +
                 "recMap=" + recMap +
                 '}';
     }

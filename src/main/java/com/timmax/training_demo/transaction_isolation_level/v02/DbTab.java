@@ -14,7 +14,7 @@ public non-sealed class DbTab extends DbTableLike {
     private static final String YOU_CANNOT_DELETE = "You cannot delete any row from this table.";
 
     private final DbTabName dbTabName;
-    private boolean readOnly;
+    private final boolean readOnly;
 
     public DbTab(DbTabName dbTabName, DbFields dbFields, boolean readOnly) {
         super(dbFields);
@@ -25,7 +25,7 @@ public non-sealed class DbTab extends DbTableLike {
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
         //  Рабочий вариант
-        for(DbRec dbRec : dbTab.dbRecs) {
+        for (DbRec dbRec : dbTab.dbRecs) {
             this.dbRecs.add(new DbRec(dbRec));
         }
 /*
@@ -44,10 +44,6 @@ public non-sealed class DbTab extends DbTableLike {
         //  Плохой вариант
         this.dbRecs.addAll(dbRecs);
 */
-    }
-
-    public void setReadOnly() {
-        readOnly = true;
     }
 
     private void validateReadOnlyTable(String msgInsUpdDel) throws DataAccessException {
@@ -92,7 +88,7 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        for(DbRec dbRec : dbRecs) {
+        for (DbRec dbRec : dbRecs) {
             if (whereFunc == null || whereFunc.where(dbRec)) {
                 dbRec.setAll(updateSetCalcFunc.setCalcFunc(dbRec));
             }
@@ -101,12 +97,11 @@ public non-sealed class DbTab extends DbTableLike {
 
     @Override
     public String toString() {
-        return super.toString() +
-                "DbTab{" +
+        return "DbTab{" +
                 "dbTabName='" + dbTabName + '\'' +
-////                 ", readOnly=" + readOnly +
-//                ", dbFields=" + dbFields +
-//                ", dbRecs=" + dbRecs +
+                ", readOnly=" + readOnly +
+                ", dbFields=" + dbFields +
+                ", dbRecs=" + dbRecs +
                 '}';
     }
 }
