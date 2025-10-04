@@ -24,27 +24,26 @@ public non-sealed class DbTab extends DbTableLike {
 
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
-
-/*      //  Рабочий вариант
+        //  Рабочий вариант
         for(DbRec dbRec : dbTab.dbRecs) {
             this.dbRecs.add(new DbRec(dbRec));
         }
-*/
+/*
         //  Плохой вариант
         this.dbRecs.addAll(dbTab.dbRecs);
+*/
     }
 
     public DbTab(DbTab dbTab, boolean readOnly, Set<DbRec> dbRecs) {
         this(dbTab, readOnly);
-
-/*      //  Рабочий вариант
+        //  Рабочий вариант
         for (DbRec dbRec : dbRecs) {
             this.dbRecs.add(new DbRec(dbRec));
         }
-*/
-
+/*
         //  Плохой вариант
         this.dbRecs.addAll(dbRecs);
+*/
     }
 
     public void setReadOnly() {
