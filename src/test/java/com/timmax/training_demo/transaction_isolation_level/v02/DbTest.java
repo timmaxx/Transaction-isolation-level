@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
 public class DbTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbTest.class);
+
     @Test
     public void dbTabCopyMustHaveOwnDbRec0Copy() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
@@ -18,7 +20,7 @@ public class DbTest {
         Assertions.assertNotSame(
                 dbTabPersonWithOneRow.dbRecs.stream().findAny().get().getDbTableLike(),
                 dbTabPerson.dbRecs.stream().findAny().get().getDbTableLike()
-                );
+        );
     }
 
     @Test
@@ -152,17 +154,14 @@ public class DbTest {
     }
 
     @Test
-    public void updateTwoRowsTable() throws DataAccessException {
+    public void updateTwoRowsTable() throws SQLException {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
         //     SET name = name || ' ' || name
         dbTabPerson.update(
-                dbRec -> new DbRec(
-                        Map.of(
-                                DB_FIELD_NAME_ID, dbRec.getValue(DB_FIELD_NAME_ID),
-                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        )
+                dbRec -> Map.of(
+                        DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                 )
         );
 
@@ -172,23 +171,38 @@ public class DbTest {
     }
 
     @Test
-    public void updateTwoRowsTableWhereIdEq2() throws DataAccessException {
+    public void updateTwoRowsTableWhereIdEq2() throws SQLException {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
         //     SET name = name || ' ' || name
         //   WHERE id = 2
         dbTabPerson.update(
-                dbRec -> new DbRec(
-                        Map.of(
-                                DB_FIELD_NAME_ID, dbRec.getValue(DB_FIELD_NAME_ID),
-                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        )
-                ), dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                dbRec -> Map.of(
+                        DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                ),
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
         );
 
         DbSelect dbSelect = dbTabPerson.select();
 
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+    }
+
+    @Test
+    public void updateTwoRowsTableWhereWrongField() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person
+        //     SET wrong_field = name || ' ' || name
+        //   WHERE id = 2
+        Assertions.assertThrows(SQLException.class, () ->
+                dbTabPerson.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                )
+        );
     }
 }

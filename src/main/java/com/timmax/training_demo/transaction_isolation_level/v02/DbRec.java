@@ -3,6 +3,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,10 +32,13 @@ public class DbRec {
         this(rec.recMap);
     }
 
-    public void setAll(DbRec rec) {
-        for (DbFieldName dbFieldName : recMap.keySet()) {
+    public void setAll(Map<DbFieldName, Object> newRecMap) throws SQLException {
+        for (DbFieldName dbFieldName : newRecMap.keySet()) {
+            if (!recMap.containsKey(dbFieldName)) {
+                throw new SQLException("ERROR: column '" + dbFieldName + "' does not exist.");
+            }
             Object oldValue = recMap.get(dbFieldName);
-            Object newValue = rec.recMap.get(dbFieldName);
+            Object newValue = newRecMap.get(dbFieldName);
             if (!oldValue.equals(newValue)) {
                 recMap.put(dbFieldName, newValue);
             }

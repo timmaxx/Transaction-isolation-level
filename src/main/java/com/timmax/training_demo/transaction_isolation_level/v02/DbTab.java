@@ -3,6 +3,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.Set;
 
 public non-sealed class DbTab extends DbTableLike {
@@ -63,17 +64,17 @@ public non-sealed class DbTab extends DbTableLike {
         dbRecs.removeIf(whereFunc::where);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc) throws DataAccessException {
+    public void update(UpdateSetCalcFunc updateSetCalcFunc) throws SQLException {
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, null);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) throws DataAccessException {
+    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) throws SQLException {
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, whereFunc);
     }
 
-    private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+    private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) throws SQLException {
         for (DbRec dbRec : dbRecs) {
             if (whereFunc == null || whereFunc.where(dbRec)) {
                 dbRec.setAll(updateSetCalcFunc.setCalcFunc(dbRec));

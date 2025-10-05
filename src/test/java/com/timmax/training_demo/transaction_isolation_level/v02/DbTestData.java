@@ -9,6 +9,8 @@ import java.util.Set;
 public class DbTestData {
     protected static final Logger logger = LoggerFactory.getLogger(DbTestData.class);
 
+    public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD = new DbFieldName("wrong_field");
+
     public static final DbFieldName DB_FIELD_NAME_ID = new DbFieldName("id");
     public static final DbField<Integer> DB_FIELD_ID = new DbField<>(DB_FIELD_NAME_ID, Integer.class);
 
@@ -37,7 +39,6 @@ public class DbTestData {
     public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
 
     public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_Alice));
-    public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select();
 
     public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_BobBob, dbRec2_AliceAlice));
     public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
