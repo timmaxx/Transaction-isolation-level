@@ -143,7 +143,7 @@ public class DbTest {
 
         //  DELETE
         //    FROM person
-        //   WHERE id = 1
+        //   WHERE id = 2
         dbTabPerson.delete(dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2));
 
         DbSelect dbSelect = dbTabPerson.select();
