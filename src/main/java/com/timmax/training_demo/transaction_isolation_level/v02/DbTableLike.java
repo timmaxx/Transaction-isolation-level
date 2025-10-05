@@ -6,7 +6,7 @@ import java.util.Set;
 
 public abstract sealed class DbTableLike permits DbTab, DbSelect {
     protected final DbFields dbFields;
-    protected final Set<DbRec> dbRecs = new HashSet<>();
+    protected final Set<DbRec0> dbRecs = new HashSet<>();
 
     public DbTableLike(DbFields dbFields) {
         this.dbFields = dbFields;
@@ -31,7 +31,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
     protected void insert0(DbRec dbRec) {
-        dbRecs.add(new DbRec(dbRec));
+        dbRecs.add(new DbRec0(dbRec, this));
     }
 
     @Override

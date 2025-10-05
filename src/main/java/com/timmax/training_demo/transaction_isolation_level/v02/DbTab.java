@@ -24,26 +24,12 @@ public non-sealed class DbTab extends DbTableLike {
 
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
-        //  Рабочий вариант
-        for (DbRec dbRec : dbTab.dbRecs) {
-            this.dbRecs.add(new DbRec(dbRec));
-        }
-/*
-        //  Плохой вариант
-        this.dbRecs.addAll(dbTab.dbRecs);
-*/
+        this.dbRecs.addAll(dbTab.dbRecs.stream().map(dbRec0 -> new DbRec0(dbRec0.getSuper(), this)).toList());
     }
 
     public DbTab(DbTab dbTab, boolean readOnly, Set<DbRec> dbRecs) {
         this(dbTab, readOnly);
-        //  Рабочий вариант
-        for (DbRec dbRec : dbRecs) {
-            this.dbRecs.add(new DbRec(dbRec));
-        }
-/*
-        //  Плохой вариант
-        this.dbRecs.addAll(dbRecs);
-*/
+        this.dbRecs.addAll(dbRecs.stream().map(dbRec -> new DbRec0(dbRec, this)).toList());
     }
 
     private void validateReadOnlyTable(String msgInsUpdDel) throws DataAccessException {
