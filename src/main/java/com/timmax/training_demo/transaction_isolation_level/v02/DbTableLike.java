@@ -1,6 +1,5 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -13,15 +12,15 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         this.dbFields = dbFields;
     }
 
-    public DbSelect select() throws SQLException {
+    public DbSelect select() {
         return select0(null);
     }
 
-    public DbSelect select(WhereFunc whereFunc) throws SQLException {
+    public DbSelect select(WhereFunc whereFunc) {
         return select0(whereFunc);
     }
 
-    private DbSelect select0(WhereFunc whereFunc) throws SQLException {
+    private DbSelect select0(WhereFunc whereFunc) {
         DbSelect dbSelect = new DbSelect(this.dbFields);
         for (DbRec dbRec : dbRecs) {
             if (whereFunc == null || whereFunc.where(dbRec)) {
@@ -31,7 +30,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return dbSelect;
     }
 
-    protected void insert0(DbRec dbRec) throws SQLException {
+    protected void insert0(DbRec dbRec) {
         dbRec.verify(dbFields);
         dbRecs.add(new DbRec0(dbRec, this));
     }

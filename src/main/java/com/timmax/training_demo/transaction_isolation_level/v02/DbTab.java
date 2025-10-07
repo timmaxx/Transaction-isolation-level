@@ -1,9 +1,9 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
+import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.Set;
 
 public non-sealed class DbTab extends DbTableLike {
@@ -33,25 +33,24 @@ public non-sealed class DbTab extends DbTableLike {
         this.dbRecs.addAll(dbRecs.stream().map(dbRec -> new DbRec0(dbRec, this)).toList());
     }
 
-    private void validateReadOnlyTable(String msgInsUpdDel) throws DataAccessException {
+    private void validateReadOnlyTable(String msgInsUpdDel) {
         if (!readOnly) {
             return;
         }
-        String reason = String.format(TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel;
-        throw new DataAccessException(reason);
+        throw new DbDataAccessException(String.format(TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
     }
 
-    public void insert(DbRec dbRec) throws SQLException {
+    public void insert(DbRec dbRec) {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
         insert0(dbRec);
     }
 
-    public void delete() throws DataAccessException {
+    public void delete() {
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         delete0();
     }
 
-    public void delete(WhereFunc whereFunc) throws DataAccessException {
+    public void delete(WhereFunc whereFunc) {
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         delete0(whereFunc);
     }
@@ -64,17 +63,17 @@ public non-sealed class DbTab extends DbTableLike {
         dbRecs.removeIf(whereFunc::where);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc) throws SQLException {
+    public void update(UpdateSetCalcFunc updateSetCalcFunc) {
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, null);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) throws SQLException {
+    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         update0(updateSetCalcFunc, whereFunc);
     }
 
-    private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) throws SQLException {
+    private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         for (DbRec dbRec : dbRecs) {
             if (whereFunc == null || whereFunc.where(dbRec)) {
                 dbRec.setAll(updateSetCalcFunc.setCalcFunc(dbRec));

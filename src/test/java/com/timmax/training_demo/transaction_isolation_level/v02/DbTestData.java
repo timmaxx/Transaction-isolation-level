@@ -3,7 +3,6 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,48 +34,16 @@ public class DbTestData {
             true
     );
 
-    public static final DbSelect dbSelectPersonEmpty;
-
-    static {
-        try {
-            dbSelectPersonEmpty = dbTabPersonEmpty.select();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final DbSelect dbSelectPersonEmpty = dbTabPersonEmpty.select();
 
     public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_Bob));
-    public static final DbSelect dbSelectPersonWithOneRow;
-
-    static {
-        try {
-            dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
 
     public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_Alice));
 
     public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_BobBob, dbRec2_AliceAlice));
-    public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated;
-
-    static {
-        try {
-            dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
 
     public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_AliceAlice));
-    public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated;
-
-    static {
-        try {
-            dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
 }

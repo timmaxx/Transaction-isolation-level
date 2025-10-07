@@ -1,9 +1,9 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
+import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,10 +34,10 @@ public class DbRec {
         this(rec.recMap);
     }
 
-    public void setAll(Map<DbFieldName, Object> newRecMap) throws SQLException {
+    public void setAll(Map<DbFieldName, Object> newRecMap) {
         for (DbFieldName dbFieldName : newRecMap.keySet()) {
             if (!recMap.containsKey(dbFieldName)) {
-                throw new SQLException("ERROR: column '" + dbFieldName + "' does not exist.");
+                throw new DbSQLException("ERROR: column '" + dbFieldName + "' does not exist.");
             }
             Object oldValue = recMap.get(dbFieldName);
             Object newValue = newRecMap.get(dbFieldName);
@@ -55,26 +55,28 @@ public class DbRec {
         return recMap.get(fieldName);
     }
 
-    public void verify(DbFields dbFields) throws SQLException {
+    public void verify(DbFields dbFields) {
         StringBuilder sb = new StringBuilder("\n");
         for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
             DbFieldName dbFieldName = entry.getKey();
             Object value = entry.getValue();
             if (!dbFields.containsKey(dbFieldName)) {
-                sb.append("Нет поля '").append(dbFieldName).append("'\n");
+                sb.append(
+                        String.format("Нет поля '%s'.\n", dbFieldName)
+                );
             } else if (!dbFields.getDbFieldType(dbFieldName).equals(value.getClass())) {
-                sb.append("Тип '")
-                        .append(dbFields.getDbFieldType(dbFieldName))
-                        .append("' поля '").append(dbFieldName)
-                        .append("' не соответствует типу '")
-                        .append(value.getClass())
-                        .append("' для значения '")
-                        .append(value)
-                        .append("'.\n");
+                sb.append(
+                        String.format("Тип '%s' поля '%s' не соответствует типу '%s' для значения '%s'.\n",
+                        dbFields.getDbFieldType(dbFieldName),
+                        dbFieldName,
+                        value.getClass(),
+                        value
+                        )
+                );
             }
         }
         if (!sb.toString().equals("\n")) {
-            throw new SQLException(sb.toString());
+            throw new DbSQLException(sb.toString());
         }
     }
 
