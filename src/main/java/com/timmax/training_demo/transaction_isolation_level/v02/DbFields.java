@@ -7,11 +7,21 @@ import java.util.Objects;
 public class DbFields {
     private final Map<DbFieldName, Class<?>> dbFields;
 
+    //  Warning:(10, 21) Raw use of parameterized class 'DbField'
     public DbFields(DbField... dbFields) {
         this.dbFields = new HashMap<>();
+        //  Warning:(12, 14) Raw use of parameterized class 'DbField'
         for (DbField dbField : dbFields) {
             this.dbFields.put(dbField.getDbFieldName(), dbField.getType());
         }
+    }
+
+    public Class<?> getDbFieldType(DbFieldName dbFieldName) {
+        return dbFields.get(dbFieldName);
+    }
+
+    public boolean containsKey(DbFieldName dbFieldName) {
+        return dbFields.containsKey(dbFieldName);
     }
 
     @Override

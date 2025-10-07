@@ -59,7 +59,7 @@ public class DbTest {
     }
 
     @Test
-    public void selectFromEmptyTable() {
+    public void selectFromEmptyTable() throws SQLException {
         //  SELECT *
         //    FROM person
         DbSelect dbSelect = dbTabPersonEmpty.select();
@@ -68,7 +68,7 @@ public class DbTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTable() throws DataAccessException {
+    public void insertOneRowIntoEmptyTable() throws SQLException {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -85,7 +85,37 @@ public class DbTest {
     }
 
     @Test
-    public void selectFromOneRowTable() {
+    public void insertOneRowIntoEmptyTableWithWrongFieldName() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      wrong_name, name
+        //      ) values (
+        //      1, "Bob"
+        //  )
+        Assertions.assertThrows(SQLException.class, () ->
+                dbTabPerson.insert(new DbRec(Map.of(DB_FIELD_NAME_WRONG_FIELD, 1, DB_FIELD_NAME_NAME, "Bob")))
+        );
+    }
+
+    @Test
+    public void insertOneRowIntoEmptyTableWithWrongTypeValue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      id, name
+        //      ) values (
+        //      "B", 999
+        //  )
+        Assertions.assertThrows(SQLException.class, () ->
+                dbTabPerson.insert(new DbRec(Map.of(DB_FIELD_NAME_ID, "B", DB_FIELD_NAME_NAME, 999)))
+        );
+    }
+
+    @Test
+    public void selectFromOneRowTable() throws SQLException {
         //  SELECT *
         //    FROM person
         DbSelect dbSelect = dbTabPersonWithOneRow.select();
@@ -94,7 +124,7 @@ public class DbTest {
     }
 
     @Test
-    public void selectFromEmptyTableWhereIdEq1() {
+    public void selectFromEmptyTableWhereIdEq1() throws SQLException {
         //  SELECT *
         //    FROM person
         //   WHERE id = 1
@@ -104,7 +134,7 @@ public class DbTest {
     }
 
     @Test
-    public void selectFromOneRowTableWhereIdEq1() {
+    public void selectFromOneRowTableWhereIdEq1() throws SQLException {
         //  SELECT *
         //    FROM person
         //   WHERE id = 1
@@ -114,7 +144,7 @@ public class DbTest {
     }
 
     @Test
-    public void deleteFromEmptyTable() throws DataAccessException {
+    public void deleteFromEmptyTable() throws SQLException {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  DELETE
@@ -127,7 +157,7 @@ public class DbTest {
     }
 
     @Test
-    public void deleteFromOneRowTable() throws DataAccessException {
+    public void deleteFromOneRowTable() throws SQLException {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
 
         //  DELETE
@@ -140,7 +170,7 @@ public class DbTest {
     }
 
     @Test
-    public void deleteFromTwoRowsTableWhereIdEq2() throws DataAccessException {
+    public void deleteFromTwoRowsTableWhereIdEq2() throws SQLException {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  DELETE

@@ -17,6 +17,8 @@ public class DbRec {
     //          Лучше сделать отдельные классы DbRec0, dbField0, dbFields0, DbFieldName0, DbFieldNames0, DbObjectName0,
     //          в которых ввести поля для ссылки на объект-владельца.
 
+    //  ToDo:   Реализация задачи выше (через класс DbRec0) оказалась не эффективной. Нужно отказаться от неё.
+
     private final Map<DbFieldName, Object> recMap;
 
     public DbRec() {
@@ -51,6 +53,29 @@ public class DbRec {
 
     public Object getValue(DbFieldName fieldName) {
         return recMap.get(fieldName);
+    }
+
+    public void verify(DbFields dbFields) throws SQLException {
+        StringBuilder sb = new StringBuilder("\n");
+        for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
+            DbFieldName dbFieldName = entry.getKey();
+            Object value = entry.getValue();
+            if (!dbFields.containsKey(dbFieldName)) {
+                sb.append("Нет поля '").append(dbFieldName).append("'\n");
+            } else if (!dbFields.getDbFieldType(dbFieldName).equals(value.getClass())) {
+                sb.append("Тип '")
+                        .append(dbFields.getDbFieldType(dbFieldName))
+                        .append("' поля '").append(dbFieldName)
+                        .append("' не соответствует типу '")
+                        .append(value.getClass())
+                        .append("' для значения '")
+                        .append(value)
+                        .append("'.\n");
+            }
+        }
+        if (!sb.toString().equals("\n")) {
+            throw new SQLException(sb.toString());
+        }
     }
 
     @Override

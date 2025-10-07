@@ -41,7 +41,7 @@ public non-sealed class DbTab extends DbTableLike {
         throw new DataAccessException(reason);
     }
 
-    public void insert(DbRec dbRec) throws DataAccessException {
+    public void insert(DbRec dbRec) throws SQLException {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
         insert0(dbRec);
     }
