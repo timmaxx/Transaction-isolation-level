@@ -10,6 +10,7 @@ public class DbTestData {
     protected static final Logger logger = LoggerFactory.getLogger(DbTestData.class);
 
     public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD = new DbFieldName("wrong_field");
+    public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD_2 = new DbFieldName("wrong_field_2");
 
     public static final DbFieldName DB_FIELD_NAME_ID = new DbFieldName("id");
     public static final DbField<Integer> DB_FIELD_ID = new DbField<>(DB_FIELD_NAME_ID, Integer.class);

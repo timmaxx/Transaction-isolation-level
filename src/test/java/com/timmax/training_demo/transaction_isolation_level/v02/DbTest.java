@@ -261,4 +261,33 @@ public class DbTest {
                 )
         );
     }
+
+    @Test
+    public void updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongFields() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person
+        //     SET name = name || ' ' || name
+        //   WHERE wrong_field = 2 or wrong_field_2 = 'Bob'
+        Assertions.assertThrows(DbSQLException.class, () ->
+                //  Не получится собрать текст для исключения, в котором можно было-бы описать все ошибки и в where и в set.
+                //  В этом месте сработает одно исключение на первом where:
+                //      dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2)
+                //  И только если его закомментировать, возник исключение на втором where:
+                //      dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob")
+                //  Если-же вообще без where,
+                //      то исключение возникнет при попытке взять значение несуществующего поля перед тем, как вызовется Map.of
+                //          dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2)
+                //      если-же значения для мапы будут рассчитаны, мапа создастся, но ошибка в имени будет найдена в ключах мапы,
+                //      тогда исключение возникнет в setAll.
+                //          DB_FIELD_NAME_WRONG_FIELD.
+                dbTabPerson.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2) + " " + dbRec.getValue(DB_FIELD_NAME_NAME),
+                                DB_FIELD_NAME_WRONG_FIELD_2, "   "
+                        ),
+                        dbRec -> (dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2) || dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob"))
+                )
+        );
+    }
 }

@@ -35,10 +35,19 @@ public class DbRec {
     }
 
     public void setAll(Map<DbFieldName, Object> newRecMap) {
+        StringBuilder sb = new StringBuilder("\n");
         for (DbFieldName dbFieldName : newRecMap.keySet()) {
             if (!recMap.containsKey(dbFieldName)) {
-                throw new DbSQLException("ERROR: column '" + dbFieldName + "' does not exist.");
+                sb.append(
+                        String.format("ERROR: column '%s' does not exist.\n", dbFieldName)
+                );
             }
+        }
+        if (!sb.toString().equals("\n")) {
+            throw new DbSQLException(sb.toString());
+        }
+
+        for (DbFieldName dbFieldName : newRecMap.keySet()) {
             Object oldValue = recMap.get(dbFieldName);
             Object newValue = newRecMap.get(dbFieldName);
             if (!oldValue.equals(newValue)) {
