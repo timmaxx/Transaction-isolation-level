@@ -52,6 +52,9 @@ public class DbRec {
     }
 
     public Object getValue(DbFieldName fieldName) {
+        if (!recMap.containsKey(fieldName)) {
+            throw new DbSQLException("ERROR: column '" + fieldName + "' does not exist.");
+        }
         return recMap.get(fieldName);
     }
 
@@ -62,7 +65,7 @@ public class DbRec {
             Object value = entry.getValue();
             if (!dbFields.containsKey(dbFieldName)) {
                 sb.append(
-                        String.format("Нет поля '%s'.\n", dbFieldName)
+                        String.format("ERROR: column '%s' does not exist.\n", dbFieldName)
                 );
             } else if (!dbFields.getDbFieldType(dbFieldName).equals(value.getClass())) {
                 sb.append(

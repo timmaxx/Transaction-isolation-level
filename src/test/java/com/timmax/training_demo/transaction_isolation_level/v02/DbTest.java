@@ -86,7 +86,7 @@ public class DbTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTableWithWrongFieldName() {
+    public void insertOneRowIntoEmptyTableButFieldsHasWrongField() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -103,7 +103,7 @@ public class DbTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTableWithWrongTypeValue() {
+    public void insertOneRowIntoEmptyTableButValuesHasWrongTypeValue() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -229,7 +229,7 @@ public class DbTest {
     }
 
     @Test
-    public void updateTwoRowsTableWhereWrongField() {
+    public void updateTwoRowsTableButSetHasWrongField() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
@@ -241,6 +241,23 @@ public class DbTest {
                                 DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                )
+        );
+    }
+
+    @Test
+    public void updateTwoRowsTableButWhereHasWrongField() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person
+        //     SET name = name || ' ' || name
+        //   WHERE wrong_field = 2
+        Assertions.assertThrows(DbSQLException.class, () ->
+                dbTabPerson.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2)
                 )
         );
     }
