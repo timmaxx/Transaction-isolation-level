@@ -12,7 +12,7 @@ public class DbRec {
     protected static final Logger logger = LoggerFactory.getLogger(DbRec.class);
 
     static final String COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
-    private static final String INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
+    static final String INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
 
     //  ToDo:   Или в этом классе ввести поле DbTab, которое будет указывать на таблицу, которой принадлежит запись.
     //          Или создать отдельный класс.

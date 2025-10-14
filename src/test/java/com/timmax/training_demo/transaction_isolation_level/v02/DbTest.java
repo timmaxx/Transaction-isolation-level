@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.COLUMN_DOESNT_EXIST;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.INVALID_INPUT_SYNTAX_FOR_COLUMN;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
@@ -135,7 +136,7 @@ public class DbTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTableButValuesHasWrongTypeValue() {
+    public void insertOneRowIntoEmptyTableButValuesHasWrongTypeValues() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -144,10 +145,21 @@ public class DbTest {
         //      ) values (
         //      "B", 999
         //  )
-        Assertions.assertThrows(DbSQLException.class, () ->
-                dbTabPerson.insert(
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.insert(
                         new DbRec(Map.of(DB_FIELD_NAME_ID, "B", DB_FIELD_NAME_NAME, 999))
                 )
+        );
+        Assertions.assertEquals(
+                String.format("\n" +
+                                INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n" +
+                                INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
+                        String.class, DB_FIELD_NAME_NAME, 999,
+                        Integer.class, DB_FIELD_NAME_ID, "B"
+                ),
+                exception.getMessage(),
+                "The exception message does not match the expected one."
         );
     }
 
