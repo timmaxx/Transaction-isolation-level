@@ -60,10 +60,6 @@ public class DbRec {
         }
     }
 
-    public int size() {
-        return recMap.size();
-    }
-
     public Object getValue(DbFieldName dbFieldName) {
         if (!recMap.containsKey(dbFieldName)) {
             throw new DbSQLException(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
@@ -71,7 +67,7 @@ public class DbRec {
         return recMap.get(dbFieldName);
     }
 
-    public void verify(DbFields dbFields) {
+    void verifyForInsert(DbFields dbFields) {
         StringBuilder sb = new StringBuilder("\n");
         boolean isThereError = false;
         for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {

@@ -40,9 +40,9 @@ public non-sealed class DbTab extends DbTableLike {
         throw new DbDataAccessException(String.format(TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
     }
 
-    public void insert(DbRec dbRec) {
+    public void insert(DbRec newDbRec) {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
-        insert0(dbRec);
+        insert0(newDbRec);
     }
 
     public void delete() {
@@ -74,9 +74,9 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        for (DbRec dbRec : dbRecs) {
-            if (whereFunc == null || whereFunc.where(dbRec)) {
-                dbRec.setAll(updateSetCalcFunc.setCalcFunc(dbRec));
+        for (DbRec oldDbRec : dbRecs) {
+            if (whereFunc == null || whereFunc.where(oldDbRec)) {
+                oldDbRec.setAll(updateSetCalcFunc.setCalcFunc(oldDbRec));
             }
         }
     }

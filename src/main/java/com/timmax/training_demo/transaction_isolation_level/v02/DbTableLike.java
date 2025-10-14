@@ -30,9 +30,9 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return dbSelect;
     }
 
-    protected void insert0(DbRec dbRec) {
-        dbRec.verify(dbFields);
-        dbRecs.add(new DbRec0(dbRec, this));
+    protected void insert0(DbRec newDbRec) {
+        newDbRec.verifyForInsert(dbFields);
+        dbRecs.add(new DbRec0(newDbRec, this));
     }
 
     @Override
