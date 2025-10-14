@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.TABLE_IS_RO;
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.YOU_CANNOT_UPDATE;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
 public class DbTest {
@@ -48,7 +47,15 @@ public class DbTest {
 
     @Test
     public void insertIntoReadOnlyTable() {
-        Assertions.assertThrows(DbDataAccessException.class, () -> dbTabPersonEmpty.insert(null));
+        DbDataAccessException exception = Assertions.assertThrows(
+                DbDataAccessException.class,
+                () -> dbTabPersonEmpty.insert(null)
+        );
+        Assertions.assertEquals(
+                String.format(TABLE_IS_RO + " " + YOU_CANNOT_INSERT, DB_TAB_NAME_PERSON),
+                exception.getMessage(),
+                "The exception message does not match the expected one."
+        );
     }
 
     @Test
