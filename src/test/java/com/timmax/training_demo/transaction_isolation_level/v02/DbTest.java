@@ -279,13 +279,19 @@ public class DbTest {
         //  UPDATE person
         //     SET wrong_field = name || ' ' || name
         //   WHERE id = 2
-        Assertions.assertThrows(DbSQLException.class, () ->
-                dbTabPerson.update(
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.update(
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
                 )
+        );
+        Assertions.assertEquals(
+                String.format("\n" + COLUMN_DOESNT_EXIST + "\n", DB_FIELD_NAME_WRONG_FIELD),
+                exception.getMessage(),
+                "The exception message does not match the expected one."
         );
     }
 
