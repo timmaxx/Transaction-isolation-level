@@ -11,6 +11,9 @@ import java.util.Objects;
 public class DbRec {
     protected static final Logger logger = LoggerFactory.getLogger(DbRec.class);
 
+    private static final String COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
+    private static final String INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
+
     //  ToDo:   Или в этом классе ввести поле DbTab, которое будет указывать на таблицу, которой принадлежит запись.
     //          Или создать отдельный класс.
     //          Собственно из-за этого-то и была проблема с копиями записей в разных таблицах.
@@ -34,16 +37,17 @@ public class DbRec {
         this(rec.recMap);
     }
 
-    public void setAll(Map<DbFieldName, Object> newRecMap) {
+    void setAll(Map<DbFieldName, Object> newRecMap) {
         StringBuilder sb = new StringBuilder("\n");
+        boolean isThereError = false;
         for (DbFieldName dbFieldName : newRecMap.keySet()) {
             if (!recMap.containsKey(dbFieldName)) {
-                sb.append(
-                        String.format("ERROR: column '%s' does not exist.\n", dbFieldName)
-                );
+                sb.append(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
+                sb.append("\n");
+                isThereError = true;
             }
         }
-        if (!sb.toString().equals("\n")) {
+        if (isThereError) {
             throw new DbSQLException(sb.toString());
         }
 
@@ -60,34 +64,36 @@ public class DbRec {
         return recMap.size();
     }
 
-    public Object getValue(DbFieldName fieldName) {
-        if (!recMap.containsKey(fieldName)) {
-            throw new DbSQLException("ERROR: column '" + fieldName + "' does not exist.");
+    public Object getValue(DbFieldName dbFieldName) {
+        if (!recMap.containsKey(dbFieldName)) {
+            throw new DbSQLException(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
         }
-        return recMap.get(fieldName);
+        return recMap.get(dbFieldName);
     }
 
     public void verify(DbFields dbFields) {
         StringBuilder sb = new StringBuilder("\n");
+        boolean isThereError = false;
         for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
             DbFieldName dbFieldName = entry.getKey();
             Object value = entry.getValue();
             if (!dbFields.containsKey(dbFieldName)) {
-                sb.append(
-                        String.format("ERROR: column '%s' does not exist.\n", dbFieldName)
-                );
+                sb.append(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
+                sb.append("\n");
+                isThereError = true;
             } else if (!dbFields.getDbFieldType(dbFieldName).equals(value.getClass())) {
-                sb.append(
-                        String.format("Тип '%s' поля '%s' не соответствует типу '%s' для значения '%s'.\n",
-                        dbFields.getDbFieldType(dbFieldName),
-                        dbFieldName,
-                        value.getClass(),
-                        value
+                sb.append(String.format(
+                                INVALID_INPUT_SYNTAX_FOR_COLUMN,
+                                dbFields.getDbFieldType(dbFieldName),
+                                dbFieldName,
+                                value
                         )
                 );
+                sb.append("\n");
+                isThereError = true;
             }
         }
-        if (!sb.toString().equals("\n")) {
+        if (isThereError) {
             throw new DbSQLException(sb.toString());
         }
     }
