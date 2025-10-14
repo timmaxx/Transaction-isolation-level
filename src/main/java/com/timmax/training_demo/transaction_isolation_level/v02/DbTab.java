@@ -12,7 +12,7 @@ public non-sealed class DbTab extends DbTableLike {
     static final String TABLE_IS_RO = "The table '%s' is read only.";
     static final String YOU_CANNOT_INSERT = "You cannot insert any row into this table.";
     static final String YOU_CANNOT_UPDATE = "You cannot update any row in this table.";
-    private static final String YOU_CANNOT_DELETE = "You cannot delete any row from this table.";
+    static final String YOU_CANNOT_DELETE = "You cannot delete any row from this table.";
 
     private final DbTabName dbTabName;
     private final boolean readOnly;

@@ -73,7 +73,15 @@ public class DbTest {
 
     @Test
     public void deleteFromReadOnlyTable() {
-        Assertions.assertThrows(DbDataAccessException.class, () -> dbTabPersonEmpty.delete(null));
+        DbDataAccessException exception = Assertions.assertThrows(
+                DbDataAccessException.class,
+                () -> dbTabPersonEmpty.delete(null)
+        );
+        Assertions.assertEquals(
+                String.format(TABLE_IS_RO + " " + YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
+                exception.getMessage(),
+                "The exception message does not match the expected one."
+        );
     }
 
     @Test
