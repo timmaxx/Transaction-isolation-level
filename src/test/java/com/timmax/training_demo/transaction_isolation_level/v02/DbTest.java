@@ -17,6 +17,8 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 public class DbTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbTest.class);
 
+    private final static String EXCEPTION_MESSAGE_DOESNT_MATCH = "The exception message does not match the expected one.";
+
     @Test
     public void dbTabCopyMustHaveOwnDbRec0Copy() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
@@ -56,7 +58,7 @@ public class DbTest {
         Assertions.assertEquals(
                 String.format(TABLE_IS_RO + " " + YOU_CANNOT_INSERT, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
-                "The exception message does not match the expected one."
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 
@@ -69,7 +71,7 @@ public class DbTest {
         Assertions.assertEquals(
                 String.format(TABLE_IS_RO + " " + YOU_CANNOT_UPDATE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
-                "The exception message does not match the expected one."
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 
@@ -82,7 +84,7 @@ public class DbTest {
         Assertions.assertEquals(
                 String.format(TABLE_IS_RO + " " + YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
-                "The exception message does not match the expected one."
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 
@@ -131,7 +133,7 @@ public class DbTest {
         Assertions.assertEquals(
                 String.format("\n" + COLUMN_DOESNT_EXIST + "\n", DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
-                "The exception message does not match the expected one."
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 
@@ -159,7 +161,7 @@ public class DbTest {
                         Integer.class, DB_FIELD_NAME_ID, "B"
                 ),
                 exception.getMessage(),
-                "The exception message does not match the expected one."
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 
@@ -291,7 +293,7 @@ public class DbTest {
         Assertions.assertEquals(
                 String.format("\n" + COLUMN_DOESNT_EXIST + "\n", DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
-                "The exception message does not match the expected one."
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 
@@ -314,7 +316,7 @@ public class DbTest {
         Assertions.assertEquals(
                 String.format(COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
-                "The exception message does not match the expected one."
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 
@@ -325,7 +327,8 @@ public class DbTest {
         //  UPDATE person
         //     SET name = name || ' ' || name
         //   WHERE wrong_field = 2 or wrong_field_2 = 'Bob'
-        Assertions.assertThrows(DbSQLException.class, () ->
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
                 //  Не получится собрать текст для исключения, в котором можно было-бы описать все ошибки и в where и в set.
                 //  В этом месте сработает одно исключение на первой части where:
                 //      dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2)
@@ -337,13 +340,18 @@ public class DbTest {
                 //      если-же значения для мапы будут рассчитаны, мапа создастся, но ошибка в имени будет найдена в ключах мапы,
                 //      тогда исключение возникнет в setAll.
                 //          DB_FIELD_NAME_WRONG_FIELD.
-                dbTabPerson.update(
+                () -> dbTabPerson.update(
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2) + " " + dbRec.getValue(DB_FIELD_NAME_NAME),
                                 DB_FIELD_NAME_WRONG_FIELD_2, "   "
                         ),
                         dbRec -> (dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2) || dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob"))
                 )
+        );
+        Assertions.assertEquals(
+                String.format(COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
 }
