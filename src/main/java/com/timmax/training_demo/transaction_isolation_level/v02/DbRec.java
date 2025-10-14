@@ -37,8 +37,9 @@ public class DbRec {
         this(rec.recMap);
     }
 
-    void setAll(Map<DbFieldName, Object> newRecMap) {
-        verifyForUpdate(newRecMap);
+    void setAll(Map<DbFieldName, Object> newRecMap, DbFields dbFields) {
+        DbRec newRec = new DbRec(newRecMap);
+        newRec.verifyFieldNamesAndFieldTypes(dbFields);
         for (DbFieldName dbFieldName : newRecMap.keySet()) {
             Object oldValue = recMap.get(dbFieldName);
             Object newValue = newRecMap.get(dbFieldName);
@@ -55,33 +56,7 @@ public class DbRec {
         return recMap.get(dbFieldName);
     }
 
-    private void verifyForUpdate(Map<DbFieldName, Object> newRecMap) {
-        StringBuilder sb = new StringBuilder("\n");
-        boolean isThereError = false;
-        for (DbFieldName newDbFieldName : newRecMap.keySet()) {
-            Object newValue = newRecMap.get(newDbFieldName);
-            if (!recMap.containsKey(newDbFieldName)) {
-                sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName));
-                sb.append("\n");
-                isThereError = true;
-            } else if (!newValue.getClass().equals(recMap.get(newDbFieldName).getClass())) {
-                sb.append(String.format(
-                                INVALID_INPUT_SYNTAX_FOR_COLUMN,
-                                recMap.get(newDbFieldName).getClass(),
-                                newDbFieldName,
-                                newValue
-                        )
-                );
-                sb.append("\n");
-                isThereError = true;
-            }
-        }
-        if (isThereError) {
-            throw new DbSQLException(sb.toString());
-        }
-    }
-
-    void verifyForInsert(DbFields dbFields) {
+    void verifyFieldNamesAndFieldTypes(DbFields dbFields) {
         StringBuilder sb = new StringBuilder("\n");
         boolean isThereError = false;
         for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
