@@ -40,9 +40,20 @@ public class DbRec {
     void setAll(Map<DbFieldName, Object> newRecMap) {
         StringBuilder sb = new StringBuilder("\n");
         boolean isThereError = false;
-        for (DbFieldName dbFieldName : newRecMap.keySet()) {
-            if (!recMap.containsKey(dbFieldName)) {
-                sb.append(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
+        for (DbFieldName newDbFieldName : newRecMap.keySet()) {
+            Object newValue = newRecMap.get(newDbFieldName);
+            if (!recMap.containsKey(newDbFieldName)) {
+                sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName));
+                sb.append("\n");
+                isThereError = true;
+            } else if (!newValue.getClass().equals(recMap.get(newDbFieldName).getClass())) {
+                sb.append(String.format(
+                        INVALID_INPUT_SYNTAX_FOR_COLUMN,
+                        recMap.get(newDbFieldName).getClass(),
+                        newDbFieldName,
+                        newValue
+                        )
+                );
                 sb.append("\n");
                 isThereError = true;
             }
@@ -71,18 +82,18 @@ public class DbRec {
         StringBuilder sb = new StringBuilder("\n");
         boolean isThereError = false;
         for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
-            DbFieldName dbFieldName = entry.getKey();
-            Object value = entry.getValue();
-            if (!dbFields.containsKey(dbFieldName)) {
-                sb.append(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
+            DbFieldName newDbFieldName = entry.getKey();
+            Object newValue = entry.getValue();
+            if (!dbFields.containsKey(newDbFieldName)) {
+                sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName));
                 sb.append("\n");
                 isThereError = true;
-            } else if (!dbFields.getDbFieldType(dbFieldName).equals(value.getClass())) {
+            } else if (!dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())) {
                 sb.append(String.format(
                                 INVALID_INPUT_SYNTAX_FOR_COLUMN,
-                                dbFields.getDbFieldType(dbFieldName),
-                                dbFieldName,
-                                value
+                                dbFields.getDbFieldType(newDbFieldName),
+                                newDbFieldName,
+                                newValue
                         )
                 );
                 sb.append("\n");

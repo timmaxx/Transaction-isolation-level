@@ -298,6 +298,29 @@ public class DbTest {
     }
 
     @Test
+    public void updateTwoRowsTableButSetHasWrongFieldType() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person
+        //     SET name = 111
+        //   WHERE id = 2
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, 111
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                )
+        );
+        Assertions.assertEquals(
+                String.format("\n" + INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n", String.class, DB_FIELD_NAME_NAME, 111),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
+    @Test
     public void updateTwoRowsTableButWhereHasWrongField() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
