@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.COLUMN_DOESNT_EXIST;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
@@ -120,10 +121,16 @@ public class DbTest {
         //      ) values (
         //      1, "Bob"
         //  )
-        Assertions.assertThrows(DbSQLException.class, () ->
-                dbTabPerson.insert(
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.insert(
                         new DbRec(Map.of(DB_FIELD_NAME_WRONG_FIELD, 1, DB_FIELD_NAME_NAME, "Bob"))
                 )
+        );
+        Assertions.assertEquals(
+                String.format("\n" + COLUMN_DOESNT_EXIST + "\n", DB_FIELD_NAME_WRONG_FIELD),
+                exception.getMessage(),
+                "The exception message does not match the expected one."
         );
     }
 
