@@ -76,7 +76,7 @@ public non-sealed class DbTab extends DbTableLike {
     private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         for (DbRec oldDbRec : dbRecs) {
             if (whereFunc == null || whereFunc.where(oldDbRec)) {
-                oldDbRec.setAll(updateSetCalcFunc.setCalcFunc(oldDbRec), dbFields);
+                oldDbRec.setAll(updateSetCalcFunc.setCalcFunc(oldDbRec));
             }
         }
     }

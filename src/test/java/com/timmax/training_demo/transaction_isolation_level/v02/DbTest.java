@@ -98,6 +98,40 @@ public class DbTest {
     }
 
     @Test
+    public void insertOneRowWithNameIsNullIntoEmptyTable() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      id
+        //      ) values (
+        //      3
+        //  )
+        dbTabPerson.insert(dbRec3_Null);
+
+        DbSelect dbSelect = dbTabPerson.select();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRowNameIsNull, dbSelect);
+    }
+
+    @Test
+    public void insertOneRowWithNameIsNull2IntoEmptyTable() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      id, name
+        //      ) values (
+        //      3, null
+        //  )
+        dbTabPerson.insert(dbRec3_Null2);
+
+        DbSelect dbSelect = dbTabPerson.select();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRowNameIsNull, dbSelect);
+    }
+
+    @Test
     public void insertOneRowIntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
@@ -127,7 +161,7 @@ public class DbTest {
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 () -> dbTabPerson.insert(
-                        new DbRec(Map.of(DB_FIELD_NAME_WRONG_FIELD, 1, DB_FIELD_NAME_NAME, "Bob"))
+                        new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_WRONG_FIELD, 1, DB_FIELD_NAME_NAME, "Bob"))
                 )
         );
         Assertions.assertEquals(
@@ -150,15 +184,15 @@ public class DbTest {
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 () -> dbTabPerson.insert(
-                        new DbRec(Map.of(DB_FIELD_NAME_ID, "B", DB_FIELD_NAME_NAME, 999))
+                        new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, "B", DB_FIELD_NAME_NAME, 999))
                 )
         );
         Assertions.assertEquals(
                 String.format("\n" +
                                 INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n" +
                                 INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
-                        String.class, DB_FIELD_NAME_NAME, 999,
-                        Integer.class, DB_FIELD_NAME_ID, "B"
+                        Integer.class, DB_FIELD_NAME_ID, "B",
+                        String.class, DB_FIELD_NAME_NAME, 999
                 ),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH

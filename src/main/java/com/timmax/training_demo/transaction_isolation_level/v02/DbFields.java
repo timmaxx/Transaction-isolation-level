@@ -41,4 +41,8 @@ public class DbFields {
     public int hashCode() {
         return Objects.hashCode(dbFields);
     }
+
+    public Map<DbFieldName, Class<?>> getDbFields() {
+        return dbFields;
+    }
 }

@@ -23,23 +23,63 @@ public class DbRec {
     //  ToDo:   Реализация задачи выше (через класс DbRec0) оказалась не эффективной. Нужно отказаться от неё.
 
     private final Map<DbFieldName, Object> recMap;
+    private final DbFields dbFields;
 
-    public DbRec() {
+    public DbRec(DbFields dbFields) {
+        this.dbFields = dbFields;
         recMap = new HashMap<>();
+        for (DbFieldName dbFieldName : dbFields.getDbFields().keySet()) {
+            recMap.put(dbFieldName, null);
+        }
     }
 
-    public DbRec(Map<DbFieldName, Object> recMap) {
-        this();
+    public DbRec(DbFields dbFields, Map<DbFieldName, Object> recMap) {
+        this(dbFields);
+        StringBuilder sb = new StringBuilder("\n");
+        boolean isThereError = false;
+
+        //  ToDo:   Нужно поля проверять в определённой последовательности.
+        //          Это для генерации сообщений об ошибках в определённом порядке:
+        //          - либо в порядке именования столбцов,
+        //          - либо в порядке создания столбцов в таблице.
+/*
+        TreeMap<DbFieldName, Object> recMap2 =  new TreeMap<>(recMap);
+        for (Map.Entry<DbFieldName, Object> entry: recMap2.entrySet())
+*/
+        for (Map.Entry<DbFieldName, Object> entry: recMap.entrySet())
+        {
+            DbFieldName newDbFieldName = entry.getKey();
+            Object newValue = entry.getValue();
+            if (!dbFields.containsKey(newDbFieldName)) {
+                sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName)).append("\n");
+                isThereError = true;
+            } else if (newValue != null && !dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())) {
+                sb.append(String.format(
+                                INVALID_INPUT_SYNTAX_FOR_COLUMN,
+                                dbFields.getDbFieldType(newDbFieldName),
+                                newDbFieldName,
+                                newValue
+                        )
+                ).append("\n");
+                isThereError = true;
+            }
+        }
+        if (isThereError) {
+            throw new DbSQLException(sb.toString());
+        }
         this.recMap.putAll(recMap);
     }
 
     public DbRec(DbRec rec) {
-        this(rec.recMap);
+        this(rec.dbFields, rec.recMap);
     }
 
-    void setAll(Map<DbFieldName, Object> newRecMap, DbFields dbFields) {
-        DbRec newRec = new DbRec(newRecMap);
-        newRec.verifyFieldNamesAndFieldTypes(dbFields);
+    void setAll(Map<DbFieldName, Object> newRecMap) {
+        //  ToDo:   Переделать.
+        //          Здесь конструктор вызывается только для проверки. Что вероятно влечёт несколько проблем:
+        //          1. Может оптимизатор вообще его не вызовет.
+        //          2. Для update некоторые поля не будут в set, но при этом они не должны быть null.
+        DbRec newRec = new DbRec(dbFields, newRecMap);
         for (DbFieldName dbFieldName : newRecMap.keySet()) {
             Object oldValue = recMap.get(dbFieldName);
             Object newValue = newRecMap.get(dbFieldName);
@@ -54,33 +94,6 @@ public class DbRec {
             throw new DbSQLException(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
         }
         return recMap.get(dbFieldName);
-    }
-
-    void verifyFieldNamesAndFieldTypes(DbFields dbFields) {
-        StringBuilder sb = new StringBuilder("\n");
-        boolean isThereError = false;
-        for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
-            DbFieldName newDbFieldName = entry.getKey();
-            Object newValue = entry.getValue();
-            if (!dbFields.containsKey(newDbFieldName)) {
-                sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName));
-                sb.append("\n");
-                isThereError = true;
-            } else if (!dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())) {
-                sb.append(String.format(
-                                INVALID_INPUT_SYNTAX_FOR_COLUMN,
-                                dbFields.getDbFieldType(newDbFieldName),
-                                newDbFieldName,
-                                newValue
-                        )
-                );
-                sb.append("\n");
-                isThereError = true;
-            }
-        }
-        if (isThereError) {
-            throw new DbSQLException(sb.toString());
-        }
     }
 
     @Override
