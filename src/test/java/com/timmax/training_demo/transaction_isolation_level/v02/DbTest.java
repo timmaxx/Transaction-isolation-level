@@ -172,6 +172,7 @@ public class DbTest {
     }
 
     @Test
+    //   Тест не стабилен! Это из-за того, что поля записи могут обрабатываться в разном порядке.
     public void insertOneRowIntoEmptyTableButValuesHasWrongTypeValues() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 

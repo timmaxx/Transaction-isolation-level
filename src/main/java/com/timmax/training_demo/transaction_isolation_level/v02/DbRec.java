@@ -43,11 +43,19 @@ public class DbRec {
         //          - либо в порядке именования столбцов,
         //          - либо в порядке создания столбцов в таблице.
 /*
+        dbFields.getDbFields().entrySet().stream().forEach(
+                entry -> {}
+        );
+
+        for (Map.Entry<DbFieldName, Class<?>> entry : dbFields.getDbFields().entrySet()) {
+            ;
+        }
+*/
+/*
         TreeMap<DbFieldName, Object> recMap2 =  new TreeMap<>(recMap);
         for (Map.Entry<DbFieldName, Object> entry: recMap2.entrySet())
 */
-        for (Map.Entry<DbFieldName, Object> entry: recMap.entrySet())
-        {
+        for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
             DbFieldName newDbFieldName = entry.getKey();
             Object newValue = entry.getValue();
             if (!dbFields.containsKey(newDbFieldName)) {
@@ -70,6 +78,7 @@ public class DbRec {
         this.recMap.putAll(recMap);
     }
 
+    //  Warning:(81, 12) Copy constructor does not copy field 'dbFields'
     public DbRec(DbRec rec) {
         this(rec.dbFields, rec.recMap);
     }
@@ -79,6 +88,7 @@ public class DbRec {
         //          Здесь конструктор вызывается только для проверки. Что вероятно влечёт несколько проблем:
         //          1. Может оптимизатор вообще его не вызовет.
         //          2. Для update некоторые поля не будут в set, но при этом они не должны быть null.
+        //  Warning:(90, 15) Variable 'newRec' is never used
         DbRec newRec = new DbRec(dbFields, newRecMap);
         for (DbFieldName dbFieldName : newRecMap.keySet()) {
             Object oldValue = recMap.get(dbFieldName);

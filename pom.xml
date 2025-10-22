@@ -28,6 +28,7 @@
             <version>1.5.4</version>
         </dependency>
         <dependency>
+            <!-- Warning:(30, 9)  Provides transitive vulnerable dependency maven:ch.qos.logback:logback-core:1.5.18 CVE-2025-11226 6.9 Conditional processing of logback.xml configuration file, in conjuction with Spring Framework and Janino  Results powered by Mend.io -->
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.5.18</version>
@@ -40,6 +41,14 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- For using ImmutableMap -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.5.0-jre</version>
+        </dependency>
+
     </dependencies>
 
     <build>
