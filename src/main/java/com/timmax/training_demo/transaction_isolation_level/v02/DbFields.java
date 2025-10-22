@@ -45,7 +45,7 @@ public class DbFields {
         return Objects.hashCode(dbFields);
     }
 
-    public ImmutableMap<DbFieldName, Class<?>> getDbFields() {
+    public Map<DbFieldName, Class<?>> getDbFields() {
         return dbFields;
     }
 }
