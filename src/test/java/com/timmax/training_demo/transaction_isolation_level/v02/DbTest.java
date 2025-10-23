@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbFields.ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbFields.ERROR_TYPE_DOES_NOT_EXIST;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.COLUMN_DOESNT_EXIST;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.INVALID_INPUT_SYNTAX_FOR_COLUMN;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
@@ -44,9 +46,92 @@ public class DbTest {
         );
 
         Assertions.assertEquals(dbTabPersonEmpty, dbTabPerson);
+    }
 
-        //  DbSelect dbSelect = dbTabPerson.select();
-        //  Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    @Test
+    public void createTableWithDuplicateNameColumns() {
+        //  CREATE TABLE person(
+        //      id INT,
+        //      id INT
+        //  )
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> new DbTab(
+                        DB_TAB_NAME_PERSON,
+                        new DbFields(
+                                DB_FIELD_ID,
+                                DB_FIELD_ID
+                        ), true
+                )
+        );
+
+        Assertions.assertEquals(
+                String.format("\n" +
+                        ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE + "\n",
+                        DB_FIELD_ID.getDbFieldName()
+                ),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+
+    }
+
+    @Test
+    public void createTableWithWrongTypeInColumn() {
+        //  CREATE TABLE person(
+        //      id INT,
+        //      wrong_field null
+        //  )
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> new DbTab(
+                        DB_TAB_NAME_PERSON,
+                        new DbFields(
+                                DB_FIELD_ID,
+                                DB_FIELD_WRONG_FIELD
+                        ), true
+                )
+        );
+
+        Assertions.assertEquals(
+                String.format("\n" +
+                        ERROR_TYPE_DOES_NOT_EXIST + "\n",
+                        "null", DB_FIELD_WRONG_FIELD.getDbFieldName()
+                ),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
+    @Test
+    public void createTableWithDuplicateNameColumnsAndWrongTypeInColumn() {
+        //  CREATE TABLE person(
+        //      id INT,
+        //      id INT,
+        //      wrong_field null
+        //  )
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> new DbTab(
+                        DB_TAB_NAME_PERSON,
+                        new DbFields(
+                                DB_FIELD_ID,
+                                DB_FIELD_ID,
+                                DB_FIELD_WRONG_FIELD
+                        ), true
+                )
+        );
+
+        Assertions.assertEquals(
+                String.format("\n" +
+                                ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE + "\n" +
+                                ERROR_TYPE_DOES_NOT_EXIST + "\n",
+                        DB_FIELD_NAME_ID,
+                        "null", DB_FIELD_NAME_WRONG_FIELD
+                ),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
     }
 
     @Test
@@ -165,7 +250,10 @@ public class DbTest {
                 )
         );
         Assertions.assertEquals(
-                String.format("\n" + COLUMN_DOESNT_EXIST + "\n", DB_FIELD_NAME_WRONG_FIELD),
+                String.format("\n" +
+                        COLUMN_DOESNT_EXIST + "\n",
+                        DB_FIELD_NAME_WRONG_FIELD
+                ),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
@@ -325,7 +413,10 @@ public class DbTest {
                 )
         );
         Assertions.assertEquals(
-                String.format("\n" + COLUMN_DOESNT_EXIST + "\n", DB_FIELD_NAME_WRONG_FIELD),
+                String.format("\n" +
+                        COLUMN_DOESNT_EXIST + "\n",
+                        DB_FIELD_NAME_WRONG_FIELD
+                ),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
@@ -348,7 +439,10 @@ public class DbTest {
                 )
         );
         Assertions.assertEquals(
-                String.format("\n" + INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n", String.class, DB_FIELD_NAME_NAME, 111),
+                String.format("\n" +
+                        INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
+                        String.class, DB_FIELD_NAME_NAME, 111
+                ),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );

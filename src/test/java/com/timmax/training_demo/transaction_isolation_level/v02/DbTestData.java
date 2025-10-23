@@ -12,6 +12,7 @@ public class DbTestData {
 
     public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD = new DbFieldName("wrong_field");
     public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD_2 = new DbFieldName("wrong_field_2");
+    public static final DbField<Object> DB_FIELD_WRONG_FIELD = new DbField<>(DB_FIELD_NAME_WRONG_FIELD, null);
 
     public static final DbFieldName DB_FIELD_NAME_ID = new DbFieldName("id");
     public static final DbField<Integer> DB_FIELD_ID = new DbField<>(DB_FIELD_NAME_ID, Integer.class);
@@ -53,7 +54,7 @@ public class DbTestData {
 
 
     public static final DbRec dbRec3_Null = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 3));
-    //  Использовать Map.Of() со значениями null нельзя, поэтому применил HasMap.
+    //  Использовать Map.Of() со значениями null нельзя, поэтому применил HashMap.
     // public static final DbRec dbRec3_Null2 = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 3, DB_FIELD_NAME_NAME, null));
     public static final DbRec dbRec3_Null2;
     static {

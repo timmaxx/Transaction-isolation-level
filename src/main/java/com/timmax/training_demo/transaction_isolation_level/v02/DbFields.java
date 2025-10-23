@@ -1,22 +1,39 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
+import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
+
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DbFields {
+    final static String ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE = "ERROR: column '%s' specified more than once.";
+    final static String ERROR_TYPE_DOES_NOT_EXIST = "ERROR: type '%s' does not exist ('%s').";
+
     private final Map<DbFieldName, Class<?>> dbFields = new LinkedHashMap<>();
 
+    //  ToDo:
     //  Warning:(9, 21) Raw use of parameterized class 'DbField'
     public DbFields(DbField... arrayOfDbFields) {
+        StringBuilder sb = new StringBuilder("\n");
+        AtomicBoolean isThereError = new AtomicBoolean(false);
+
         Arrays.stream(arrayOfDbFields)
                 .forEach(dbField -> {
                     if (dbFields.containsKey(dbField.getDbFieldName())) {
-                        throw new RuntimeException("Duplicate key: " + dbField.getDbFieldName());
+                        sb.append(String.format(ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE, dbField.getDbFieldName())).append("\n");
+                        isThereError.set(true);
                     }
                     if (dbField.getType() == null) {
-                        throw new RuntimeException("Type is null: " + dbField.getDbFieldName());
+                        sb.append(String.format(ERROR_TYPE_DOES_NOT_EXIST, "null", dbField.getDbFieldName())).append("\n");
+                        isThereError.set(true);
                     }
-                    dbFields.put(dbField.getDbFieldName(), dbField.getType());
+                    if (!isThereError.get()) {
+                        dbFields.put(dbField.getDbFieldName(), dbField.getType());
+                    }
                 });
+        if (isThereError.get()) {
+            throw new DbSQLException(sb.toString());
+        }
     }
 
     public Class<?> getDbFieldType(DbFieldName dbFieldName) {
