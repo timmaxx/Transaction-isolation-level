@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DbRec {
     protected static final Logger logger = LoggerFactory.getLogger(DbRec.class);
@@ -36,48 +37,39 @@ public class DbRec {
     public DbRec(DbFields dbFields, Map<DbFieldName, Object> recMap) {
         this(dbFields);
         StringBuilder sb = new StringBuilder("\n");
-        boolean isThereError = false;
+        AtomicBoolean isThereError = new AtomicBoolean(false);
 
-        //  ToDo:   Нужно поля проверять в определённой последовательности.
-        //          Это для генерации сообщений об ошибках в определённом порядке:
-        //          - либо в порядке именования столбцов,
-        //          - либо в порядке создания столбцов в таблице.
-/*
-        dbFields.getDbFields().entrySet().stream().forEach(
-                entry -> {}
-        );
+        recMap.entrySet().stream()
+                //  recMap сортируется по ключу, для этого
+                //  class DbObjectName implements Comparable<DbObjectName>
+                //  Но лучше было-бы для тех полей, которые есть в DbFields, сортировать по порядку включения,
+                //  а уже те, которых нет, сортировать по имени полей.
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    DbFieldName newDbFieldName = entry.getKey();
+                    Object newValue = entry.getValue();
+                    if (!dbFields.containsKey(newDbFieldName)) {
+                        sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName)).append("\n");
+                        isThereError.set(true);
+                    } else if (newValue != null && !dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())) {
+                        sb.append(String.format(
+                                        INVALID_INPUT_SYNTAX_FOR_COLUMN,
+                                        dbFields.getDbFieldType(newDbFieldName),
+                                        newDbFieldName,
+                                        newValue
+                                )
+                        ).append("\n");
+                        isThereError.set(true);
+                    }
+                });
 
-        for (Map.Entry<DbFieldName, Class<?>> entry : dbFields.getDbFields().entrySet()) {
-            ;
-        }
-*/
-/*
-        TreeMap<DbFieldName, Object> recMap2 =  new TreeMap<>(recMap);
-        for (Map.Entry<DbFieldName, Object> entry: recMap2.entrySet())
-*/
-        for (Map.Entry<DbFieldName, Object> entry : recMap.entrySet()) {
-            DbFieldName newDbFieldName = entry.getKey();
-            Object newValue = entry.getValue();
-            if (!dbFields.containsKey(newDbFieldName)) {
-                sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName)).append("\n");
-                isThereError = true;
-            } else if (newValue != null && !dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())) {
-                sb.append(String.format(
-                                INVALID_INPUT_SYNTAX_FOR_COLUMN,
-                                dbFields.getDbFieldType(newDbFieldName),
-                                newDbFieldName,
-                                newValue
-                        )
-                ).append("\n");
-                isThereError = true;
-            }
-        }
-        if (isThereError) {
+        if (isThereError.get()) {
             throw new DbSQLException(sb.toString());
         }
         this.recMap.putAll(recMap);
     }
 
+    //  ToDo:
     //  Warning:(81, 12) Copy constructor does not copy field 'dbFields'
     public DbRec(DbRec rec) {
         this(rec.dbFields, rec.recMap);

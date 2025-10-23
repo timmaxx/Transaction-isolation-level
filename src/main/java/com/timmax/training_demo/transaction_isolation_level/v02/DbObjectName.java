@@ -2,7 +2,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import java.util.Objects;
 
-public abstract sealed class DbObjectName
+public abstract sealed class DbObjectName implements Comparable<DbObjectName>
         permits DbTabName, DbFieldName {
     private final String name;
 
@@ -30,5 +30,10 @@ public abstract sealed class DbObjectName
     @Override
     public int hashCode() {
         return Objects.hashCode(name);
+    }
+
+    @Override
+    public int compareTo(DbObjectName o) {
+        return this.name.compareTo(o.name);
     }
 }
