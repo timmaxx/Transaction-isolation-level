@@ -10,6 +10,8 @@ import java.util.Set;
 public class DbTestData {
     protected static final Logger logger = LoggerFactory.getLogger(DbTestData.class);
 
+    final static String EXCEPTION_MESSAGE_DOESNT_MATCH = "The exception message does not match the expected one.";
+
     public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD = new DbFieldName("wrong_field");
     public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD_2 = new DbFieldName("wrong_field_2");
     public static final DbField<Object> DB_FIELD_WRONG_FIELD = new DbField<>(DB_FIELD_NAME_WRONG_FIELD, null);
