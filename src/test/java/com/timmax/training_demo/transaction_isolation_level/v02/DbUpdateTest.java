@@ -119,7 +119,7 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTableButWhereHasWrongField() {
+    public void updateTwoRowsTableButWhereHasWrongNameField() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
@@ -142,7 +142,7 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongFields() {
+    public void updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongNameFields() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
@@ -168,7 +168,10 @@ public class DbUpdateTest {
                                 DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2) + " " + dbRec.getValue(DB_FIELD_NAME_NAME),
                                 DB_FIELD_NAME_WRONG_FIELD_2, "   "
                         ),
-                        dbRec -> (dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2) || dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob"))
+                        dbRec -> (
+                                dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2) ||
+                                        dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob")
+                        )
                 )
         );
         Assertions.assertEquals(
@@ -177,4 +180,6 @@ public class DbUpdateTest {
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
+
+    //  ToDo:   make tests with wrong where (invalid data type).
 }
