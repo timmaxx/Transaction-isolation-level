@@ -9,10 +9,14 @@ import java.util.Set;
 public non-sealed class DbTab extends DbTableLike {
     protected static final Logger logger = LoggerFactory.getLogger(DbTab.class);
 
-    static final String TABLE_IS_RO = "The table '%s' is read only.";
-    static final String YOU_CANNOT_INSERT = "You cannot insert any row into this table.";
-    static final String YOU_CANNOT_UPDATE = "You cannot update any row in this table.";
-    static final String YOU_CANNOT_DELETE = "You cannot delete any row from this table.";
+    private static final String ERROR_TABLE_IS_RO = "ERROR: The table '%s' is read only.";
+    private static final String YOU_CANNOT_INSERT = "You cannot insert any row into this table.";
+    private static final String YOU_CANNOT_UPDATE = "You cannot update any row in this table.";
+    private static final String YOU_CANNOT_DELETE = "You cannot delete any row from this table.";
+
+    static final String ERROR_TABLE_IS_RO_YOU_CANNOT_INSERT = ERROR_TABLE_IS_RO + " " + YOU_CANNOT_INSERT;
+    static final String ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE = ERROR_TABLE_IS_RO + " " + YOU_CANNOT_UPDATE;
+    static final String ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE = ERROR_TABLE_IS_RO + " " + YOU_CANNOT_DELETE;
 
     private final DbTabName dbTabName;
     private final boolean readOnly;
@@ -37,7 +41,7 @@ public non-sealed class DbTab extends DbTableLike {
         if (!readOnly) {
             return;
         }
-        throw new DbDataAccessException(String.format(TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
+        throw new DbDataAccessException(String.format(ERROR_TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
     }
 
     public void insert(DbRec newDbRec) {

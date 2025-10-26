@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.COLUMN_DOESNT_EXIST;
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.INVALID_INPUT_SYNTAX_FOR_COLUMN;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_COLUMN_DOESNT_EXIST;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
@@ -24,7 +24,7 @@ public class DbInsertTest {
                 () -> dbTabPersonEmpty.insert(null)
         );
         Assertions.assertEquals(
-                String.format(TABLE_IS_RO + " " + YOU_CANNOT_INSERT, DB_TAB_NAME_PERSON),
+                String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_INSERT, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
@@ -99,7 +99,7 @@ public class DbInsertTest {
         );
         Assertions.assertEquals(
                 String.format("\n" +
-                        COLUMN_DOESNT_EXIST + "\n",
+                                ERROR_COLUMN_DOESNT_EXIST + "\n",
                         DB_FIELD_NAME_WRONG_FIELD
                 ),
                 exception.getMessage(),
@@ -125,8 +125,8 @@ public class DbInsertTest {
         );
         Assertions.assertEquals(
                 String.format("\n" +
-                                INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n" +
-                                INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
+                                ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n" +
+                                ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
                         Integer.class, DB_FIELD_NAME_ID, "B",
                         String.class, DB_FIELD_NAME_NAME, 999
                 ),

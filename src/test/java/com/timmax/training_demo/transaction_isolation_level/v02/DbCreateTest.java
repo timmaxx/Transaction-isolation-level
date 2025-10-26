@@ -65,7 +65,6 @@ public class DbCreateTest {
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
-
     }
 
     @Test
@@ -88,7 +87,7 @@ public class DbCreateTest {
         Assertions.assertEquals(
                 String.format("\n" +
                         ERROR_TYPE_DOES_NOT_EXIST + "\n",
-                        "null", DB_FIELD_WRONG_FIELD.getDbFieldName()
+                        "null", DB_FIELD_NAME_WRONG_FIELD
                 ),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH

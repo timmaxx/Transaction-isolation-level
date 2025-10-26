@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DbRec {
     protected static final Logger logger = LoggerFactory.getLogger(DbRec.class);
 
-    static final String COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
-    static final String INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
+    static final String ERROR_COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
+    static final String ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
 
     //  ToDo:   Или в этом классе ввести поле DbTab, которое будет указывать на таблицу, которой принадлежит запись.
     //          Или создать отдельный класс.
@@ -40,7 +40,7 @@ public class DbRec {
         AtomicBoolean isThereError = new AtomicBoolean(false);
 
         recMap.entrySet().stream()
-                //  recMap сортируется по ключу, для этого
+                //  recMap сортируется по ключу. Для этого
                 //  class DbObjectName implements Comparable<DbObjectName>
                 //  Но лучше было-бы для тех полей, которые есть в DbFields, сортировать по порядку включения,
                 //  а уже те, которых нет, сортировать по имени полей.
@@ -49,11 +49,11 @@ public class DbRec {
                     DbFieldName newDbFieldName = entry.getKey();
                     Object newValue = entry.getValue();
                     if (!dbFields.containsKey(newDbFieldName)) {
-                        sb.append(String.format(COLUMN_DOESNT_EXIST, newDbFieldName)).append("\n");
+                        sb.append(String.format(ERROR_COLUMN_DOESNT_EXIST, newDbFieldName)).append("\n");
                         isThereError.set(true);
                     } else if (newValue != null && !dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())) {
                         sb.append(String.format(
-                                        INVALID_INPUT_SYNTAX_FOR_COLUMN,
+                                        ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN,
                                         dbFields.getDbFieldType(newDbFieldName),
                                         newDbFieldName,
                                         newValue
@@ -93,7 +93,7 @@ public class DbRec {
 
     public Object getValue(DbFieldName dbFieldName) {
         if (!recMap.containsKey(dbFieldName)) {
-            throw new DbSQLException(String.format(COLUMN_DOESNT_EXIST, dbFieldName));
+            throw new DbSQLException(String.format(ERROR_COLUMN_DOESNT_EXIST, dbFieldName));
         }
         return recMap.get(dbFieldName);
     }

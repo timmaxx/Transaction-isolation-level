@@ -51,4 +51,6 @@ public class DbSelectTest {
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
+
+    //  ToDo:   make tests with wrong where.
 }

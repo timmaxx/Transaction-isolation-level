@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.COLUMN_DOESNT_EXIST;
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.INVALID_INPUT_SYNTAX_FOR_COLUMN;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_COLUMN_DOESNT_EXIST;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
@@ -24,7 +24,7 @@ public class DbUpdateTest {
                 () -> dbTabPersonEmpty.update(null)
         );
         Assertions.assertEquals(
-                String.format(TABLE_IS_RO + " " + YOU_CANNOT_UPDATE, DB_TAB_NAME_PERSON),
+                String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
@@ -84,7 +84,7 @@ public class DbUpdateTest {
         );
         Assertions.assertEquals(
                 String.format("\n" +
-                        COLUMN_DOESNT_EXIST + "\n",
+                                ERROR_COLUMN_DOESNT_EXIST + "\n",
                         DB_FIELD_NAME_WRONG_FIELD
                 ),
                 exception.getMessage(),
@@ -110,7 +110,7 @@ public class DbUpdateTest {
         );
         Assertions.assertEquals(
                 String.format("\n" +
-                        INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
+                                ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
                         String.class, DB_FIELD_NAME_NAME, 111
                 ),
                 exception.getMessage(),
@@ -135,7 +135,7 @@ public class DbUpdateTest {
                 )
         );
         Assertions.assertEquals(
-                String.format(COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
+                String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
@@ -146,8 +146,10 @@ public class DbUpdateTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
-        //     SET name = name || ' ' || name
-        //   WHERE wrong_field = 2 or wrong_field_2 = 'Bob'
+        //     SET wrong_field = wrong_field_2 || ' ' || name
+        //       , wrong_field_2 = '   '
+        //   WHERE wrong_field = 2
+        //      or wrong_field_2 = 'Bob'
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 //  Не получится собрать текст для исключения, в котором можно было-бы описать все ошибки и в where и в set.
@@ -170,7 +172,7 @@ public class DbUpdateTest {
                 )
         );
         Assertions.assertEquals(
-                String.format(COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
+                String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );

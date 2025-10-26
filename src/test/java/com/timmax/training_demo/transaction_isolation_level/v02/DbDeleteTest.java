@@ -19,7 +19,7 @@ public class DbDeleteTest {
                 () -> dbTabPersonEmpty.delete(null)
         );
         Assertions.assertEquals(
-                String.format(TABLE_IS_RO + " " + YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
+                String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
@@ -58,10 +58,14 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person
         //   WHERE id = 2
-        dbTabPerson.delete(dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2));
+        dbTabPerson.delete(
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+        );
 
         DbSelect dbSelect = dbTabPerson.select();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
+
+    //  ToDo:   make tests with wrong where.
 }
