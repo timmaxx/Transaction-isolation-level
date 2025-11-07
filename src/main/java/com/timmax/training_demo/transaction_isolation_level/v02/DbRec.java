@@ -28,12 +28,7 @@ public class DbRec {
     public DbRec(DbFields dbFields) {
         this.dbFields = dbFields;
         recMap = new HashMap<>();
-/*
-        for (DbFieldName dbFieldName : dbFields.getDbFields().keySet()) {
-            recMap.put(dbFieldName, null);
-        }
-*/
-        dbFields.getDbFields().keySet().stream()
+        dbFields.getDbFields().keySet()
                 .forEach(key -> recMap.put(key, null));
     }
 
@@ -86,20 +81,7 @@ public class DbRec {
 
     void setAll(Map<DbFieldName, Object> newRecMap) {
         verifyCorrespondenceBetweenDbFieldsAndRecMap(newRecMap);
-/*
-        for (Map.Entry<DbFieldName, Object> entry : newRecMap.entrySet()) {
-            Object oldValue = recMap.get(entry.getKey());
-            Object newValue = entry.getValue();
-            if (!oldValue.equals(newValue)) {
-                recMap.put(entry.getKey(), newValue);
-            }
-        }
-*/
-        newRecMap.entrySet()
-                .stream()
-                .filter(entry -> !recMap.get(entry.getKey()).equals(entry.getValue()))
-                .forEach(entry -> recMap.put(entry.getKey(), entry.getValue())
-                );
+        recMap.putAll(newRecMap);
     }
 
     //  Method returns DbFieldValue, but not Object.
