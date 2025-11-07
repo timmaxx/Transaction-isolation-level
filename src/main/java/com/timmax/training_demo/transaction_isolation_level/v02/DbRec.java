@@ -28,7 +28,7 @@ public class DbRec {
     public DbRec(DbFields dbFields) {
         this.dbFields = dbFields;
         recMap = new HashMap<>();
-        dbFields.getDbFields().keySet()
+        dbFields.getDbFieldNameClassMap().keySet()
                 .forEach(key -> recMap.put(key, null));
     }
 

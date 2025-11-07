@@ -9,7 +9,7 @@ public class DbFields {
     final static String ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE = "ERROR: column '%s' specified more than once.";
     final static String ERROR_TYPE_DOES_NOT_EXIST = "ERROR: type '%s' does not exist ('%s').";
 
-    private final Map<DbFieldName, Class<?>> dbFields = new LinkedHashMap<>();
+    private final Map<DbFieldName, Class<?>> dbFieldNameClassMap = new LinkedHashMap<>();
 
     //  ToDo:
     //  Warning:(9, 21) Raw use of parameterized class 'DbField'
@@ -19,16 +19,16 @@ public class DbFields {
 
         Arrays.stream(arrayOfDbFields)
                 .forEach(dbField -> {
-                    if (dbFields.containsKey(dbField.getDbFieldName())) {
+                    if (dbFieldNameClassMap.containsKey(dbField.getDbFieldName())) {
                         sb.append(String.format(ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE, dbField.getDbFieldName())).append("\n");
                         isThereError.set(true);
                     }
-                    if (dbField.getType() == null) {
+                    if (dbField.getClazz() == null) {
                         sb.append(String.format(ERROR_TYPE_DOES_NOT_EXIST, "null", dbField.getDbFieldName())).append("\n");
                         isThereError.set(true);
                     }
                     if (!isThereError.get()) {
-                        dbFields.put(dbField.getDbFieldName(), dbField.getType());
+                        dbFieldNameClassMap.put(dbField.getDbFieldName(), dbField.getClazz());
                     }
                 });
         if (isThereError.get()) {
@@ -37,32 +37,32 @@ public class DbFields {
     }
 
     public Class<?> getDbFieldType(DbFieldName dbFieldName) {
-        return dbFields.get(dbFieldName);
+        return dbFieldNameClassMap.get(dbFieldName);
     }
 
     public boolean containsKey(DbFieldName dbFieldName) {
-        return dbFields.containsKey(dbFieldName);
+        return dbFieldNameClassMap.containsKey(dbFieldName);
     }
 
     @Override
     public String toString() {
         return "DbFields{" +
-                "dbFields=" + dbFields +
+                "dbFieldNameClassMap=" + dbFieldNameClassMap +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DbFields dbFields1)) return false;
-        return Objects.equals(dbFields, dbFields1.dbFields);
+        return Objects.equals(dbFieldNameClassMap, dbFields1.dbFieldNameClassMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(dbFields);
+        return Objects.hashCode(dbFieldNameClassMap);
     }
 
-    public Map<DbFieldName, Class<?>> getDbFields() {
-        return dbFields;
+    public Map<DbFieldName, Class<?>> getDbFieldNameClassMap() {
+        return dbFieldNameClassMap;
     }
 }
