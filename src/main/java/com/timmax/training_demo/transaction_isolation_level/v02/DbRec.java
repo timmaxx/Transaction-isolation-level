@@ -73,13 +73,9 @@ public class DbRec {
         }
     }
 
-    //  ToDo:
-    //  Warning:(81, 12) Copy constructor does not copy field 'dbFields'
+    @SuppressWarnings("CopyConstructorMissesField")
     public DbRec(DbRec rec) {
-        //  this(rec.dbFields, rec.recMap);
-        this(rec.dbFields);
-        verifyCorrespondenceBetweenDbFieldsAndRecMap(rec.recMap);
-        this.recMap.putAll(rec.recMap);
+        this(rec.dbFields, rec.recMap);
     }
 
     void setAll(Map<DbFieldName, Object> newRecMap) {
