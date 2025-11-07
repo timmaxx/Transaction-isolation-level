@@ -94,9 +94,14 @@ public class DbInsertTest {
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 () -> dbTabPerson.insert(
-                        new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_WRONG_FIELD, 1, DB_FIELD_NAME_NAME, "Bob"))
+                        new DbRec(DB_FIELDS,
+                                Map.of(DB_FIELD_NAME_WRONG_FIELD, 1,
+                                        DB_FIELD_NAME_NAME, "Bob"
+                                )
+                        )
                 )
         );
+
         Assertions.assertEquals(
                 String.format("\n" +
                                 ERROR_COLUMN_DOESNT_EXIST + "\n",
@@ -120,9 +125,14 @@ public class DbInsertTest {
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 () -> dbTabPerson.insert(
-                        new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, "B", DB_FIELD_NAME_NAME, 999))
+                        new DbRec(DB_FIELDS,
+                                Map.of(DB_FIELD_NAME_ID, "B",
+                                        DB_FIELD_NAME_NAME, 999
+                                )
+                        )
                 )
         );
+
         Assertions.assertEquals(
                 String.format("\n" +
                                 ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n" +

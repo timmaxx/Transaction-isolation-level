@@ -23,6 +23,7 @@ public class DbUpdateTest {
                 DbDataAccessException.class,
                 () -> dbTabPersonEmpty.update(null)
         );
+
         Assertions.assertEquals(
                 String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
@@ -82,6 +83,7 @@ public class DbUpdateTest {
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
                 )
         );
+
         Assertions.assertEquals(
                 String.format("\n" +
                                 ERROR_COLUMN_DOESNT_EXIST + "\n",
@@ -108,6 +110,7 @@ public class DbUpdateTest {
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
                 )
         );
+
         Assertions.assertEquals(
                 String.format("\n" +
                                 ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
@@ -134,6 +137,7 @@ public class DbUpdateTest {
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2)
                 )
         );
+
         Assertions.assertEquals(
                 String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
@@ -174,6 +178,7 @@ public class DbUpdateTest {
                         )
                 )
         );
+
         Assertions.assertEquals(
                 String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),

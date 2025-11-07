@@ -50,7 +50,9 @@ public class DbRec {
                     if (!dbFields.containsKey(newDbFieldName)) {
                         sb.append(String.format(ERROR_COLUMN_DOESNT_EXIST, newDbFieldName)).append("\n");
                         isThereError.set(true);
-                    } else if (newValue != null && !dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())) {
+                    } else if (newValue != null &&
+                            !dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())
+                    ) {
                         sb.append(String.format(
                                         ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN,
                                         dbFields.getDbFieldType(newDbFieldName),

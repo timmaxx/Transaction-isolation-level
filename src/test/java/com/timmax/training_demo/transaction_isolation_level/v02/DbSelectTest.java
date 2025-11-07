@@ -65,6 +65,7 @@ public class DbSelectTest {
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2)
                 )
         );
+
         Assertions.assertEquals(
                 String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
@@ -89,6 +90,7 @@ public class DbSelectTest {
 
                 )
         );
+
         Assertions.assertEquals(
                 String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
                 exception.getMessage(),
