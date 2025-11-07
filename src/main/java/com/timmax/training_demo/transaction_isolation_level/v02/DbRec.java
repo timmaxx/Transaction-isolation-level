@@ -28,9 +28,13 @@ public class DbRec {
     public DbRec(DbFields dbFields) {
         this.dbFields = dbFields;
         recMap = new HashMap<>();
+/*
         for (DbFieldName dbFieldName : dbFields.getDbFields().keySet()) {
             recMap.put(dbFieldName, null);
         }
+*/
+        dbFields.getDbFields().keySet().stream()
+                .forEach(key -> recMap.put(key, null));
     }
 
     public DbRec(DbFields dbFields, Map<DbFieldName, Object> recMap) {
@@ -82,13 +86,20 @@ public class DbRec {
 
     void setAll(Map<DbFieldName, Object> newRecMap) {
         verifyCorrespondenceBetweenDbFieldsAndRecMap(newRecMap);
-        for (DbFieldName dbFieldName : newRecMap.keySet()) {
-            Object oldValue = recMap.get(dbFieldName);
-            Object newValue = newRecMap.get(dbFieldName);
+/*
+        for (Map.Entry<DbFieldName, Object> entry : newRecMap.entrySet()) {
+            Object oldValue = recMap.get(entry.getKey());
+            Object newValue = entry.getValue();
             if (!oldValue.equals(newValue)) {
-                recMap.put(dbFieldName, newValue);
+                recMap.put(entry.getKey(), newValue);
             }
         }
+*/
+        newRecMap.entrySet()
+                .stream()
+                .filter(entry -> !recMap.get(entry.getKey()).equals(entry.getValue()))
+                .forEach(entry -> recMap.put(entry.getKey(), entry.getValue())
+                );
     }
 
     //  Method returns DbFieldValue, but not Object.
