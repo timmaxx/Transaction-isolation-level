@@ -92,11 +92,14 @@ public class DbRec {
         }
     }
 
-    public Object getValue(DbFieldName dbFieldName) {
+    //  Method returns DbFieldValue, but not Object.
+    //  This was done to check the correctness of the types.
+    //  Also see DbFieldValue :: public boolean equals(Object o)
+    public DbFieldValue getValue(DbFieldName dbFieldName) {
         if (!recMap.containsKey(dbFieldName)) {
             throw new DbSQLException(String.format(ERROR_COLUMN_DOESNT_EXIST, dbFieldName));
         }
-        return recMap.get(dbFieldName);
+        return new DbFieldValue(recMap.get(dbFieldName).getClass(), recMap.get(dbFieldName));
     }
 
     @Override

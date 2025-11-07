@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbFieldValue.ERROR_VALUE_IS_WRONG_TYPE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_COLUMN_DOESNT_EXIST;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
@@ -172,10 +173,9 @@ public class DbUpdateTest {
                                 DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2) + " " + dbRec.getValue(DB_FIELD_NAME_NAME),
                                 DB_FIELD_NAME_WRONG_FIELD_2, "   "
                         ),
-                        dbRec -> (
+                        dbRec ->
                                 dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2) ||
                                         dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob")
-                        )
                 )
         );
 
@@ -186,5 +186,51 @@ public class DbUpdateTest {
         );
     }
 
-    //  ToDo:   make tests with wrong where (invalid data type).
+    @Test
+    public void updateTwoRowsTableButWhereHasWrongValueTypeIntegerForRightString() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person
+        //     SET name = name || ' ' || name
+        //   WHERE name = 1
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_NAME).equals(1)
+                )
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_VALUE_IS_WRONG_TYPE, 1, String.class),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
+    @Test
+    public void updateTwoRowsTableButWhereHasWrongValueTypeStringForRightInteger() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person
+        //     SET name = name || ' ' || name
+        //   WHERE id = 'Bob'
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals("Bob")
+                )
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_VALUE_IS_WRONG_TYPE, "Bob", Integer.class),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
 }
