@@ -35,6 +35,11 @@ public class DbRec {
 
     public DbRec(DbFields dbFields, Map<DbFieldName, Object> recMap) {
         this(dbFields);
+        verifyCorrespondenceBetweenDbFieldsAndRecMap(recMap);
+        this.recMap.putAll(recMap);
+    }
+
+    private void verifyCorrespondenceBetweenDbFieldsAndRecMap(Map<DbFieldName, Object> recMap) {
         StringBuilder sb = new StringBuilder("\n");
         AtomicBoolean isThereError = new AtomicBoolean(false);
 
@@ -67,7 +72,6 @@ public class DbRec {
         if (isThereError.get()) {
             throw new DbSQLException(sb.toString());
         }
-        this.recMap.putAll(recMap);
     }
 
     //  ToDo:
@@ -77,12 +81,7 @@ public class DbRec {
     }
 
     void setAll(Map<DbFieldName, Object> newRecMap) {
-        //  ToDo:   Переделать.
-        //          Здесь конструктор вызывается только для проверки. Что вероятно влечёт несколько проблем:
-        //          1. Может оптимизатор вообще его не вызовет.
-        //          2. Для update некоторые поля не будут в set, но при этом они не должны быть null.
-        //  Warning:(90, 15) Variable 'newRec' is never used
-        DbRec newRec = new DbRec(dbFields, newRecMap);
+        verifyCorrespondenceBetweenDbFieldsAndRecMap(newRecMap);
         for (DbFieldName dbFieldName : newRecMap.keySet()) {
             Object oldValue = recMap.get(dbFieldName);
             Object newValue = newRecMap.get(dbFieldName);
