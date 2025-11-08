@@ -15,13 +15,6 @@ public class DbRec {
     static final String ERROR_COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
     static final String ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
 
-    //  Done:   Или в этом классе ввести поле DbTab, которое будет указывать на таблицу, которой принадлежит запись.
-    //          Или создать отдельный класс.
-    //          Собственно из-за этого-то и была проблема с копиями записей в разных таблицах.
-    //          Лучше сделать отдельные классы DbRec0, dbField0, dbFields0, DbFieldName0, DbFieldNames0, DbObjectName0,
-    //          в которых ввести поля для ссылки на объект-владельца.
-    //  ToDo:   Реализация задачи выше (через класс DbRec0) оказалась не эффективной. Нужно отказаться от неё.
-
     private final Map<DbFieldName, Object> recMap;
     private final DbFields dbFields;
 

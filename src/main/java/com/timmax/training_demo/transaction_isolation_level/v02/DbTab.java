@@ -29,12 +29,20 @@ public non-sealed class DbTab extends DbTableLike {
 
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
-        this.dbRecs.addAll(dbTab.dbRecs.stream().map(dbRec0 -> new DbRec0(dbRec0.getSuper(), this)).toList());
+        this.dbRecs.addAll(
+                dbTab.dbRecs.stream()
+                        .map(DbRec::new)
+                        .toList()
+        );
     }
 
     public DbTab(DbTab dbTab, boolean readOnly, Set<DbRec> dbRecs) {
         this(dbTab, readOnly);
-        this.dbRecs.addAll(dbRecs.stream().map(dbRec -> new DbRec0(dbRec, this)).toList());
+        this.dbRecs.addAll(
+                dbRecs.stream()
+                        .map(DbRec::new)
+                        .toList()
+        );
     }
 
     private void validateReadOnlyTable(String msgInsUpdDel) {
