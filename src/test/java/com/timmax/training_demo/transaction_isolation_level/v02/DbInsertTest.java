@@ -82,6 +82,26 @@ public class DbInsertTest {
     }
 
     @Test
+    public void insertTwoRowsIntoEmptyTableInDifferentOrder() {
+        DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT INTO person1 (id, name) VALUES (1, "Bob");
+        //  INSERT INTO person1 (id, name) VALUES (2, "Alice");
+        //  INSERT INTO person2 (id, name) VALUES (2, "Alice");
+        //  INSERT INTO person2 (id, name) VALUES (1, "Bob");
+        dbTabPerson1.insert(dbRec1_Bob);
+        dbTabPerson1.insert(dbRec2_Alice);
+        dbTabPerson2.insert(dbRec2_Alice);
+        dbTabPerson2.insert(dbRec1_Bob);
+
+        DbSelect dbSelect1 = dbTabPerson1.select();
+        DbSelect dbSelect2 = dbTabPerson2.select();
+
+        Assertions.assertEquals(dbSelect1, dbSelect2);
+    }
+
+    @Test
     public void insertOneRowIntoEmptyTableButFieldsHasWrongField() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
