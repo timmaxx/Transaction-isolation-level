@@ -10,6 +10,18 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     public static final String ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE = "ERROR: Duplicate key value violates unique constraint (combinations of all fields must be unique).";
 
     protected final DbFields dbFields;
+
+    //  ToDo:   См. ниже UPDATE.
+    //  Поскольку в качестве коллекции для хранения строк используется Set,
+    //  новый элемент может быть не добавлен, если точно такой уже есть.
+    //  Это нужно проверять:
+    //  - при INSERT (см. insert0 в этом классе - реализовано),
+    //  - при UPDATE (см. update0 в классе-потомке - НЕОБХОДИМО ПРОВЕРИТЬ И РЕАЛИЗОВАТЬ).
+    //  ToDo:   Вместо Set использовать, что-то, что позволяет хранить дубликаты.
+    //  Для большей схожести с реляционной алгеброй следовало-бы вместо Set использовать что-то,
+    //  что позволяет хранить дубликаты, например, List.
+    //  Но это более академическая задача, поэтому пока пусть будет Set и будем считать,
+    //  что комбинация значений всех полей составляет уникальный ключ.
     protected final Set<DbRec> dbRecs = new HashSet<>();
 
     public DbTableLike(DbFields dbFields) {
