@@ -83,6 +83,8 @@ public class DbInsertTest {
 
     @Test
     public void insertTwoRowsWithIdAndNameAreNullIntoEmptyTable() {
+        //  Этот тест таков потому, что в качестве коллекции для хранения строк используется Set.
+        //  См. комментарий к DbTableLike :: dbRecs.
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT INTO person VALUES (null, null);
