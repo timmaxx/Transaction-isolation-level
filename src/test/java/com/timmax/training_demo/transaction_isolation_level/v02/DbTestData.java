@@ -54,6 +54,7 @@ public class DbTestData {
     public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_AliceAlice));
     public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
 
+    public static final DbRec dbRecNull_Null = new DbRec(DB_FIELDS, Map.of());
 
     public static final DbRec dbRec3_Null = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 3));
     //  Использовать Map.Of() со значениями null нельзя, поэтому применил HashMap.
@@ -68,4 +69,7 @@ public class DbTestData {
 
     public static final DbTab dbTabPersonWithOneRowNameIsNull = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec3_Null));
     public static final DbSelect dbSelectPersonWithOneRowNameIsNull = dbTabPersonWithOneRowNameIsNull.select();
+
+    public static final DbTab dbTabPersonWithOneRowIdAndNameAreNull = new DbTab(dbTabPersonEmpty, true, Set.of(dbRecNull_Null));
+    public static final DbSelect dbSelectPersonWithOneRowIdAndNameAreNull = dbTabPersonWithOneRowIdAndNameAreNull.select();
 }

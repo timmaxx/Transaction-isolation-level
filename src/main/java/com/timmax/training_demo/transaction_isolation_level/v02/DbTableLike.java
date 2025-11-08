@@ -1,10 +1,14 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
+import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public abstract sealed class DbTableLike permits DbTab, DbSelect {
+    public static final String ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE = "ERROR: Duplicate key value violates unique constraint (combinations of all fields must be unique).";
+
     protected final DbFields dbFields;
     protected final Set<DbRec> dbRecs = new HashSet<>();
 
@@ -31,7 +35,9 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
     protected void insert0(DbRec newDbRec) {
-        dbRecs.add(new DbRec(newDbRec));
+        if (!dbRecs.add(new DbRec(newDbRec))) {
+            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+        }
     }
 
     @Override

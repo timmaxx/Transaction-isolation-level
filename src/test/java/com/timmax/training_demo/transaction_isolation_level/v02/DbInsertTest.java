@@ -23,6 +23,7 @@ public class DbInsertTest {
                 DbDataAccessException.class,
                 () -> dbTabPersonEmpty.insert(null)
         );
+
         Assertions.assertEquals(
                 String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_INSERT, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
@@ -62,6 +63,41 @@ public class DbInsertTest {
         DbSelect dbSelect = dbTabPerson.select();
 
         Assertions.assertEquals(dbSelectPersonWithOneRowNameIsNull, dbSelect);
+    }
+
+    @Test
+    public void insertOneRowWithIdAndNameAreNullIntoEmptyTable() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person
+        //    VALUES (
+        //      null, null
+        //  )
+        dbTabPerson.insert(dbRecNull_Null);
+
+        DbSelect dbSelect = dbTabPerson.select();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRowIdAndNameAreNull, dbSelect);
+    }
+
+    @Test
+    public void insertTwoRowsWithIdAndNameAreNullIntoEmptyTable() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT INTO person VALUES (null, null);
+        //  INSERT INTO person VALUES (null, null);
+        dbTabPerson.insert(dbRecNull_Null);
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.insert(dbRecNull_Null)
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
     }
 
     @Test
