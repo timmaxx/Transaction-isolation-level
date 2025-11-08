@@ -37,7 +37,7 @@ public class DbInsertTest {
         //  INSERT
         //    INTO person (
         //      id
-        //      ) values (
+        //      ) VALUES (
         //      3
         //  )
         dbTabPerson.insert(dbRec3_Null);
@@ -54,7 +54,7 @@ public class DbInsertTest {
         //  INSERT
         //    INTO person (
         //      id, name
-        //      ) values (
+        //      ) VALUES (
         //      3, null
         //  )
         dbTabPerson.insert(dbRec3_Null2);
@@ -71,7 +71,7 @@ public class DbInsertTest {
         //  INSERT
         //    INTO person (
         //      id, name
-        //      ) values (
+        //      ) VALUES (
         //      1, "Bob"
         //  )
         dbTabPerson.insert(dbRec1_Bob);
@@ -88,7 +88,7 @@ public class DbInsertTest {
         //  INSERT
         //    INTO person (
         //      wrong_name, name
-        //      ) values (
+        //      ) VALUES (
         //      1, "Bob"
         //  )
         DbSQLException exception = Assertions.assertThrows(
@@ -119,7 +119,7 @@ public class DbInsertTest {
         //  INSERT
         //    INTO person (
         //      id, name
-        //      ) values (
+        //      ) VALUES (
         //      "B", 999
         //  )
         DbSQLException exception = Assertions.assertThrows(

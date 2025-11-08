@@ -98,7 +98,7 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person
         //   WHERE wrong_field = 2
-        //      or wrong_field_2 = 'Bob'
+        //      OR wrong_field_2 = 'Bob'
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 //  См. комментарии к DbUpdateTest :: updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongNameFields

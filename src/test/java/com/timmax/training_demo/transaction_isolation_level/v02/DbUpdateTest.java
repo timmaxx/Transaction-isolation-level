@@ -154,7 +154,7 @@ public class DbUpdateTest {
         //     SET wrong_field = wrong_field_2 || ' ' || name
         //       , wrong_field_2 = '   '
         //   WHERE wrong_field = 2
-        //      or wrong_field_2 = 'Bob'
+        //      OR wrong_field_2 = 'Bob'
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 //  Не получится собрать текст для исключения, в котором можно было-бы описать все ошибки и в where и в set.
