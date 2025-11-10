@@ -15,13 +15,15 @@ public class DbRec {
 
     static final String ERROR_COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
     static final String ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
+    static final String ERROR_NULL_VALUE_IN_COLUMN_S_VIOLATES_NOT_NULL_CONSTRAINT = "ERROR: null value in column '%s' violates not-null constraint";
 
-    //  ToDo:   Вероятно стоит выделить этот объект в отдельный класс.
+    private final DbFields dbFields;
+
+    //  ToDo:   Возможно стоит выделить этот объект в отдельный класс.
     //          Он должен быть предназначен для задач манипуляций со значениями полей записи
     //          и при этом не предоставлять доступ к мапе,
     //          а также сериализацией и десериализацией управлять.
     private final Map<DbFieldName, Object> recMap;
-    private final DbFields dbFields;
 
     public DbRec(DbFields dbFields) {
         this.dbFields = dbFields;
@@ -38,6 +40,7 @@ public class DbRec {
         this(dbFields);
         verifyCorrespondenceBetweenDbFieldsAndRecMap(recMap);
         this.recMap.putAll(recMap);
+        verifyAreSomeFieldsNullButTheyMustBeNotNull();
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
@@ -49,8 +52,34 @@ public class DbRec {
         this(dbRec);
         verifyCorrespondenceBetweenDbFieldsAndRecMap(recMap);
         this.recMap.putAll(recMap);
+        verifyAreSomeFieldsNullButTheyMustBeNotNull();
     }
 
+    //  ToDo:   В методах verify... видна похожая структура. Нужно избавиться от дублирования кода.
+    private void verifyAreSomeFieldsNullButTheyMustBeNotNull() {
+        StringBuilder sb = new StringBuilder("\n");
+        AtomicBoolean isThereError = new AtomicBoolean(false);
+
+        recMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    DbFieldName dbFieldName = entry.getKey();
+                    boolean isNullable = dbFields.isNullableOfDbFieldDefinition(dbFieldName);
+                    if (!isNullable &&
+                            entry.getValue() == null
+                    ) {
+                        sb.append(String.format(ERROR_NULL_VALUE_IN_COLUMN_S_VIOLATES_NOT_NULL_CONSTRAINT, dbFieldName)).append("\n");
+                        isThereError.set(true);
+                    }
+                })
+        ;
+
+        if (isThereError.get()) {
+            throw new DbSQLException(sb.toString());
+        }
+    }
+
+    //  ToDo:   В методах verify... видна похожая структура. Нужно избавиться от дублирования кода.
     private void verifyCorrespondenceBetweenDbFieldsAndRecMap(Map<DbFieldName, Object> recMap) {
         StringBuilder sb = new StringBuilder("\n");
         AtomicBoolean isThereError = new AtomicBoolean(false);
@@ -79,7 +108,8 @@ public class DbRec {
                         ).append("\n");
                         isThereError.set(true);
                     }
-                });
+                })
+        ;
 
         if (isThereError.get()) {
             throw new DbSQLException(sb.toString());

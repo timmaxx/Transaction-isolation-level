@@ -32,53 +32,54 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertOneRowWithNameIsNullIntoEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-
-        //  INSERT
-        //    INTO person (
-        //      id
-        //      ) VALUES (
-        //      3
-        //  )
-        dbTabPerson.insert(dbRec3_Null);
-
-        DbSelect dbSelect = dbTabPerson.select();
-
-        Assertions.assertEquals(dbSelectPersonWithOneRowNameIsNull, dbSelect);
-    }
-
-    @Test
-    public void insertOneRowWithNameIsNull2IntoEmptyTable() {
+    public void insertOneRowWithEmailIsNullIntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
         //    INTO person (
         //      id, name
         //      ) VALUES (
-        //      3, null
+        //      3, "Tom"
         //  )
-        dbTabPerson.insert(dbRec3_Null2);
+        dbTabPerson.insert(dbRec3_Tom_Null);
 
         DbSelect dbSelect = dbTabPerson.select();
 
-        Assertions.assertEquals(dbSelectPersonWithOneRowNameIsNull, dbSelect);
+        Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
     @Test
-    public void insertOneRowWithIdAndNameAreNullIntoEmptyTable() {
+    public void insertOneRowWithEmailIsNull2IntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //    INTO person
-        //    VALUES (
-        //      null, null
+        //    INTO person (
+        //      id, name, email
+        //      ) VALUES (
+        //      3, "Tom", null
         //  )
-        dbTabPerson.insert(dbRecNull_Null);
+        dbTabPerson.insert(dbRec3_Tom_Null2);
 
         DbSelect dbSelect = dbTabPerson.select();
 
-        Assertions.assertEquals(dbSelectPersonWithOneRowIdAndNameAreNull, dbSelect);
+        Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
+    }
+
+    @Test
+    public void insertOneRowIntoEmptyTable() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      id, name, email
+        //      ) VALUES (
+        //      1, "Bob", "@"
+        //  )
+        dbTabPerson.insert(dbRec1_Bob_email);
+
+        DbSelect dbSelect = dbTabPerson.select();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
     //  Этот тест нужен и таков потому, что в качестве коллекции для хранения строк используется Set.
@@ -87,12 +88,12 @@ public class DbInsertTest {
     public void insertTwoRowsWithIdAndNameAreNullIntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
-        //  INSERT INTO person VALUES (null, null);
-        //  INSERT INTO person VALUES (null, null);
-        dbTabPerson.insert(dbRecNull_Null);
+        //  INSERT INTO person VALUES (1, "Bob", "@");
+        //  INSERT INTO person VALUES (1, "Bob", "@");
+        dbTabPerson.insert(dbRec1_Bob_email);
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
-                () -> dbTabPerson.insert(dbRecNull_Null)
+                () -> dbTabPerson.insert(dbRec1_Bob_email)
         );
 
         Assertions.assertEquals(
@@ -103,35 +104,18 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-
-        //  INSERT
-        //    INTO person (
-        //      id, name
-        //      ) VALUES (
-        //      1, "Bob"
-        //  )
-        dbTabPerson.insert(dbRec1_Bob);
-
-        DbSelect dbSelect = dbTabPerson.select();
-
-        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
-    }
-
-    @Test
     public void insertTwoRowsIntoEmptyTableInDifferentOrder() {
         DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
         DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
 
-        //  INSERT INTO person1 (id, name) VALUES (1, "Bob");
-        //  INSERT INTO person1 (id, name) VALUES (2, "Alice");
-        //  INSERT INTO person2 (id, name) VALUES (2, "Alice");
-        //  INSERT INTO person2 (id, name) VALUES (1, "Bob");
-        dbTabPerson1.insert(dbRec1_Bob);
-        dbTabPerson1.insert(dbRec2_Alice);
-        dbTabPerson2.insert(dbRec2_Alice);
-        dbTabPerson2.insert(dbRec1_Bob);
+        //  INSERT INTO person1 (id, name, email) VALUES (1, "Bob", "@"););
+        //  INSERT INTO person1 (id, name, email) VALUES (2, "Alice", "@");
+        //  INSERT INTO person2 (id, name, email) VALUES (2, "Alice", "@");
+        //  INSERT INTO person2 (id, name, email) VALUES (1, "Bob", "@"););
+        dbTabPerson1.insert(dbRec1_Bob_email);
+        dbTabPerson1.insert(dbRec2_Alice_email);
+        dbTabPerson2.insert(dbRec2_Alice_email);
+        dbTabPerson2.insert(dbRec1_Bob_email);
 
         DbSelect dbSelect1 = dbTabPerson1.select();
         DbSelect dbSelect2 = dbTabPerson2.select();
@@ -202,4 +186,6 @@ public class DbInsertTest {
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
+
+    //  ToDo:   Дополнить тестом, вставляющим запись с NOT NULL полем, которое = null.
 }

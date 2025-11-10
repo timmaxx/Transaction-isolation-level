@@ -37,7 +37,7 @@ public class DbUpdateTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
-        //     SET name = name || ' ' || name
+        //     SET name = name || " " || name
         dbTabPerson.update(
                 dbRec -> Map.of(
                         DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
@@ -57,7 +57,7 @@ public class DbUpdateTest {
 
         //  UPDATE person
         //     SET id = 1
-        //       , name = 'Bob'
+        //       , name = "Bob"
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 () -> dbTabPerson.update(
@@ -80,7 +80,7 @@ public class DbUpdateTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
-        //     SET name = name || ' ' || name
+        //     SET name = name || " " || name
         //   WHERE id = 2
         dbTabPerson.update(
                 dbRec -> Map.of(
@@ -99,7 +99,7 @@ public class DbUpdateTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
-        //     SET wrong_field = name || ' ' || name
+        //     SET wrong_field = name || " " || name
         //   WHERE id = 2
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
@@ -153,7 +153,7 @@ public class DbUpdateTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
-        //     SET name = name || ' ' || name
+        //     SET name = name || " " || name
         //   WHERE wrong_field = 2
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
@@ -177,10 +177,10 @@ public class DbUpdateTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
-        //     SET wrong_field = wrong_field_2 || ' ' || name
-        //       , wrong_field_2 = '   '
+        //     SET wrong_field = wrong_field_2 || " " || name
+        //       , wrong_field_2 = "   "
         //   WHERE wrong_field = 2
-        //      OR wrong_field_2 = 'Bob'
+        //      OR wrong_field_2 = "Bob"
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 //  Не получится собрать текст для исключения, в котором можно было-бы описать все ошибки и в where и в set.
@@ -217,7 +217,7 @@ public class DbUpdateTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
-        //     SET name = name || ' ' || name
+        //     SET name = name || " " || name
         //   WHERE name = 1
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
@@ -259,4 +259,6 @@ public class DbUpdateTest {
                 EXCEPTION_MESSAGE_DOESNT_MATCH
         );
     }
+
+    //  ToDo:   Дополнить тестом, изменяющим запись с NOT NULL полем, которое должно стать null.
 }

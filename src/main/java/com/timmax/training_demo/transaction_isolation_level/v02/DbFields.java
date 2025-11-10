@@ -11,7 +11,7 @@ public class DbFields {
 
     private final Map<DbFieldName, DbFieldDefinition<?>> dbFieldName_DbFieldDefinition_Map = new LinkedHashMap<>();
 
-    //  ToDo:
+    //  ToDo:   Смотри комментарии к методам DbRec :: verify...
     //  Warning:(9, 21) Raw use of parameterized class 'DbField'
     public DbFields(DbField... arrayOfDbFields) {
         StringBuilder sb = new StringBuilder("\n");
@@ -45,8 +45,22 @@ public class DbFields {
         return dbFieldName_DbFieldDefinition_Map.get(dbFieldName);
     }
 
+    //  ToDo:   Определиться с такими ("транзитивными") методами. Хорошо или плохо их делать?
+    //  Этот метод "знает" внутренности DbFieldDefinition.
+    //  Хорошо-ли это?
+    //  Плюс от этого только в том, что написанного кода становиться чуть меньше в том месте,
+    //  где нужно узнать результат.
     public Class<?> getClassOfDbFieldDefinition(DbFieldName dbFieldName) {
         return getDbFieldDefinition(dbFieldName).getClazz();
+    }
+
+    //  ToDo:   Определиться с такими ("транзитивными") методами. Хорошо или плохо их делать?
+    //  Этот метод "знает" внутренности DbFieldDefinition.
+    //  Хорошо-ли это?
+    //  Плюс от этого только в том, что написанного кода становиться чуть меньше в том месте,
+    //  где нужно узнать результат.
+    public boolean isNullableOfDbFieldDefinition(DbFieldName dbFieldName) {
+        return getDbFieldDefinition(dbFieldName).isNullable();
     }
 
     public boolean containsDbFieldName(DbFieldName dbFieldName) {

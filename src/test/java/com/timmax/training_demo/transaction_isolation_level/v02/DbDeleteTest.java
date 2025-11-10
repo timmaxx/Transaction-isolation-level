@@ -21,6 +21,7 @@ public class DbDeleteTest {
                 DbDataAccessException.class,
                 () -> dbTabPersonEmpty.delete(null)
         );
+
         Assertions.assertEquals(
                 String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
@@ -98,7 +99,7 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person
         //   WHERE wrong_field = 2
-        //      OR wrong_field_2 = 'Bob'
+        //      OR wrong_field_2 = "Bob"
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 //  См. комментарии к DbUpdateTest :: updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongNameFields
@@ -143,7 +144,7 @@ public class DbDeleteTest {
 
         //  DELETE
         //    FROM person
-        //   WHERE id = 'Bob'
+        //   WHERE id = "Bob"
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 () -> dbTabPerson.delete(

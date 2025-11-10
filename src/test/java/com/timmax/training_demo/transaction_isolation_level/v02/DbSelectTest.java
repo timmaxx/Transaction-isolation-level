@@ -79,7 +79,7 @@ public class DbSelectTest {
         //  SELECT *
         //    FROM person
         //   WHERE wrong_field = 2
-        //      OR wrong_field_2 = 'Bob'
+        //      OR wrong_field_2 = "Bob"
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 //  См. комментарии к DbUpdateTest :: updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongNameFields
@@ -120,7 +120,7 @@ public class DbSelectTest {
     public void selectFromOneRowTableButWhereHasWrongValueTypeStringForRightInteger() {
         //  SELECT *
         //    FROM person
-        //   WHERE id = 'Bob'
+        //   WHERE id = "Bob"
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
                 () -> dbTabPersonWithOneRow.select(

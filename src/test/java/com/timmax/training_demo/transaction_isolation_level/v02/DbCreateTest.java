@@ -14,7 +14,7 @@ public class DbCreateTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbCreateTest.class);
 
     @Test
-    public void dbTabCopyMustHaveOwnDbRec0Copy() {
+    public void dbTabCopyMustHaveOwnDbRecCopy() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
 
         Assertions.assertNotSame(
