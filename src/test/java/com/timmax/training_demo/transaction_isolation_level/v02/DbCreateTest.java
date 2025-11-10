@@ -48,8 +48,10 @@ public class DbCreateTest {
                 DbSQLException.class,
                 () -> new DbTab(
                         DB_TAB_NAME_PERSON,
-                        DB_FIELDS,
-                        true
+                        new DbFields(
+                                DB_FIELD_ID,
+                                DB_FIELD_ID
+                        ), true
                 )
         );
 
@@ -73,8 +75,10 @@ public class DbCreateTest {
                 DbSQLException.class,
                 () -> new DbTab(
                         DB_TAB_NAME_PERSON,
-                        DB_FIELDS,
-                        true
+                        new DbFields(
+                                DB_FIELD_ID,
+                                DB_FIELD_WRONG_FIELD
+                        ), true
                 )
         );
 
