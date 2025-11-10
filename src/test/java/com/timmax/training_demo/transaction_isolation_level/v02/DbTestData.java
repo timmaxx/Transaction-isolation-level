@@ -34,10 +34,7 @@ public class DbTestData {
 
     public static final DbTab dbTabPersonEmpty = new DbTab(
             DB_TAB_NAME_PERSON,
-            new DbFields(
-                    DB_FIELD_ID,
-                    DB_FIELD_NAME
-            ),
+            DB_FIELDS,
             true
     );
 

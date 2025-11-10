@@ -31,10 +31,8 @@ public class DbCreateTest {
         //  )
         DbTab dbTabPerson = new DbTab(
                 DB_TAB_NAME_PERSON,
-                new DbFields(
-                        DB_FIELD_ID,
-                        DB_FIELD_NAME
-                ), true
+                DB_FIELDS,
+                true
         );
 
         Assertions.assertEquals(dbTabPersonEmpty, dbTabPerson);
@@ -50,10 +48,8 @@ public class DbCreateTest {
                 DbSQLException.class,
                 () -> new DbTab(
                         DB_TAB_NAME_PERSON,
-                        new DbFields(
-                                DB_FIELD_ID,
-                                DB_FIELD_ID
-                        ), true
+                        DB_FIELDS,
+                        true
                 )
         );
 
@@ -77,10 +73,8 @@ public class DbCreateTest {
                 DbSQLException.class,
                 () -> new DbTab(
                         DB_TAB_NAME_PERSON,
-                        new DbFields(
-                                DB_FIELD_ID,
-                                DB_FIELD_WRONG_FIELD
-                        ), true
+                        DB_FIELDS,
+                        true
                 )
         );
 
