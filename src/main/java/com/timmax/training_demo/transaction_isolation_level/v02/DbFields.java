@@ -9,7 +9,7 @@ public class DbFields {
     final static String ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE = "ERROR: column '%s' specified more than once.";
     final static String ERROR_TYPE_DOES_NOT_EXIST = "ERROR: type '%s' does not exist ('%s').";
 
-    private final Map<DbFieldName, Class<?>> dbFieldNameClassMap = new LinkedHashMap<>();
+    private final Map<DbFieldName, DbFieldDefinition<?>> dbFieldName_DbFieldDefinition_Map = new LinkedHashMap<>();
 
     //  ToDo:
     //  Warning:(9, 21) Raw use of parameterized class 'DbField'
@@ -19,16 +19,20 @@ public class DbFields {
 
         Arrays.stream(arrayOfDbFields)
                 .forEach(dbField -> {
-                    if (dbFieldNameClassMap.containsKey(dbField.getDbFieldName())) {
+                    if (dbFieldName_DbFieldDefinition_Map.containsKey(dbField.getDbFieldName())) {
                         sb.append(String.format(ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE, dbField.getDbFieldName())).append("\n");
                         isThereError.set(true);
                     }
-                    if (dbField.getClazz() == null) {
+                    //  ToDo:   Отрефакторить проверку на допустимый тип поля.
+                    //          Здесь "типа проверяется на допустимый тип поля".
+                    //          Но он в принципе не должен быть null.
+                    //          Пока проверка на null есть, что-бы имитировать проверку типа.
+                    if (dbField.getDbFieldDefinition().getClazz() == null) {
                         sb.append(String.format(ERROR_TYPE_DOES_NOT_EXIST, "null", dbField.getDbFieldName())).append("\n");
                         isThereError.set(true);
                     }
                     if (!isThereError.get()) {
-                        dbFieldNameClassMap.put(dbField.getDbFieldName(), dbField.getClazz());
+                        dbFieldName_DbFieldDefinition_Map.put(dbField.getDbFieldName(), dbField.getDbFieldDefinition());
                     }
                 });
         if (isThereError.get()) {
@@ -36,33 +40,38 @@ public class DbFields {
         }
     }
 
-    public Class<?> getDbFieldType(DbFieldName dbFieldName) {
-        return dbFieldNameClassMap.get(dbFieldName);
+    //  Warning:(43, 13) Raw use of parameterized class 'DbFieldDefinition'
+    private DbFieldDefinition getDbFieldDefinition(DbFieldName dbFieldName) {
+        return dbFieldName_DbFieldDefinition_Map.get(dbFieldName);
     }
 
-    public boolean containsKey(DbFieldName dbFieldName) {
-        return dbFieldNameClassMap.containsKey(dbFieldName);
+    public Class<?> getClassOfDbFieldDefinition(DbFieldName dbFieldName) {
+        return getDbFieldDefinition(dbFieldName).getClazz();
+    }
+
+    public boolean containsDbFieldName(DbFieldName dbFieldName) {
+        return dbFieldName_DbFieldDefinition_Map.containsKey(dbFieldName);
     }
 
     @Override
     public String toString() {
         return "DbFields{" +
-                "dbFieldNameClassMap=" + dbFieldNameClassMap +
+                "dbFieldName_DbFieldDefinition_Map=" + dbFieldName_DbFieldDefinition_Map +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DbFields dbFields1)) return false;
-        return Objects.equals(dbFieldNameClassMap, dbFields1.dbFieldNameClassMap);
+        return Objects.equals(dbFieldName_DbFieldDefinition_Map, dbFields1.dbFieldName_DbFieldDefinition_Map);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(dbFieldNameClassMap);
+        return Objects.hashCode(dbFieldName_DbFieldDefinition_Map);
     }
 
-    public Map<DbFieldName, Class<?>> getDbFieldNameClassMap() {
-        return dbFieldNameClassMap;
+    public Set<DbFieldName> getDbFieldName_Set() {
+        return dbFieldName_DbFieldDefinition_Map.keySet();
     }
 }

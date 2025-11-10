@@ -16,13 +16,21 @@ public class DbRec {
     static final String ERROR_COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
     static final String ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
 
+    //  ToDo:   Вероятно стоит выделить этот объект в отдельный класс.
+    //          Он должен быть предназначен для задач манипуляций со значениями полей записи
+    //          и при этом не предоставлять доступ к мапе,
+    //          а также сериализацией и десериализацией управлять.
     private final Map<DbFieldName, Object> recMap;
     private final DbFields dbFields;
 
     public DbRec(DbFields dbFields) {
         this.dbFields = dbFields;
+        //  ToDo:   Этот и следующий вызовы можно было-бы спрятать в класс,
+        //          который будет альтернативно реализовывать
+        //          Map<DbFieldName, Object> recMap
+        //          См. выше.
         recMap = new HashMap<>();
-        dbFields.getDbFieldNameClassMap().keySet()
+        dbFields.getDbFieldName_Set()
                 .forEach(key -> recMap.put(key, null));
     }
 
@@ -56,15 +64,15 @@ public class DbRec {
                 .forEach(entry -> {
                     DbFieldName newDbFieldName = entry.getKey();
                     Object newValue = entry.getValue();
-                    if (!dbFields.containsKey(newDbFieldName)) {
+                    if (!dbFields.containsDbFieldName(newDbFieldName)) {
                         sb.append(String.format(ERROR_COLUMN_DOESNT_EXIST, newDbFieldName)).append("\n");
                         isThereError.set(true);
                     } else if (newValue != null &&
-                            !dbFields.getDbFieldType(newDbFieldName).equals(newValue.getClass())
+                            !dbFields.getClassOfDbFieldDefinition(newDbFieldName).equals(newValue.getClass())
                     ) {
                         sb.append(String.format(
                                         ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN,
-                                        dbFields.getDbFieldType(newDbFieldName),
+                                        dbFields.getClassOfDbFieldDefinition(newDbFieldName),
                                         newDbFieldName,
                                         newValue
                                 )

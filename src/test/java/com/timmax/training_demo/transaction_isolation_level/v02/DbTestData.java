@@ -14,13 +14,13 @@ public class DbTestData {
 
     public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD = new DbFieldName("wrong_field");
     public static final DbFieldName DB_FIELD_NAME_WRONG_FIELD_2 = new DbFieldName("wrong_field_2");
-    public static final DbField<Object> DB_FIELD_WRONG_FIELD = new DbField<>(DB_FIELD_NAME_WRONG_FIELD, null);
+    public static final DbField<Object> DB_FIELD_WRONG_FIELD = new DbField<>(DB_FIELD_NAME_WRONG_FIELD, new DbFieldDefinition<>(null));
 
     public static final DbFieldName DB_FIELD_NAME_ID = new DbFieldName("id");
-    public static final DbField<Integer> DB_FIELD_ID = new DbField<>(DB_FIELD_NAME_ID, Integer.class);
+    public static final DbField<Integer> DB_FIELD_ID = new DbField<>(DB_FIELD_NAME_ID, new DbFieldDefinition<>(Integer.class));
 
     public static final DbFieldName DB_FIELD_NAME_NAME = new DbFieldName("name");
-    public static final DbField<String> DB_FIELD_NAME = new DbField<>(DB_FIELD_NAME_NAME, String.class);
+    public static final DbField<String> DB_FIELD_NAME = new DbField<>(DB_FIELD_NAME_NAME, new DbFieldDefinition<>(String.class));
 
     public static final DbTabName DB_TAB_NAME_PERSON = new DbTabName("person");
 
