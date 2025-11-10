@@ -1,9 +1,11 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
+import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public non-sealed class DbTab extends DbTableLike {
@@ -86,10 +88,56 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        Set<DbRec> oldDbRecs = new HashSet<>();
+        Set<DbRec> newDbRecs = new HashSet<>();
+        int beforeCount = dbRecs.size();
+
         for (DbRec oldDbRec : dbRecs) {
             if (whereFunc == null || whereFunc.where(oldDbRec)) {
-                oldDbRec.setAll(updateSetCalcFunc.setCalcFunc(oldDbRec));
+                oldDbRecs.add(oldDbRec);
+                //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
+                DbRec newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
+                if (dbRecs.contains(newDbRec) ||
+                        newDbRecs.contains(newDbRec)
+                ) {
+                    throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+                }
+                if (!newDbRecs.add(newDbRec)) {
+                    throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+                }
             }
+        }
+
+        int oldCount = oldDbRecs.size();
+        int newCount = newDbRecs.size();
+
+        if (oldCount != newCount) {
+            logger.error("oldCount != newCount");
+            logger.error("beforeCount = {}, oldCount = {}, newCount = {}", beforeCount, oldCount, newCount);
+            throw new RuntimeException("oldCount != newCount");
+        }
+
+        dbRecs.removeAll(oldDbRecs);
+        int afterRemoveCount = dbRecs.size();
+
+        if (beforeCount - oldCount != afterRemoveCount) {
+            logger.error("beforeCount - oldCount != afterRemoveCount");
+            logger.error("oldTestRecordSet = {}", oldDbRecs);
+            logger.error("newTestRecordSet = {}", newDbRecs);
+            logger.error("beforeCount = {}, oldCount = {}, newCount = {}", beforeCount, oldCount, newCount);
+            logger.error("afterRemoveCount = {}", afterRemoveCount);
+            logger.error("after remove:  testRecordSet = {}", dbRecs);
+            throw new RuntimeException("beforeCount - oldCount != afterRemoveCount");
+        }
+
+        insert0(newDbRecs);
+        int afterCount = dbRecs.size();
+
+        if (afterRemoveCount + newCount != afterCount) {
+            logger.error("afterRemoveCount + newCount != afterCount");
+            logger.error("afterRemoveCount = {}, newCount = {}, afterCount = {}", afterRemoveCount, newCount, afterCount);
+            logger.error("after insert0: testRecordSet = {}", dbRecs);
+            throw new RuntimeException("afterRemoveCount + newCount != afterCount");
         }
     }
 

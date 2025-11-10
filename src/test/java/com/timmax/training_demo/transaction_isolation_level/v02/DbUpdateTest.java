@@ -49,6 +49,32 @@ public class DbUpdateTest {
         Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
 
+    //  Этот тест нужен и таков потому, что в качестве коллекции для хранения строк используется Set.
+    //  См. комментарий к DbTableLike :: dbRecs.
+    @Test
+    public void updateTwoRowsTableBySameRecords() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person
+        //     SET id = 1
+        //       , name = 'Bob'
+        DbSQLException exception = Assertions.assertThrows(
+                DbSQLException.class,
+                () -> dbTabPerson.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_ID, 1,
+                                DB_FIELD_NAME_NAME, "Bob"
+                        )
+                )
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
     @Test
     public void updateTwoRowsTableWhereIdEq2() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);

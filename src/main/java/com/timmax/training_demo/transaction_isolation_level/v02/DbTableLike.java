@@ -11,12 +11,13 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     protected final DbFields dbFields;
 
-    //  ToDo:   См. ниже UPDATE.
+    //  Done:
     //  Поскольку в качестве коллекции для хранения строк используется Set,
-    //  новый элемент может быть не добавлен, если точно такой уже есть.
+    //  новый элемент может быть не добавлен, если точно такой уже есть
+    //  (причём в Set значения типа null при сравнении с null дают true, в отличии от SQL).
     //  Это нужно проверять:
     //  - при INSERT (см. insert0 в этом классе - реализовано),
-    //  - при UPDATE (см. update0 в классе-потомке - НЕОБХОДИМО ПРОВЕРИТЬ И РЕАЛИЗОВАТЬ).
+    //  - при UPDATE (см. update0 в классе-потомке - реализовано).
     //  ToDo:   Вместо Set использовать, что-то, что позволяет хранить дубликаты.
     //  Для большей схожести с реляционной алгеброй следовало-бы вместо Set использовать что-то,
     //  что позволяет хранить дубликаты, например, List.
@@ -50,6 +51,10 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         if (!dbRecs.add(new DbRec(newDbRec))) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
+    }
+
+    protected void insert0(Set<DbRec> newDbRecSet) {
+        newDbRecSet.forEach(this::insert0);
     }
 
     @Override

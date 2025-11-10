@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+//  ToDo:   Экземпляр класса нужно сделать глубоко неизменяемым.
 public class DbRec {
     protected static final Logger logger = LoggerFactory.getLogger(DbRec.class);
 
@@ -27,6 +28,17 @@ public class DbRec {
 
     public DbRec(DbFields dbFields, Map<DbFieldName, Object> recMap) {
         this(dbFields);
+        verifyCorrespondenceBetweenDbFieldsAndRecMap(recMap);
+        this.recMap.putAll(recMap);
+    }
+
+    @SuppressWarnings("CopyConstructorMissesField")
+    public DbRec(DbRec rec) {
+        this(rec.dbFields, rec.recMap);
+    }
+
+    public DbRec(DbRec dbRec, Map<DbFieldName, Object> recMap) {
+        this(dbRec);
         verifyCorrespondenceBetweenDbFieldsAndRecMap(recMap);
         this.recMap.putAll(recMap);
     }
@@ -64,16 +76,6 @@ public class DbRec {
         if (isThereError.get()) {
             throw new DbSQLException(sb.toString());
         }
-    }
-
-    @SuppressWarnings("CopyConstructorMissesField")
-    public DbRec(DbRec rec) {
-        this(rec.dbFields, rec.recMap);
-    }
-
-    void setAll(Map<DbFieldName, Object> newRecMap) {
-        verifyCorrespondenceBetweenDbFieldsAndRecMap(newRecMap);
-        recMap.putAll(newRecMap);
     }
 
     //  Method returns DbFieldValue, but not Object.
