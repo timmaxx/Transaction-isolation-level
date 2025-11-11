@@ -3,61 +3,30 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbFields.ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbFields.ERROR_TYPE_DOES_NOT_EXIST;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
-public class DbCreateTest {
-    protected static final Logger logger = LoggerFactory.getLogger(DbCreateTest.class);
-
+public class DbFieldsTest {
     @Test
-    public void dbTabCopyMustHaveOwnDbRecCopy() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
-
-        Assertions.assertNotSame(
-                dbTabPersonWithOneRow.dbRecs.stream().findAny().get(),
-                dbTabPerson.dbRecs.stream().findAny().get()
-        );
-    }
-
-    @Test
-    public void createTable() {
-        //  CREATE TABLE person(
-        //      id INT,
-        //      name VARCHAR(50)
-        //  )
-        DbTab dbTabPerson = new DbTab(
-                DB_TAB_NAME_PERSON,
-                DB_FIELDS,
-                true
-        );
-
-        Assertions.assertEquals(dbTabPersonEmpty, dbTabPerson);
-    }
-
-    @Test
-    public void createTableWithDuplicateNameColumns() {
+    void createDbFieldsButWithDuplicateNameColumns() {
+        //  Prepare column list for
         //  CREATE TABLE person(
         //      id INT,
         //      id INT
         //  )
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
-                () -> new DbTab(
-                        DB_TAB_NAME_PERSON,
-                        new DbFields(
-                                DB_FIELD_ID,
-                                DB_FIELD_ID
-                        ), true
+                () -> new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_ID
                 )
         );
 
         Assertions.assertEquals(
                 String.format("\n" +
-                        ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE + "\n",
+                                ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE + "\n",
                         DB_FIELD_ID.getDbFieldName()
                 ),
                 exception.getMessage(),
@@ -66,25 +35,23 @@ public class DbCreateTest {
     }
 
     @Test
-    public void createTableWithWrongTypeInColumn() {
+    public void createDbFieldsButWithWrongTypeInColumn() {
+        //  Prepare column list for
         //  CREATE TABLE person(
         //      id INT,
         //      wrong_field null
         //  )
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
-                () -> new DbTab(
-                        DB_TAB_NAME_PERSON,
-                        new DbFields(
-                                DB_FIELD_ID,
-                                DB_FIELD_WRONG_FIELD
-                        ), true
+                () -> new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_WRONG_FIELD
                 )
         );
 
         Assertions.assertEquals(
                 String.format("\n" +
-                        ERROR_TYPE_DOES_NOT_EXIST + "\n",
+                                ERROR_TYPE_DOES_NOT_EXIST + "\n",
                         "null", DB_FIELD_NAME_WRONG_FIELD
                 ),
                 exception.getMessage(),
@@ -93,7 +60,8 @@ public class DbCreateTest {
     }
 
     @Test
-    public void createTableWithDuplicateNameColumnsAndWrongTypeInColumn() {
+    void createDbFieldsButWithDuplicateNameColumnsAndWrongTypeInColumn() {
+        //  Prepare column list for
         //  CREATE TABLE person(
         //      id INT,
         //      id INT,
@@ -101,13 +69,10 @@ public class DbCreateTest {
         //  )
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
-                () -> new DbTab(
-                        DB_TAB_NAME_PERSON,
-                        new DbFields(
-                                DB_FIELD_ID,
-                                DB_FIELD_ID,
-                                DB_FIELD_WRONG_FIELD
-                        ), true
+                () -> new DbFields(
+                        DB_FIELD_ID,
+                        DB_FIELD_ID,
+                        DB_FIELD_WRONG_FIELD
                 )
         );
 
