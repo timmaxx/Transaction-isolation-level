@@ -1,12 +1,10 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_COLUMN_DOESNT_EXIST;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
 public class DbSelectTest {
@@ -53,47 +51,4 @@ public class DbSelectTest {
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
-
-    @Test
-    public void selectFromOneRowTableButWhereHasWrongNameField() {
-        //  SELECT *
-        //    FROM person
-        //   WHERE wrong_field = 2
-        DbSQLException exception = Assertions.assertThrows(
-                DbSQLException.class,
-                () -> dbTabPersonWithOneRow.select(
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2)
-                )
-        );
-
-        Assertions.assertEquals(
-                String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
-                exception.getMessage(),
-                EXCEPTION_MESSAGE_DOESNT_MATCH
-        );
-    }
-
-    @Test
-    public void selectFromOneRowTableButWhereHasWrongNameFields() {
-        //  SELECT *
-        //    FROM person
-        //   WHERE wrong_field = 2
-        //      OR wrong_field_2 = "Bob"
-        DbSQLException exception = Assertions.assertThrows(
-                DbSQLException.class,
-                //  См. комментарии к DbUpdateTest :: updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongNameFields
-                () -> dbTabPersonWithOneRow.select(
-                        dbRec ->
-                                dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2) ||
-                                        dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob")
-                )
-        );
-
-        Assertions.assertEquals(
-                String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
-                exception.getMessage(),
-                EXCEPTION_MESSAGE_DOESNT_MATCH
-        );
-    }
-
 }

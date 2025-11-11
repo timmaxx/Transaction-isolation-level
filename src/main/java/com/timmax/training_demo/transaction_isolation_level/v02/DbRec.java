@@ -15,7 +15,7 @@ public class DbRec {
 
     static final String ERROR_COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
     static final String ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN = "ERROR: invalid input syntax for '%s' (column '%s'): '%s'.";
-    static final String ERROR_NULL_VALUE_IN_COLUMN_S_VIOLATES_NOT_NULL_CONSTRAINT = "ERROR: null value in column '%s' violates not-null constraint";
+    static final String ERROR_NULL_VALUE_IN_COLUMN_VIOLATES_NOT_NULL_CONSTRAINT = "ERROR: null value in column '%s' violates not-null constraint";
 
     private final DbFields dbFields;
 
@@ -68,7 +68,7 @@ public class DbRec {
                     if (!isNullable &&
                             entry.getValue() == null
                     ) {
-                        sb.append(String.format(ERROR_NULL_VALUE_IN_COLUMN_S_VIOLATES_NOT_NULL_CONSTRAINT, dbFieldName)).append("\n");
+                        sb.append(String.format(ERROR_NULL_VALUE_IN_COLUMN_VIOLATES_NOT_NULL_CONSTRAINT, dbFieldName)).append("\n");
                         isThereError.set(true);
                     }
                 })

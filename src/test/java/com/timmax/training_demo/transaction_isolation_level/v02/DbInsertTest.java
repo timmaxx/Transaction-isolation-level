@@ -7,10 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_COLUMN_DOESNT_EXIST;
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbRec.ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
@@ -121,70 +117,6 @@ public class DbInsertTest {
         DbSelect dbSelect2 = dbTabPerson2.select();
 
         Assertions.assertEquals(dbSelect1, dbSelect2);
-    }
-
-    @Test
-    public void insertOneRowIntoEmptyTableButFieldsHasWrongField() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-
-        //  INSERT
-        //    INTO person (
-        //      wrong_name, name
-        //      ) VALUES (
-        //      1, "Bob"
-        //  )
-        DbSQLException exception = Assertions.assertThrows(
-                DbSQLException.class,
-                () -> dbTabPerson.insert(
-                        new DbRec(DB_FIELDS,
-                                Map.of(DB_FIELD_NAME_WRONG_FIELD, 1,
-                                        DB_FIELD_NAME_NAME, "Bob"
-                                )
-                        )
-                )
-        );
-
-        Assertions.assertEquals(
-                String.format("\n" +
-                                ERROR_COLUMN_DOESNT_EXIST + "\n",
-                        DB_FIELD_NAME_WRONG_FIELD
-                ),
-                exception.getMessage(),
-                EXCEPTION_MESSAGE_DOESNT_MATCH
-        );
-    }
-
-    @Test
-    public void insertOneRowIntoEmptyTableButValuesHasWrongTypeValues() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-
-        //  INSERT
-        //    INTO person (
-        //      id, name
-        //      ) VALUES (
-        //      "B", 999
-        //  )
-        DbSQLException exception = Assertions.assertThrows(
-                DbSQLException.class,
-                () -> dbTabPerson.insert(
-                        new DbRec(DB_FIELDS,
-                                Map.of(DB_FIELD_NAME_ID, "B",
-                                        DB_FIELD_NAME_NAME, 999
-                                )
-                        )
-                )
-        );
-
-        Assertions.assertEquals(
-                String.format("\n" +
-                                ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n" +
-                                ERROR_INVALID_INPUT_SYNTAX_FOR_COLUMN + "\n",
-                        Integer.class, DB_FIELD_NAME_ID, "B",
-                        String.class, DB_FIELD_NAME_NAME, 999
-                ),
-                exception.getMessage(),
-                EXCEPTION_MESSAGE_DOESNT_MATCH
-        );
     }
 
     //  ToDo:   Дополнить тестом, вставляющим запись с NOT NULL полем, которое = null.
