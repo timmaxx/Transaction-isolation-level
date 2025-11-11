@@ -132,6 +132,4 @@ public class DbUpdateTest {
         );
     }
 */
-
-    //  ToDo:   Дополнить тестом, изменяющим запись с NOT NULL полем, которое должно стать null.
 }

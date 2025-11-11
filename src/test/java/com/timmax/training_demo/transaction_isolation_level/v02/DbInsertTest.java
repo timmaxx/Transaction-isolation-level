@@ -118,6 +118,4 @@ public class DbInsertTest {
 
         Assertions.assertEquals(dbSelect1, dbSelect2);
     }
-
-    //  ToDo:   Дополнить тестом, вставляющим запись с NOT NULL полем, которое = null.
 }
