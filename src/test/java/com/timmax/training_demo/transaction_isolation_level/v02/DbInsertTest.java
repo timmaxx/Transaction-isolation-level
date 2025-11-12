@@ -100,7 +100,7 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertTwoRowsIntoEmptyTableInDifferentOrder() {
+    public void insertTwoRowsIntoEmptyTablesInDifferentOrder() {
         DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
         DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
 

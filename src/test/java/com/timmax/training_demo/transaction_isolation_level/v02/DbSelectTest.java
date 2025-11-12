@@ -29,6 +29,15 @@ public class DbSelectTest {
     }
 
     @Test
+    public void selectFromTwoRowsTable() {
+        //  SELECT *
+        //    FROM person
+        DbSelect dbSelect = dbTabPersonWithTwoRows.select();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
+    }
+
+    @Test
     public void selectFromEmptyTableWhereIdEq1() {
         //  SELECT *
         //    FROM person
@@ -46,6 +55,18 @@ public class DbSelectTest {
         //    FROM person
         //   WHERE id = 1
         DbSelect dbSelect = dbTabPersonWithOneRow.select(
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
+        );
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void selectFromTwoRowsTableWhereIdEq1() {
+        //  SELECT *
+        //    FROM person
+        //   WHERE id = 1
+        DbSelect dbSelect = dbTabPersonWithTwoRows.select(
                 dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
         );
 
