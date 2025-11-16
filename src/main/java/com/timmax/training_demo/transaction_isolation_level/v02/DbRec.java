@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 //  ToDo:   Экземпляр класса нужно сделать глубоко неизменяемым.
-public class DbRec {
+public class DbRec implements Comparable<DbRec> {
     protected static final Logger logger = LoggerFactory.getLogger(DbRec.class);
 
     static final String ERROR_COLUMN_DOESNT_EXIST = "ERROR: column '%s' does not exist.";
@@ -142,5 +142,10 @@ public class DbRec {
     @Override
     public int hashCode() {
         return Objects.hashCode(recMap);
+    }
+
+    @Override
+    public int compareTo(DbRec o) {
+        return hashCode() - o.hashCode();
     }
 }

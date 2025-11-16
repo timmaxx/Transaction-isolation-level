@@ -15,8 +15,8 @@ public class DbTabTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
 
         Assertions.assertNotSame(
-                dbTabPersonWithOneRow.dbRecs.stream().findAny().get(),
-                dbTabPerson.dbRecs.stream().findAny().get()
+                dbTabPersonWithOneRow.dbRecs.values().stream().findAny().get(),
+                dbTabPerson.dbRecs.values().stream().findAny().get()
         );
     }
 

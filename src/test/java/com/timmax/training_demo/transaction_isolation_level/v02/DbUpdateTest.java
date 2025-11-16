@@ -1,13 +1,12 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
-import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.util.*;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
@@ -43,33 +42,15 @@ public class DbUpdateTest {
 
         DbSelect dbSelect = dbTabPerson.select();
 
-        Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
-    }
+        // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
 
-    //  Этот тест нужен и таков потому, что в качестве коллекции для хранения строк используется Set.
-    //  См. комментарий к DbTableLike :: dbRecs.
-    @Test
-    public void updateTwoRowsTableBySameRecords() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.dbRecs.values());
+        List<DbRec> values2 = new ArrayList<>(dbSelect.dbRecs.values());
+        values1.sort(Comparator.naturalOrder());
+        values2.sort(Comparator.naturalOrder());
 
-        //  UPDATE person
-        //     SET id = 1
-        //       , name = "Bob"
-        DbSQLException exception = Assertions.assertThrows(
-                DbSQLException.class,
-                () -> dbTabPerson.update(
-                        dbRec -> Map.of(
-                                DB_FIELD_NAME_ID, 1,
-                                DB_FIELD_NAME_NAME, "Bob"
-                        )
-                )
-        );
-
-        Assertions.assertEquals(
-                String.format(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE),
-                exception.getMessage(),
-                EXCEPTION_MESSAGE_DOESNT_MATCH
-        );
+        Assertions.assertEquals(values1, values2);
     }
 
     @Test

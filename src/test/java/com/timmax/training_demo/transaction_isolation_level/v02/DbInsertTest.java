@@ -1,11 +1,12 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
-import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
@@ -78,27 +79,6 @@ public class DbInsertTest {
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
-    //  Этот тест нужен и таков потому, что в качестве коллекции для хранения строк используется Set.
-    //  См. комментарий к DbTableLike :: dbRecs.
-    @Test
-    public void insertTwoRowsWithIdAndNameAreNullIntoEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-
-        //  INSERT INTO person VALUES (1, "Bob", "@");
-        //  INSERT INTO person VALUES (1, "Bob", "@");
-        dbTabPerson.insert(dbRec1_Bob_email);
-        DbSQLException exception = Assertions.assertThrows(
-                DbSQLException.class,
-                () -> dbTabPerson.insert(dbRec1_Bob_email)
-        );
-
-        Assertions.assertEquals(
-                String.format(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE),
-                exception.getMessage(),
-                EXCEPTION_MESSAGE_DOESNT_MATCH
-        );
-    }
-
     @Test
     public void insertTwoRowsIntoEmptyTablesInDifferentOrder() {
         DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
@@ -116,6 +96,14 @@ public class DbInsertTest {
         DbSelect dbSelect1 = dbTabPerson1.select();
         DbSelect dbSelect2 = dbTabPerson2.select();
 
-        Assertions.assertEquals(dbSelect1, dbSelect2);
+        // Assertions.assertEquals(dbSelect1, dbSelect2);
+
+        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        List<DbRec> values1 = new ArrayList<>(dbSelect1.dbRecs.values());
+        List<DbRec> values2 = new ArrayList<>(dbSelect2.dbRecs.values());
+        values1.sort(Comparator.naturalOrder());
+        values2.sort(Comparator.naturalOrder());
+
+        Assertions.assertEquals(values1, values2);
     }
 }

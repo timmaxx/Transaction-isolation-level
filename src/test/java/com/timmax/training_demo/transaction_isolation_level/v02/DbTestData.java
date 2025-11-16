@@ -3,9 +3,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DbTestData {
     protected static final Logger logger = LoggerFactory.getLogger(DbTestData.class);
@@ -41,16 +39,16 @@ public class DbTestData {
 
     public static final DbSelect dbSelectPersonEmpty = dbTabPersonEmpty.select();
 
-    public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_Bob_email));
+    public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, List.of(dbRec1_Bob_email));
     public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select();
 
-    public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_Alice_email));
+    public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, List.of(dbRec2_Alice_email));
     public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select();
 
-    public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec1_BobBob_email, dbRec2_AliceAlice_email));
+    public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, List.of(dbRec1_BobBob_email, dbRec2_AliceAlice_email));
     public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select();
 
-    public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, Set.of(dbRec2_AliceAlice_email));
+    public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, List.of(dbRec2_AliceAlice_email));
     public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select();
 
     public static final DbRec dbRec3_Tom_Null = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 3, DB_FIELD_NAME_NAME, "Tom"));
@@ -66,6 +64,6 @@ public class DbTestData {
         dbRec3_Tom_Null2 = new DbRec(DB_FIELDS, m);
     }
 
-    public static final DbTab dbTabPersonWithOneRowNameIsNull = new DbTab(dbTabPersonEmpty, true, Set.of(dbRec3_Tom_Null));
+    public static final DbTab dbTabPersonWithOneRowNameIsNull = new DbTab(dbTabPersonEmpty, true, List.of(dbRec3_Tom_Null));
     public static final DbSelect dbSelectPersonWithOneRowEmailIsNull = dbTabPersonWithOneRowNameIsNull.select();
 }
