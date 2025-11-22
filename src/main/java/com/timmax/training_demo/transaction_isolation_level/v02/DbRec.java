@@ -55,15 +55,18 @@ public class DbRec implements Comparable<DbRec> {
     }
 
     private void verifyAreSomeFieldsNullButTheyMustBeNotNull() {
-        VerifyAndBuildExceptionMessage.work(
-                dbFieldName_Object_Map,
+        VerifyAndBuildExceptionMessageStream.work(
+                dbFieldName_Object_Map.entrySet().stream()
+                        //  dbFieldName_Object_Map сортируется по ключу. Для этого
+                        //  class DbObjectName implements Comparable<DbObjectName>
+                        //  Но лучше было-бы для тех полей, которые есть в DbFields, сортировать по порядку включения,
+                        //  а уже те, которых нет, сортировать по имени полей.
+                        .sorted(Map.Entry.comparingByKey()),
                 (sb, isThereError, entry
                 ) -> {
                     DbFieldName dbFieldName = entry.getKey();
                     boolean isNullable = dbFields.isNullableOfDbFieldDefinition(dbFieldName);
-                    if (!isNullable &&
-                            entry.getValue() == null
-                    ) {
+                    if (!isNullable && entry.getValue() == null) {
                         sb.append(String.format(ERROR_NULL_VALUE_IN_COLUMN_VIOLATES_NOT_NULL_CONSTRAINT, dbFieldName)).append("\n");
                         isThereError.set(true);
                     }
@@ -71,9 +74,14 @@ public class DbRec implements Comparable<DbRec> {
         ;
     }
 
-    private void verifyCorrespondenceBetweenDbFieldsAndRecMap(Map<DbFieldName, Object> recMap) {
-        VerifyAndBuildExceptionMessage.work(
-                recMap,
+    private void verifyCorrespondenceBetweenDbFieldsAndRecMap(Map<DbFieldName, Object> newDbFieldName_Object_Map) {
+        VerifyAndBuildExceptionMessageStream.work(
+                newDbFieldName_Object_Map.entrySet().stream()
+                        //  newDbFieldName_Object_Map сортируется по ключу. Для этого
+                        //  class DbObjectName implements Comparable<DbObjectName>
+                        //  Но лучше было-бы для тех полей, которые есть в DbFields, сортировать по порядку включения,
+                        //  а уже те, которых нет, сортировать по имени полей.
+                        .sorted(Map.Entry.comparingByKey()),
                 (sb, isThereError, entry
                 ) -> {
                     DbFieldName newDbFieldName = entry.getKey();
