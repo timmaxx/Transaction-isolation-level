@@ -8,7 +8,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     public static final String ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE = "ERROR: Duplicate key value violates unique constraint (combinations of all fields must be unique).";
 
     protected final DbFields dbFields;
-    protected final Map<Integer, DbRec> dbRecs = new HashMap<>();
+    protected final Map<Integer, DbRec> rowId_DbRec_Map = new HashMap<>();
     protected Integer lastInsertedRowId = 0;
 
     public DbTableLike(DbFields dbFields) {
@@ -25,7 +25,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     private DbSelect select0(WhereFunc whereFunc) {
         DbSelect dbSelect = new DbSelect(this.dbFields);
-        for (DbRec dbRec : dbRecs.values()) {
+        for (DbRec dbRec : rowId_DbRec_Map.values()) {
             if (whereFunc == null || whereFunc.where(dbRec)) {
                 dbSelect.insert0(dbRec);
             }
@@ -35,31 +35,31 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     protected void insert0(DbRec newDbRec) {
         lastInsertedRowId++;
-        if (dbRecs.put(lastInsertedRowId, new DbRec(newDbRec)) != null) {
+        if (rowId_DbRec_Map.put(lastInsertedRowId, new DbRec(newDbRec)) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
     }
 
-    protected void insert0(List<DbRec> newDbRecSet) {
-        newDbRecSet.forEach(this::insert0);
+    protected void insert0(List<DbRec> newDbRecList) {
+        newDbRecList.forEach(this::insert0);
     }
 
     @Override
     public String toString() {
         return "DbTableLike{" +
                 "dbFields=" + dbFields +
-                ", dbRecs=" + dbRecs +
+                ", rowId_DbRec_Map=" + rowId_DbRec_Map +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DbTableLike that)) return false;
-        return Objects.equals(dbFields, that.dbFields) && Objects.equals(dbRecs, that.dbRecs);
+        return Objects.equals(dbFields, that.dbFields) && Objects.equals(rowId_DbRec_Map, that.rowId_DbRec_Map);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dbFields, dbRecs);
+        return Objects.hash(dbFields, rowId_DbRec_Map);
     }
 }

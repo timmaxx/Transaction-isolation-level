@@ -29,19 +29,18 @@ public non-sealed class DbTab extends DbTableLike {
 
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
-        dbTab.dbRecs.values().forEach(this::insert0);
+        dbTab.rowId_DbRec_Map.values().forEach(this::insert0);
     }
 
-    public DbTab(DbTab dbTab, boolean readOnly, List<DbRec> dbRecs) {
+    public DbTab(DbTab dbTab, boolean readOnly, List<DbRec> dbRec_List) {
         this(dbTab, readOnly);
-        dbRecs.forEach(this::insert0);
+        dbRec_List.forEach(this::insert0);
     }
 
     private void validateReadOnlyTable(String msgInsUpdDel) {
-        if (!readOnly) {
-            return;
+        if (readOnly) {
+            throw new DbDataAccessException(String.format(ERROR_TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
         }
-        throw new DbDataAccessException(String.format(ERROR_TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
     }
 
     public void insert(DbRec newDbRec) {
@@ -60,11 +59,11 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private void delete0() {
-        dbRecs.clear();
+        rowId_DbRec_Map.clear();
     }
 
     private void delete0(WhereFunc whereFunc) {
-        dbRecs.values().removeIf(whereFunc::where);
+        rowId_DbRec_Map.values().removeIf(whereFunc::where);
     }
 
     public void update(UpdateSetCalcFunc updateSetCalcFunc) {
@@ -80,9 +79,9 @@ public non-sealed class DbTab extends DbTableLike {
     private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         List<DbRec> oldDbRecs = new ArrayList<>();
         List<DbRec> newDbRecs = new ArrayList<>();
-        int beforeCount = dbRecs.size();
+        int beforeCount = rowId_DbRec_Map.size();
 
-        for (Map.Entry<Integer, DbRec>  entry : dbRecs.entrySet()) {
+        for (Map.Entry<Integer, DbRec>  entry : rowId_DbRec_Map.entrySet()) {
             if (whereFunc == null || whereFunc.where(entry.getValue())) {
                 oldDbRecs.add(entry.getValue());
                 //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
@@ -100,8 +99,8 @@ public non-sealed class DbTab extends DbTableLike {
             throw new RuntimeException("oldCount != newCount");
         }
 
-        dbRecs.values().removeAll(oldDbRecs);
-        int afterRemoveCount = dbRecs.size();
+        rowId_DbRec_Map.values().removeAll(oldDbRecs);
+        int afterRemoveCount = rowId_DbRec_Map.size();
 
         if (beforeCount - oldCount != afterRemoveCount) {
             logger.error("beforeCount - oldCount != afterRemoveCount");
@@ -109,17 +108,17 @@ public non-sealed class DbTab extends DbTableLike {
             logger.error("newTestRecordSet = {}", newDbRecs);
             logger.error("beforeCount = {}, oldCount = {}, newCount = {}", beforeCount, oldCount, newCount);
             logger.error("afterRemoveCount = {}", afterRemoveCount);
-            logger.error("after remove:  testRecordSet = {}", dbRecs);
+            logger.error("after remove:  rowId_DbRec_Map = {}", rowId_DbRec_Map);
             throw new RuntimeException("beforeCount - oldCount != afterRemoveCount");
         }
 
         insert0(newDbRecs);
-        int afterCount = dbRecs.size();
+        int afterCount = rowId_DbRec_Map.size();
 
         if (afterRemoveCount + newCount != afterCount) {
             logger.error("afterRemoveCount + newCount != afterCount");
             logger.error("afterRemoveCount = {}, newCount = {}, afterCount = {}", afterRemoveCount, newCount, afterCount);
-            logger.error("after insert0: testRecordSet = {}", dbRecs);
+            logger.error("after insert0: rowId_DbRec_Map = {}", rowId_DbRec_Map);
             throw new RuntimeException("afterRemoveCount + newCount != afterCount");
         }
     }
@@ -130,7 +129,7 @@ public non-sealed class DbTab extends DbTableLike {
                 "dbTabName='" + dbTabName + '\'' +
                 ", readOnly=" + readOnly +
                 ", dbFields=" + dbFields +
-                ", dbRecs=" + dbRecs +
+                ", rowId_DbRec_Map=" + rowId_DbRec_Map +
                 '}';
     }
 }
