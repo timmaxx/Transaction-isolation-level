@@ -23,7 +23,7 @@ public class DbRec implements Comparable<DbRec> {
     //          Он должен быть предназначен для задач манипуляций со значениями полей записи
     //          и при этом не предоставлять доступ к мапе,
     //          а также сериализацией и десериализацией управлять.
-    private final Map<DbFieldName, Object> recMap;
+    private final Map<DbFieldName, Object> dbFieldName_Object_Map;
 
     public DbRec(DbFields dbFields) {
         this.dbFields = dbFields;
@@ -31,38 +31,35 @@ public class DbRec implements Comparable<DbRec> {
         //          который будет альтернативно реализовывать
         //          Map<DbFieldName, Object> recMap
         //          См. выше.
-        recMap = new HashMap<>();
+        dbFieldName_Object_Map = new HashMap<>();
         dbFields.getDbFieldName_Set()
-                .forEach(key -> recMap.put(key, null));
+                .forEach(key -> dbFieldName_Object_Map.put(key, null));
     }
 
-    public DbRec(DbFields dbFields, Map<DbFieldName, Object> recMap) {
+    public DbRec(DbFields dbFields, Map<DbFieldName, Object> dbFieldName_Object_Map) {
         this(dbFields);
-        verifyCorrespondenceBetweenDbFieldsAndRecMap(recMap);
-        this.recMap.putAll(recMap);
+        verifyCorrespondenceBetweenDbFieldsAndRecMap(dbFieldName_Object_Map);
+        this.dbFieldName_Object_Map.putAll(dbFieldName_Object_Map);
         verifyAreSomeFieldsNullButTheyMustBeNotNull();
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
     public DbRec(DbRec rec) {
-        this(rec.dbFields, rec.recMap);
+        this(rec.dbFields, rec.dbFieldName_Object_Map);
     }
 
-    public DbRec(DbRec dbRec, Map<DbFieldName, Object> recMap) {
+    public DbRec(DbRec dbRec, Map<DbFieldName, Object> dbFieldName_Object_Map) {
         this(dbRec);
-        verifyCorrespondenceBetweenDbFieldsAndRecMap(recMap);
-        this.recMap.putAll(recMap);
+        verifyCorrespondenceBetweenDbFieldsAndRecMap(dbFieldName_Object_Map);
+        this.dbFieldName_Object_Map.putAll(dbFieldName_Object_Map);
         verifyAreSomeFieldsNullButTheyMustBeNotNull();
     }
 
-    //  ToDo:   В методах verify... видна похожая структура. Нужно избавиться от дублирования кода.
     private void verifyAreSomeFieldsNullButTheyMustBeNotNull() {
-        StringBuilder sb = new StringBuilder("\n");
-        AtomicBoolean isThereError = new AtomicBoolean(false);
-
-        recMap.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(entry -> {
+        verifyAndBuildExceptionMessage(
+                dbFieldName_Object_Map,
+                (sb, isThereError, entry
+                ) -> {
                     DbFieldName dbFieldName = entry.getKey();
                     boolean isNullable = dbFields.isNullableOfDbFieldDefinition(dbFieldName);
                     if (!isNullable &&
@@ -71,26 +68,14 @@ public class DbRec implements Comparable<DbRec> {
                         sb.append(String.format(ERROR_NULL_VALUE_IN_COLUMN_VIOLATES_NOT_NULL_CONSTRAINT, dbFieldName)).append("\n");
                         isThereError.set(true);
                     }
-                })
-        ;
-
-        if (isThereError.get()) {
-            throw new DbSQLException(sb.toString());
-        }
+                });
     }
 
-    //  ToDo:   В методах verify... видна похожая структура. Нужно избавиться от дублирования кода.
     private void verifyCorrespondenceBetweenDbFieldsAndRecMap(Map<DbFieldName, Object> recMap) {
-        StringBuilder sb = new StringBuilder("\n");
-        AtomicBoolean isThereError = new AtomicBoolean(false);
-
-        recMap.entrySet().stream()
-                //  recMap сортируется по ключу. Для этого
-                //  class DbObjectName implements Comparable<DbObjectName>
-                //  Но лучше было-бы для тех полей, которые есть в DbFields, сортировать по порядку включения,
-                //  а уже те, которых нет, сортировать по имени полей.
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(entry -> {
+        verifyAndBuildExceptionMessage(
+                recMap,
+                (sb, isThereError, entry
+                ) -> {
                     DbFieldName newDbFieldName = entry.getKey();
                     Object newValue = entry.getValue();
                     if (!dbFields.containsDbFieldName(newDbFieldName)) {
@@ -108,9 +93,21 @@ public class DbRec implements Comparable<DbRec> {
                         ).append("\n");
                         isThereError.set(true);
                     }
-                })
-        ;
+                });
+    }
 
+    private static void verifyAndBuildExceptionMessage(Map<DbFieldName, Object> recMap, VerifyAndBuildExceptionMessage verifyAndBuildExceptionMessage) {
+        StringBuilder sb = new StringBuilder("\n");
+        AtomicBoolean isThereError = new AtomicBoolean(false);
+
+        recMap.entrySet().stream()
+                //  recMap сортируется по ключу. Для этого
+                //  class DbObjectName implements Comparable<DbObjectName>
+                //  Но лучше было-бы для тех полей, которые есть в DbFields, сортировать по порядку включения,
+                //  а уже те, которых нет, сортировать по имени полей.
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> verifyAndBuildExceptionMessage.work(sb, isThereError, entry))
+        ;
         if (isThereError.get()) {
             throw new DbSQLException(sb.toString());
         }
@@ -120,28 +117,28 @@ public class DbRec implements Comparable<DbRec> {
     //  This was done to check the correctness of the types.
     //  Also see DbFieldValue :: public boolean equals(Object o)
     public DbFieldValue getValue(DbFieldName dbFieldName) {
-        if (!recMap.containsKey(dbFieldName)) {
+        if (!dbFieldName_Object_Map.containsKey(dbFieldName)) {
             throw new DbSQLException(String.format(ERROR_COLUMN_DOESNT_EXIST, dbFieldName));
         }
-        return new DbFieldValue(recMap.get(dbFieldName).getClass(), recMap.get(dbFieldName));
+        return new DbFieldValue(dbFieldName_Object_Map.get(dbFieldName).getClass(), dbFieldName_Object_Map.get(dbFieldName));
     }
 
     @Override
     public String toString() {
         return "DbRec{" +
-                "recMap=" + recMap +
+                "dbFieldName_Object_Map=" + dbFieldName_Object_Map +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DbRec dbRec)) return false;
-        return Objects.equals(recMap, dbRec.recMap);
+        return Objects.equals(dbFieldName_Object_Map, dbRec.dbFieldName_Object_Map);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(recMap);
+        return Objects.hashCode(dbFieldName_Object_Map);
     }
 
     @Override
