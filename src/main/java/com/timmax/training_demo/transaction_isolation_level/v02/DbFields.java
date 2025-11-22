@@ -1,9 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
-
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DbFields {
     final static String ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE = "ERROR: column '%s' specified more than once.";
@@ -11,14 +8,11 @@ public class DbFields {
 
     private final Map<DbFieldName, DbFieldDefinition<?>> dbFieldName_DbFieldDefinition_Map = new LinkedHashMap<>();
 
-    //  ToDo:   Смотри комментарии к методам DbRec :: verify...
     //  Warning:(9, 21) Raw use of parameterized class 'DbField'
     public DbFields(DbField... arrayOfDbFields) {
-        StringBuilder sb = new StringBuilder("\n");
-        AtomicBoolean isThereError = new AtomicBoolean(false);
-
-        Arrays.stream(arrayOfDbFields)
-                .forEach(dbField -> {
+        VerifyAndBuildExceptionMessageStream.work(
+                Arrays.stream(arrayOfDbFields),
+                (sb, isThereError, dbField) -> {
                     if (dbFieldName_DbFieldDefinition_Map.containsKey(dbField.getDbFieldName())) {
                         sb.append(String.format(ERROR_COLUMN_SPECIFIED_MORE_THAN_ONCE, dbField.getDbFieldName())).append("\n");
                         isThereError.set(true);
@@ -34,10 +28,8 @@ public class DbFields {
                     if (!isThereError.get()) {
                         dbFieldName_DbFieldDefinition_Map.put(dbField.getDbFieldName(), dbField.getDbFieldDefinition());
                     }
-                });
-        if (isThereError.get()) {
-            throw new DbSQLException(sb.toString());
-        }
+                })
+        ;
     }
 
     //  Warning:(43, 13) Raw use of parameterized class 'DbFieldDefinition'
