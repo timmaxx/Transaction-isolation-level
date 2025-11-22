@@ -9,28 +9,29 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     protected final DbFields dbFields;
     protected final Map<Integer, DbRec> rowId_DbRec_Map = new HashMap<>();
-    protected Integer lastInsertedRowId = 0;
+
+    private Integer lastInsertedRowId = 0;
 
     public DbTableLike(DbFields dbFields) {
         this.dbFields = dbFields;
     }
 
-    public DbSelect select() {
+    public ResultOfDQLCommand select() {
         return select0(null);
     }
 
-    public DbSelect select(WhereFunc whereFunc) {
+    public ResultOfDQLCommand select(WhereFunc whereFunc) {
         return select0(whereFunc);
     }
 
-    private DbSelect select0(WhereFunc whereFunc) {
+    private ResultOfDQLCommand select0(WhereFunc whereFunc) {
         DbSelect dbSelect = new DbSelect(this.dbFields);
         for (DbRec dbRec : rowId_DbRec_Map.values()) {
             if (whereFunc == null || whereFunc.where(dbRec)) {
                 dbSelect.insert0(dbRec);
             }
         }
-        return dbSelect;
+        return new ResultOfDQLCommand(dbSelect);
     }
 
     protected void insert0(DbRec newDbRec) {

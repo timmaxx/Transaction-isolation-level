@@ -1,5 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -14,7 +16,13 @@ public class DbSelectTest {
     public void selectFromEmptyTable() {
         //  SELECT *
         //    FROM person
-        DbSelect dbSelect = dbTabPersonEmpty.select();
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DQLCommandSelect(1L, dbTabPersonEmpty)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -23,7 +31,13 @@ public class DbSelectTest {
     public void selectFromOneRowTable() {
         //  SELECT *
         //    FROM person
-        DbSelect dbSelect = dbTabPersonWithOneRow.select();
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DQLCommandSelect(1L, dbTabPersonWithOneRow)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
@@ -32,7 +46,13 @@ public class DbSelectTest {
     public void selectFromTwoRowsTable() {
         //  SELECT *
         //    FROM person
-        DbSelect dbSelect = dbTabPersonWithTwoRows.select();
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DQLCommandSelect(1L, dbTabPersonWithTwoRows)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
     }
@@ -42,9 +62,13 @@ public class DbSelectTest {
         //  SELECT *
         //    FROM person
         //   WHERE id = 1
-        DbSelect dbSelect = dbTabPersonEmpty.select(
-                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DQLCommandSelect(1L, dbTabPersonEmpty, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1))
         );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -54,9 +78,13 @@ public class DbSelectTest {
         //  SELECT *
         //    FROM person
         //   WHERE id = 1
-        DbSelect dbSelect = dbTabPersonWithOneRow.select(
-                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DQLCommandSelect(1L, dbTabPersonWithOneRow, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1))
         );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
@@ -66,9 +94,13 @@ public class DbSelectTest {
         //  SELECT *
         //    FROM person
         //   WHERE id = 1
-        DbSelect dbSelect = dbTabPersonWithTwoRows.select(
-                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DQLCommandSelect(1L, dbTabPersonWithTwoRows, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1))
         );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }

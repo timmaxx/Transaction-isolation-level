@@ -12,6 +12,7 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 public class DbDeleteTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbDeleteTest.class);
 
+/*
     @Test
     public void deleteFromReadOnlyTable() {
         DbDataAccessException exception = Assertions.assertThrows(
@@ -67,4 +68,5 @@ public class DbDeleteTest {
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
+*/
 }

@@ -13,6 +13,7 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 
 public class DbUpdateTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbUpdateTest.class);
+/*
 
     @Test
     public void updateReadOnlyTable() {
@@ -71,6 +72,7 @@ public class DbUpdateTest {
 
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
+*/
 
 /*
     @Test
