@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 //  ToDo:   Экземпляр класса нужно сделать глубоко неизменяемым.
 public class DbRec implements Comparable<DbRec> {
@@ -56,7 +55,7 @@ public class DbRec implements Comparable<DbRec> {
     }
 
     private void verifyAreSomeFieldsNullButTheyMustBeNotNull() {
-        verifyAndBuildExceptionMessage(
+        VerifyAndBuildExceptionMessage.work(
                 dbFieldName_Object_Map,
                 (sb, isThereError, entry
                 ) -> {
@@ -68,11 +67,12 @@ public class DbRec implements Comparable<DbRec> {
                         sb.append(String.format(ERROR_NULL_VALUE_IN_COLUMN_VIOLATES_NOT_NULL_CONSTRAINT, dbFieldName)).append("\n");
                         isThereError.set(true);
                     }
-                });
+                })
+        ;
     }
 
     private void verifyCorrespondenceBetweenDbFieldsAndRecMap(Map<DbFieldName, Object> recMap) {
-        verifyAndBuildExceptionMessage(
+        VerifyAndBuildExceptionMessage.work(
                 recMap,
                 (sb, isThereError, entry
                 ) -> {
@@ -93,24 +93,8 @@ public class DbRec implements Comparable<DbRec> {
                         ).append("\n");
                         isThereError.set(true);
                     }
-                });
-    }
-
-    private static void verifyAndBuildExceptionMessage(Map<DbFieldName, Object> recMap, VerifyAndBuildExceptionMessage verifyAndBuildExceptionMessage) {
-        StringBuilder sb = new StringBuilder("\n");
-        AtomicBoolean isThereError = new AtomicBoolean(false);
-
-        recMap.entrySet().stream()
-                //  recMap сортируется по ключу. Для этого
-                //  class DbObjectName implements Comparable<DbObjectName>
-                //  Но лучше было-бы для тех полей, которые есть в DbFields, сортировать по порядку включения,
-                //  а уже те, которых нет, сортировать по имени полей.
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(entry -> verifyAndBuildExceptionMessage.work(sb, isThereError, entry))
+                })
         ;
-        if (isThereError.get()) {
-            throw new DbSQLException(sb.toString());
-        }
     }
 
     //  Method returns DbFieldValue, but not Object.
