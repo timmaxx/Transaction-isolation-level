@@ -13,9 +13,18 @@ public class DbSelectTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbSelectTest.class);
 
     @Test
-    public void selectFromEmptyTable() {
+    public void selectFromEmptyTableViaMainThread() {
         //  SELECT *
-        //    FROM person
+        //    FROM person   --  0 rows
+        DbSelect dbSelect = dbTabPersonEmpty.select().getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void selectFromEmptyTableViaSQLCommandQueue() {
+        //  SELECT *
+        //    FROM person   --  0 rows
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DQLCommandSelect(1L, dbTabPersonEmpty)
         );
@@ -28,9 +37,18 @@ public class DbSelectTest {
     }
 
     @Test
-    public void selectFromOneRowTable() {
+    public void selectFromOneRowTableViaMainThread() {
         //  SELECT *
-        //    FROM person
+        //    FROM person   --  1 row (dbRec1_Bob_email)
+        DbSelect dbSelect = dbTabPersonWithOneRow.select().getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void selectFromOneRowTableViaSQLCommandQueue() {
+        //  SELECT *
+        //    FROM person   --  1 row (dbRec1_Bob_email)
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DQLCommandSelect(1L, dbTabPersonWithOneRow)
         );
@@ -43,9 +61,18 @@ public class DbSelectTest {
     }
 
     @Test
-    public void selectFromTwoRowsTable() {
+    public void selectFromTwoRowsTableViaMainThread() {
         //  SELECT *
-        //    FROM person
+        //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
+        DbSelect dbSelect = dbTabPersonWithTwoRows.select().getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
+    }
+
+    @Test
+    public void selectFromTwoRowsTableViaSQLCommandQueue() {
+        //  SELECT *
+        //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DQLCommandSelect(1L, dbTabPersonWithTwoRows)
         );
@@ -58,9 +85,21 @@ public class DbSelectTest {
     }
 
     @Test
-    public void selectFromEmptyTableWhereIdEq1() {
+    public void selectFromEmptyTableWhereIdEq1ViaMainThread() {
         //  SELECT *
-        //    FROM person
+        //    FROM person   --  0 rows
+        //   WHERE id = 1
+        DbSelect dbSelect = dbTabPersonEmpty.select(
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
+        ).getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void selectFromEmptyTableWhereIdEq1ViaSQLCommandQueue() {
+        //  SELECT *
+        //    FROM person   --  0 rows
         //   WHERE id = 1
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DQLCommandSelect(1L, dbTabPersonEmpty, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1))
@@ -74,9 +113,21 @@ public class DbSelectTest {
     }
 
     @Test
-    public void selectFromOneRowTableWhereIdEq1() {
+    public void selectFromOneRowTableWhereIdEq1ViaMainThread() {
         //  SELECT *
-        //    FROM person
+        //    FROM person   --  1 row (dbRec1_Bob_email)
+        //   WHERE id = 1
+        DbSelect dbSelect = dbTabPersonWithOneRow.select(
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
+        ).getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void selectFromOneRowTableWhereIdEq1ViaSQLCommandQueue() {
+        //  SELECT *
+        //    FROM person   --  1 row (dbRec1_Bob_email)
         //   WHERE id = 1
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DQLCommandSelect(1L, dbTabPersonWithOneRow, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1))
@@ -90,9 +141,21 @@ public class DbSelectTest {
     }
 
     @Test
-    public void selectFromTwoRowsTableWhereIdEq1() {
+    public void selectFromTwoRowsTableWhereIdEq1ViaMainThread() {
         //  SELECT *
-        //    FROM person
+        //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
+        //   WHERE id = 1
+        DbSelect dbSelect = dbTabPersonWithTwoRows.select(
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1)
+        ).getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void selectFromTwoRowsTableWhereIdEq1ViaSQLCommandQueue() {
+        //  SELECT *
+        //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
         //   WHERE id = 1
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DQLCommandSelect(1L, dbTabPersonWithTwoRows, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(1))
