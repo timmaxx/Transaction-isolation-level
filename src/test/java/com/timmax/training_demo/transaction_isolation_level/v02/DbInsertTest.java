@@ -19,31 +19,6 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 public class DbInsertTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbInsertTest.class);
 /*
-
-    @Test
-    public void insertOneRecordIntoEmptyTable() {
-        // final DbTab workDbTable = new DbTab(EMPTY_IMMUTABLE_DB_TABLE);
-        final DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-        insertOneRecord(dbTabPerson, dbSelectPersonWithOneRow);
-    }
-
-    public SQLCommandQueue insertOneRecord(DbTab dbTab, DbSelect dbSelect) {
-        final SQLCommandQueue sqlCommandQueue = new SQLCommandQueue(
-                new DMLCommandInsert(dbTab, dbRec1_Bob_email)*/
-/*,
-                new DQLCommandSelect(dbTab, Set.of(0, 1, 2))*//*
-
-        );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
-
-        DbSelect dbTableResultInTransaction = sqlCommandQueue.popFromDQLResultLog();
-
-        Assertions.assertEquals(dbSelect, dbTableResultInTransaction);
-
-        return sqlCommandQueue;
-    }
-
     @Test
     public void insertIntoReadOnlyTable() {
         DbDataAccessException exception = Assertions.assertThrows(
