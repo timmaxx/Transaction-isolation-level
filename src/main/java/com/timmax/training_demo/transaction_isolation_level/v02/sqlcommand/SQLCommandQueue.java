@@ -1,20 +1,20 @@
 package com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.DbSelect;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandQueueLogElement;
+import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLResultLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
-import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueueState.*;
-import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandQueueLogElementType.*;
 
 public class SQLCommandQueue {
     protected static final Logger logger = LoggerFactory.getLogger(SQLCommandQueue.class);
@@ -26,6 +26,8 @@ public class SQLCommandQueue {
     DMLCommandQueueLog dmlCommandQueueLog = new DMLCommandQueueLog();
     //  !!! Нехорошо, что этот класс должен управлять экземплярами классов, которые лежат во вложенном пакете!!!
     DQLResultLog dqlResultLog = new DQLResultLog();
+
+    private final AtomicReference<Throwable> exceptionRef = new AtomicReference<>(); // Для передачи исключения наружу
 
     public SQLCommandQueue(SQLCommand... sqlCommands) {
         super();
@@ -46,7 +48,17 @@ public class SQLCommandQueue {
         sqlCommandQueueState = STARTED;
         thread = new Thread(() -> {
             for (SQLCommand sqlCommand : sqlCommandQueue) {
-                ResultOfSQLCommand resultOfSQLCommand = sqlCommand.run();
+                ResultOfSQLCommand resultOfSQLCommand;
+                try {
+                    resultOfSQLCommand = sqlCommand.run();
+                } catch (DbSQLException dbSQLException) {
+                    exceptionRef.set(dbSQLException);
+                    //  !!!!!
+                    // rollback();
+                    sqlCommandQueueState = MALFUNCTIONED_ROLLED_BACK;
+                    throw dbSQLException;
+                }
+
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (resultOfSQLCommand instanceof ResultOfDMLCommand resultOfDMLCommand) {
                     dmlCommandQueueLog.push(resultOfDMLCommand.getLogResult());
@@ -57,19 +69,52 @@ public class SQLCommandQueue {
                 }
             }
         });
-        thread.setUncaughtExceptionHandler((t, throwable) -> {
-            logger.error("Uncaught exception in thread = {}, throwable = {}", t, throwable.toString());
-            rollback();
-            sqlCommandQueueState = MALFUNCTIONED_ROLLED_BACK;
-            try {
-                throw throwable;
-            } catch (Throwable ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+
+        thread.setUncaughtExceptionHandler(
+                (thread, throwable) -> {
+                    if (!(throwable instanceof DbSQLException)) {
+                        logger.error("Uncaught exception in thread = {}, throwable = {}", thread, throwable.toString());
+                    }
+                    exceptionRef.set(throwable);
+                })
+        ;
+
         thread.start();
     }
 
+    public void joinToThread() {
+        if (sqlCommandQueueState != STARTED) {
+            logger.info("sqlCommandQueueState = {}", sqlCommandQueueState);
+            throw new UnsupportedOperationException();
+        }
+        try {
+            // Ждём завершения потока (в реальном коде это может быть join() с таймаутом)
+            thread.join();
+        } catch (InterruptedException interruptedException) {
+            // Восстанавливаем прерванный статус
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(interruptedException);
+        } finally {
+            sqlCommandQueueState = STOPPED;
+        }
+
+        // Если исключение было брошено, бросаем его заново в основной поток
+        Throwable throwable = exceptionRef.get();
+        if (throwable != null) {
+            if (throwable instanceof RuntimeException rte) {
+                throw rte;
+            } else {
+                throw new RuntimeException(throwable);
+            }
+        }
+    }
+
+    public DbSelect popFromDQLResultLog() {
+        return dqlResultLog.pop();
+    }
+}
+
+/*
     public void rollback() {
         if (thread.getState() != Thread.State.TERMINATED) {
             throw new UnsupportedOperationException();
@@ -84,44 +129,27 @@ public class SQLCommandQueue {
             int rowId = dmlCommandQueueLogElement.getRowId();
             //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
             if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == INSERT) {
-/*
                 dmlCommandQueueLogElement
                         .getDbTab()
                         .rollback_delete(rowId);
-*/
+
+
             } else if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == UPDATE) {
-/*
                 dmlCommandQueueLogElement
                         .getDbTab()
                         .rollback_update(rowId, dmlCommandQueueLogElement.oldDbRecord());
-*/
+
+
             } else if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == DELETE) {
-/*
                 dmlCommandQueueLogElement
                         .getDbTab()
                         .rollback_insert(rowId, dmlCommandQueueLogElement.oldDbRecord());
-*/
+
+
             } else {
                 throw new UnsupportedOperationException();
             }
         }
         sqlCommandQueueState = ROLLED_BACK;
     }
-
-    public void joinToThread() {
-        if (sqlCommandQueueState != STARTED) {
-            logger.info("sqlCommandQueueState = {}", sqlCommandQueueState);
-            throw new UnsupportedOperationException();
-        }
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        sqlCommandQueueState = STOPPED;
-    }
-
-    public DbSelect popFromDQLResultLog() {
-        return dqlResultLog.pop();
-    }
-}
+*/
