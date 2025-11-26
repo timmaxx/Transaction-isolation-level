@@ -1,6 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +44,9 @@ public non-sealed class DbTab extends DbTableLike {
         }
     }
 
-    public void insert(DbRec newDbRec) {
+    public ResultOfDMLCommand insert(DbRec newDbRec) {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
-        insert0(newDbRec);
+        return insert0(newDbRec);
     }
 
     public void delete() {

@@ -1,6 +1,5 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import com.timmax.training_demo.transaction_isolation_level.table.DbTable;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandInsert;
@@ -18,9 +17,9 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 
 public class DbInsertTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbInsertTest.class);
-/*
+
     @Test
-    public void insertIntoReadOnlyTable() {
+    public void insertIntoReadOnlyTableViaMainThread() {
         DbDataAccessException exception = Assertions.assertThrows(
                 DbDataAccessException.class,
                 () -> dbTabPersonEmpty.insert(null)
@@ -34,7 +33,25 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertOneRowWithEmailIsNullIntoEmptyTable() {
+    public void insertIntoReadOnlyTableViaSQLCommandQueue() {
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandInsert(1L, dbTabPersonEmpty, dbRec3_Tom_Null)
+        );
+        sqlCommandQueue1.startThread();
+        DbDataAccessException exception = Assertions.assertThrows(
+                DbDataAccessException.class,
+                sqlCommandQueue1::joinToThread
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_INSERT, DB_TAB_NAME_PERSON),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
+    @Test
+    public void insertOneRowWithEmailIsNullIntoEmptyTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -45,13 +62,35 @@ public class DbInsertTest {
         //  )
         dbTabPerson.insert(dbRec3_Tom_Null);
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
     @Test
-    public void insertOneRowWithEmailIsNull2IntoEmptyTable() {
+    public void insertOneRowWithEmailIsNullIntoEmptyTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      id, name
+        //      ) VALUES (
+        //      3, "Tom"
+        //  )
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandInsert(1L, dbTabPerson, dbRec3_Tom_Null),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
+    }
+
+    @Test
+    public void insertOneRowWithEmailIsNull2IntoEmptyTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -62,13 +101,35 @@ public class DbInsertTest {
         //  )
         dbTabPerson.insert(dbRec3_Tom_Null2);
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
     @Test
-    public void insertOneRowIntoEmptyTable() {
+    public void insertOneRowWithEmailIsNull2IntoEmptyTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      id, name, email
+        //      ) VALUES (
+        //      3, "Tom", null
+        //  )
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandInsert(1L, dbTabPerson, dbRec3_Tom_Null2),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
+    }
+
+    @Test
+    public void insertOneRowIntoEmptyTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -79,13 +140,35 @@ public class DbInsertTest {
         //  )
         dbTabPerson.insert(dbRec1_Bob_email);
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
     @Test
-    public void insertTwoRowsIntoEmptyTablesInDifferentOrder() {
+    public void insertOneRowIntoEmptyTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person (
+        //      id, name, email
+        //      ) VALUES (
+        //      1, "Bob", "@"
+        //  )
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandInsert(1L, dbTabPerson, dbRec1_Bob_email),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void insertTwoRowsIntoEmptyTablesInDifferentOrderViaMainThread() {
         DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
         DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
 
@@ -98,8 +181,8 @@ public class DbInsertTest {
         dbTabPerson2.insert(dbRec2_Alice_email);
         dbTabPerson2.insert(dbRec1_Bob_email);
 
-        DbSelect dbSelect1 = dbTabPerson1.select();
-        DbSelect dbSelect2 = dbTabPerson2.select();
+        DbSelect dbSelect1 = dbTabPerson1.select().getDbSelect();
+        DbSelect dbSelect2 = dbTabPerson2.select().getDbSelect();
 
         // Assertions.assertEquals(dbSelect1, dbSelect2);
 
@@ -111,5 +194,38 @@ public class DbInsertTest {
 
         Assertions.assertEquals(values1, values2);
     }
-*/
+
+    @Test
+    public void insertTwoRowsIntoEmptyTablesInDifferentOrderViaSQLCommandQueue() {
+        DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT INTO person1 (id, name, email) VALUES (1, "Bob", "@"););
+        //  INSERT INTO person1 (id, name, email) VALUES (2, "Alice", "@");
+        //  INSERT INTO person2 (id, name, email) VALUES (2, "Alice", "@");
+        //  INSERT INTO person2 (id, name, email) VALUES (1, "Bob", "@"););
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandInsert(1L, dbTabPerson1, dbRec1_Bob_email),
+                new DMLCommandInsert(1L, dbTabPerson1, dbRec2_Alice_email),
+                new DMLCommandInsert(1L, dbTabPerson2, dbRec2_Alice_email),
+                new DMLCommandInsert(1L, dbTabPerson2, dbRec1_Bob_email),
+                new DQLCommandSelect(1L, dbTabPerson1),
+                new DQLCommandSelect(1L, dbTabPerson2)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
+        DbSelect dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
+
+        // Assertions.assertEquals(dbSelect1, dbSelect2);
+
+        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        List<DbRec> values1 = new ArrayList<>(dbSelect1.rowId_DbRec_Map.values());
+        List<DbRec> values2 = new ArrayList<>(dbSelect2.rowId_DbRec_Map.values());
+        values1.sort(Comparator.naturalOrder());
+        values2.sort(Comparator.naturalOrder());
+
+        Assertions.assertEquals(values1, values2);
+    }
 }

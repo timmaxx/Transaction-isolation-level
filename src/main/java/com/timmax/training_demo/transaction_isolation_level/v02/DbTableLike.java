@@ -1,6 +1,8 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
 
 import java.util.*;
 
@@ -34,11 +36,14 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDQLCommand(dbSelect);
     }
 
-    protected void insert0(DbRec newDbRec) {
+    protected ResultOfDMLCommand insert0(DbRec newDbRec) {
         lastInsertedRowId++;
         if (rowId_DbRec_Map.put(lastInsertedRowId, new DbRec(newDbRec)) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
+        //  !!!!!
+        //  ToDo:   implement code for rollback
+        return null;
     }
 
     protected void insert0(List<DbRec> newDbRecList) {
