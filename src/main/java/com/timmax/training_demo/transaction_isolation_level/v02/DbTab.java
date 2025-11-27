@@ -2,6 +2,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,22 +50,32 @@ public non-sealed class DbTab extends DbTableLike {
         return insert0(newDbRec);
     }
 
-    public void delete() {
+    public ResultOfDMLCommand delete() {
         validateReadOnlyTable(YOU_CANNOT_DELETE);
-        delete0();
+        return delete0();
     }
 
-    public void delete(WhereFunc whereFunc) {
+    public ResultOfDMLCommand delete(WhereFunc whereFunc) {
         validateReadOnlyTable(YOU_CANNOT_DELETE);
-        delete0(whereFunc);
+        return delete0(whereFunc);
     }
 
-    private void delete0() {
+    private ResultOfDMLCommand delete0() {
+        //  !!!!!
         rowId_DbRec_Map.clear();
+        //  ToDo:   code for rollback
+        return new ResultOfDMLCommand(null);
     }
 
-    private void delete0(WhereFunc whereFunc) {
+    private ResultOfDMLCommand delete0(WhereFunc whereFunc) {
+        if (whereFunc == null) {
+            return delete0();
+        }
+        //  !!!!!
         rowId_DbRec_Map.values().removeIf(whereFunc::where);
+        //  ToDo:   code for rollback
+        // return new ResultOfDMLCommand(new DMLCommandQueueLog());
+        return new ResultOfDMLCommand(null);
     }
 
     public void update(UpdateSetCalcFunc updateSetCalcFunc) {

@@ -5,15 +5,15 @@ import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.Resul
 import java.util.Objects;
 
 public final class ResultOfDMLCommand extends ResultOfSQLCommand {
-    private final DMLCommandQueueLogElement logResult;
+    private final DMLCommandQueueLog resultLog;
 
     public ResultOfDMLCommand(
-            DMLCommandQueueLogElement logResult) {
-        this.logResult = logResult;
+            DMLCommandQueueLog resultLog) {
+        this.resultLog = resultLog;
     }
 
-    public DMLCommandQueueLogElement getLogResult() {
-        return logResult;
+    public DMLCommandQueueLog getResultLog() {
+        return resultLog;
     }
 
     @Override
@@ -21,17 +21,17 @@ public final class ResultOfDMLCommand extends ResultOfSQLCommand {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (ResultOfDMLCommand) obj;
-        return Objects.equals(this.logResult, that.logResult);
+        return Objects.equals(this.resultLog, that.resultLog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(logResult);
+        return Objects.hash(resultLog);
     }
 
     @Override
     public String toString() {
         return "ResultOfDMLCommand[" +
-                "logResult=" + logResult + ']';
+                "resultLog=" + resultLog + ']';
     }
 }

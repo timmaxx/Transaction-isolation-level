@@ -2,6 +2,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.DbSelect;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandQueueLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLResultLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
@@ -61,7 +62,7 @@ public class SQLCommandQueue {
 
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (resultOfSQLCommand instanceof ResultOfDMLCommand resultOfDMLCommand) {
-                    dmlCommandQueueLog.push(resultOfDMLCommand.getLogResult());
+                    dmlCommandQueueLog.push(resultOfDMLCommand.getResultLog());
                 }
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (resultOfSQLCommand instanceof ResultOfDQLCommand resultOfDQLCommand) {

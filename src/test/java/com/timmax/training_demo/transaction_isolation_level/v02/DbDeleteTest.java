@@ -1,6 +1,9 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandDelete;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -12,12 +15,13 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 public class DbDeleteTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbDeleteTest.class);
 
-/*
     @Test
-    public void deleteFromReadOnlyTable() {
+    public void deleteFromReadOnlyTableViaMainThread() {
+        //  DELETE
+        //    FROM person   --  0 rows and table is read only
         DbDataAccessException exception = Assertions.assertThrows(
                 DbDataAccessException.class,
-                () -> dbTabPersonEmpty.delete(null)
+                dbTabPersonEmpty::delete
         );
 
         Assertions.assertEquals(
@@ -28,45 +32,119 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromEmptyTable() {
+    public void deleteFromReadOnlyTableViaSQLCommandQueue() {
+        //  DELETE
+        //    FROM person   --  0 rows and table is read only
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandDelete(1L, dbTabPersonEmpty)
+        );
+        sqlCommandQueue1.startThread();
+        DbDataAccessException exception = Assertions.assertThrows(
+                DbDataAccessException.class,
+                sqlCommandQueue1::joinToThread
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
+    @Test
+    public void deleteFromEmptyTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  DELETE
-        //    FROM person
+        //    FROM person   --  0 rows
         dbTabPerson.delete();
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
-    public void deleteFromOneRowTable() {
+    public void deleteFromEmptyTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  DELETE
+        //    FROM person   --  0 rows
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandDelete(1L, dbTabPerson),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void deleteFromOneRowTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
 
         //  DELETE
-        //    FROM person
+        //    FROM person   --  1 row
         dbTabPerson.delete();
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
-    public void deleteFromTwoRowsTableWhereIdEq2() {
+    public void deleteFromOneRowTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+
+        //  DELETE
+        //    FROM person   --  1 row
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandDelete(1L, dbTabPerson),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void deleteFromTwoRowsTableWhereIdEq2ViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  DELETE
-        //    FROM person
+        //    FROM person   --  2 rows
         //   WHERE id = 2
         dbTabPerson.delete(
                 dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
         );
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
-*/
+
+    @Test
+    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  DELETE
+        //    FROM person   --  2 rows
+        //   WHERE id = 2
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
 }
