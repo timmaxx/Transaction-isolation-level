@@ -6,13 +6,13 @@ import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCo
 //      -   DQL команда (SELECT)
 //          -   не изменяет данные, а значит НЕ порождает журнал изменения,
 //          -   возвращают данные, а значит содержит результат.
-public abstract class DQLCommand extends SQLCommand implements RunnableWithResultOfDQLCommand {
+public abstract class DQLCommand extends SQLCommand {
     public DQLCommand(Long millsBeforeRun, DbTab dbTab) {
         super(millsBeforeRun, dbTab);
     }
 
     @Override
-    public ResultOfDQLCommand run() {
+    protected final ResultOfDQLCommand run() {
         return (ResultOfDQLCommand)super.run();
     }
 }

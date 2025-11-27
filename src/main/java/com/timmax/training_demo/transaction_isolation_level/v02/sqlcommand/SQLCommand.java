@@ -22,7 +22,7 @@ public abstract class SQLCommand {
         this.millsBeforeRun = millsBeforeRun;
     }
 
-    public ResultOfSQLCommand run() {
+    protected ResultOfSQLCommand run() {
         if (millsBeforeRun > 0) {
             try {
                 Thread.sleep(millsBeforeRun);

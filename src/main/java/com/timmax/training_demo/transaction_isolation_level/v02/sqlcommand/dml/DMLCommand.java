@@ -6,13 +6,13 @@ import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCo
 //      -   DML команды (INSERT, UPDATE, DELETE)
 //          -   могут изменять данные, а значит порождают журнал изменения,
 //          -   не возвращают данные, а значит не содержат результата.
-public abstract class DMLCommand extends SQLCommand implements RunnableWithResultOfDMLCommand {
+public abstract class DMLCommand extends SQLCommand {
     public DMLCommand(Long millsBeforeRun, DbTab baseDbTable) {
         super(millsBeforeRun, baseDbTable);
     }
 
     @Override
-    public ResultOfDMLCommand run() {
+    protected final ResultOfDMLCommand run() {
         return (ResultOfDMLCommand)super.run();
     }
 }
