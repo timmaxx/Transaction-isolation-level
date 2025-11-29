@@ -13,10 +13,9 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 
 public class DbUpdateTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbUpdateTest.class);
-/*
 
     @Test
-    public void updateReadOnlyTable() {
+    public void updateReadOnlyTableViaMainThread() {
         DbDataAccessException exception = Assertions.assertThrows(
                 DbDataAccessException.class,
                 () -> dbTabPersonEmpty.update(null)
@@ -30,7 +29,7 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTable() {
+    public void updateTwoRowsTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
@@ -41,7 +40,7 @@ public class DbUpdateTest {
                 )
         );
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
 
@@ -55,7 +54,7 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTableWhereIdEq2() {
+    public void updateTwoRowsTableWhereIdEq2ViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
         //  UPDATE person
@@ -68,7 +67,7 @@ public class DbUpdateTest {
                 dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
         );
 
-        DbSelect dbSelect = dbTabPerson.select();
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
