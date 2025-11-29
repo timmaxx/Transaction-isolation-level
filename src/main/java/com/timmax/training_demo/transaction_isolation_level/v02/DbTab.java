@@ -59,8 +59,7 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     public ResultOfDMLCommand delete() {
-        validateReadOnlyTable(YOU_CANNOT_DELETE);
-        return delete0();
+        return delete(null);
     }
 
     public ResultOfDMLCommand delete(WhereFunc whereFunc) {
