@@ -64,7 +64,48 @@ public class DbUpdateTest {
         );
     }
 
-    //  ToDo:   implement tests with updateSetCalcFunc is null
+    @Test
+    public void updateReadOnlyTableWithUpdateSetCalcFuncIsNullViaMainThread() {
+        //  UPDATE person   --  0 rows and table is read only
+        //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
+        NullPointerException exception = Assertions.assertThrows(
+                NullPointerException.class,
+                //  ToDo:   It (verifying on null) must be made on compiler stage!
+                () -> dbTabPersonEmpty.update(null)
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
+    @Test
+    public void updateReadOnlyTableWithUpdateSetCalcFuncIsNullViaSQLCommandQueue() {
+        //  UPDATE person   --  0 rows and table is read only
+        //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandUpdate(
+                        1L,
+                        dbTabPersonEmpty,
+                        //  ToDo:   It (verifying on null) must be made on compiler stage!
+                        null
+                )
+        );
+
+        sqlCommandQueue1.startThread();
+        NullPointerException exception = Assertions.assertThrows(
+                NullPointerException.class,
+                sqlCommandQueue1::joinToThread
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
 
     @Test
     public void updateTwoRowsTableViaMainThread() {

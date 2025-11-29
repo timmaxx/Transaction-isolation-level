@@ -20,6 +20,8 @@ public non-sealed class DbTab extends DbTableLike {
     static final String ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE = ERROR_TABLE_IS_RO + " " + YOU_CANNOT_UPDATE;
     static final String ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE = ERROR_TABLE_IS_RO + " " + YOU_CANNOT_DELETE;
 
+    static final String ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL = "ERROR: updateSetCalcFunc is null, but you cannot make it null!";
+
     private final DbTabName dbTabName;
     private final boolean readOnly;
 
@@ -42,6 +44,12 @@ public non-sealed class DbTab extends DbTableLike {
     private void validateReadOnlyTable(String msgInsUpdDel) {
         if (readOnly) {
             throw new DbDataAccessException(String.format(ERROR_TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
+        }
+    }
+
+    private void validateIsUpdateSetCalcFuncNull(UpdateSetCalcFunc updateSetCalcFunc) {
+        if (updateSetCalcFunc == null) {
+            throw new NullPointerException(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
         }
     }
 
@@ -83,9 +91,7 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        if (updateSetCalcFunc == null) {
-            throw new NullPointerException("updateSetCalcFunc is null, but you cannot make it null!");
-        }
+        validateIsUpdateSetCalcFuncNull(updateSetCalcFunc);
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         return update0(updateSetCalcFunc, whereFunc);
     }
