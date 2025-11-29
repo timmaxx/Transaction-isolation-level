@@ -1,6 +1,9 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandUpdate;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -16,9 +19,15 @@ public class DbUpdateTest {
 
     @Test
     public void updateReadOnlyTableViaMainThread() {
+        //  UPDATE person   --  0 rows and table is read only
+        //     SET name = name || " " || name
         DbDataAccessException exception = Assertions.assertThrows(
                 DbDataAccessException.class,
-                () -> dbTabPersonEmpty.update(null)
+                () -> dbTabPersonEmpty.update(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        )
+                )
         );
 
         Assertions.assertEquals(
@@ -29,10 +38,39 @@ public class DbUpdateTest {
     }
 
     @Test
+    public void updateReadOnlyTableViaMainThreadViaSQLCommandQueue() {
+        //  UPDATE person   --  0 rows and table is read only
+        //     SET name = name || " " || name
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandUpdate(
+                        1L,
+                        dbTabPersonEmpty,
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        )
+                )
+        );
+
+        sqlCommandQueue1.startThread();
+        DbDataAccessException exception = Assertions.assertThrows(
+                DbDataAccessException.class,
+                sqlCommandQueue1::joinToThread
+        );
+
+        Assertions.assertEquals(
+                String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE, DB_TAB_NAME_PERSON),
+                exception.getMessage(),
+                EXCEPTION_MESSAGE_DOESNT_MATCH
+        );
+    }
+
+    //  ToDo:   implement tests with updateSetCalcFunc is null
+
+    @Test
     public void updateTwoRowsTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
-        //  UPDATE person
+        //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         dbTabPerson.update(
                 dbRec -> Map.of(
@@ -54,10 +92,43 @@ public class DbUpdateTest {
     }
 
     @Test
+    public void updateTwoRowsTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person   --  2 rows
+        //     SET name = name || " " || name
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandUpdate(
+                        1L,
+                        dbTabPerson,
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        )
+                ),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
+
+        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.rowId_DbRec_Map.values());
+        List<DbRec> values2 = new ArrayList<>(dbSelect.rowId_DbRec_Map.values());
+        values1.sort(Comparator.naturalOrder());
+        values2.sort(Comparator.naturalOrder());
+
+        Assertions.assertEquals(values1, values2);
+    }
+
+    @Test
     public void updateTwoRowsTableWhereIdEq2ViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
-        //  UPDATE person
+        //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         //   WHERE id = 2
         dbTabPerson.update(
@@ -71,14 +142,40 @@ public class DbUpdateTest {
 
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
-*/
+
+    @Test
+    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person   --  2 rows
+        //     SET name = name || " " || name
+        //   WHERE id = 2
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandUpdate(
+                        1L,
+                        dbTabPerson,
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                ),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+    }
 
 /*
     @Test
     public void updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongNameFields() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
 
-        //  UPDATE person
+        //  UPDATE person   --  2 rows
         //     SET wrong_field = wrong_field_2 || " " || name
         //       , wrong_field_2 = "   "
         //   WHERE wrong_field = 2

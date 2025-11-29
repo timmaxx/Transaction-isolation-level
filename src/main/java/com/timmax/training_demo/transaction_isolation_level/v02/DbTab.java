@@ -78,17 +78,19 @@ public non-sealed class DbTab extends DbTableLike {
         return new ResultOfDMLCommand(null);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc) {
-        validateReadOnlyTable(YOU_CANNOT_UPDATE);
-        update0(updateSetCalcFunc, null);
+    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
+        return update(updateSetCalcFunc, null);
     }
 
-    public void update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        if (updateSetCalcFunc == null) {
+            throw new NullPointerException("updateSetCalcFunc is null, but you cannot make it null!");
+        }
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
-        update0(updateSetCalcFunc, whereFunc);
+        return update0(updateSetCalcFunc, whereFunc);
     }
 
-    private void update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+    private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         List<DbRec> oldDbRecs = new ArrayList<>();
         List<DbRec> newDbRecs = new ArrayList<>();
         int beforeCount = rowId_DbRec_Map.size();
@@ -133,6 +135,8 @@ public non-sealed class DbTab extends DbTableLike {
             logger.error("after insert0: rowId_DbRec_Map = {}", rowId_DbRec_Map);
             throw new RuntimeException("afterRemoveCount + newCount != afterCount");
         }
+        //  !!!!!
+        return null;
     }
 
     @Override
