@@ -19,7 +19,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
     public ResultOfDQLCommand select() {
-        return select0(null);
+        return select(null);
     }
 
     public ResultOfDQLCommand select(WhereFunc whereFunc) {
