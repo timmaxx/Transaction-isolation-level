@@ -1,21 +1,22 @@
 package com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.DbSelect;
+import com.timmax.training_demo.transaction_isolation_level.v02.DbTableLike;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandQueueLog;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLResultLog;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.*;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueueState.*;
+import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.INSERT;
 
 public class SQLCommandQueue {
     protected static final Logger logger = LoggerFactory.getLogger(SQLCommandQueue.class);
@@ -62,7 +63,7 @@ public class SQLCommandQueue {
 
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (resultOfSQLCommand instanceof ResultOfDMLCommand resultOfDMLCommand) {
-                    dmlCommandQueueLog.push(resultOfDMLCommand.getResultLog());
+                    dmlCommandQueueLog.push(resultOfDMLCommand.getDmlCommandLog());
                 }
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (resultOfSQLCommand instanceof ResultOfDQLCommand resultOfDQLCommand) {
@@ -113,29 +114,38 @@ public class SQLCommandQueue {
     public DbSelect popFromDQLResultLog() {
         return dqlResultLog.pop();
     }
-}
 
-/*
     public void rollback() {
         if (thread.getState() != Thread.State.TERMINATED) {
             throw new UnsupportedOperationException();
         }
+
         while (true) {
-            DMLCommandQueueLogElement dmlCommandQueueLogElement;
+            DMLCommandLog dmlCommandLog;
             try {
-                dmlCommandQueueLogElement = dmlCommandQueueLog.pop();
+                dmlCommandLog = dmlCommandQueueLog.pop();
             } catch (EmptyStackException ese) {
                 break;
             }
-            int rowId = dmlCommandQueueLogElement.getRowId();
-            //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
-            if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == INSERT) {
-                dmlCommandQueueLogElement
-                        .getDbTab()
-                        .rollback_delete(rowId);
 
+            DbTableLike dbTableLike = dmlCommandLog.getDbTabLike();
+            DMLCommandLogElementType dmlCommandLogElementType = dmlCommandLog.getDmlCommandLogElementType();
 
-            } else if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == UPDATE) {
+            while (true) {
+                DMLCommandLogElement dmlCommandLogElement;
+                try {
+                    dmlCommandLogElement = dmlCommandLog.pop();
+                } catch (EmptyStackException ese) {
+                    break;
+                }
+                int rowId = dmlCommandLogElement.getRowId();
+                //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
+                if (dmlCommandLogElementType == INSERT) {
+                    //  rollbackOfInsert нужен только rowId.
+                    dbTableLike.rollbackOfInsert(rowId);
+                }
+/*
+            else if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == UPDATE) {
                 dmlCommandQueueLogElement
                         .getDbTab()
                         .rollback_update(rowId, dmlCommandQueueLogElement.oldDbRecord());
@@ -147,10 +157,12 @@ public class SQLCommandQueue {
                         .rollback_insert(rowId, dmlCommandQueueLogElement.oldDbRecord());
 
 
-            } else {
-                throw new UnsupportedOperationException();
             }
-        }
-        sqlCommandQueueState = ROLLED_BACK;
-    }
 */
+                else {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }        sqlCommandQueueState = ROLLED_BACK;
+    }
+}

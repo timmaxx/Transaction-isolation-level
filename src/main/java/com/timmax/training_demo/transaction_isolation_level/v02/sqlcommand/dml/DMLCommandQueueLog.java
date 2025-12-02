@@ -3,14 +3,13 @@ package com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml;
 import java.util.Stack;
 
 public class DMLCommandQueueLog {
-    Stack<DMLCommandQueueLog> dmlCommandQueueLog_Stack = new Stack<>();
+    Stack<DMLCommandLog> dmlCommandQueueLog_Stack = new Stack<>();
 
-    public void push(DMLCommandQueueLog dmlCommandQueueLog) {
-        dmlCommandQueueLog_Stack.push(dmlCommandQueueLog);
+    public void push(DMLCommandLog dmlCommandLog) {
+        dmlCommandQueueLog_Stack.push(dmlCommandLog);
     }
-/*
-    DMLCommandQueueLog pop() {
+
+    public DMLCommandLog pop() {
         return dmlCommandQueueLog_Stack.pop();
     }
-*/
 }

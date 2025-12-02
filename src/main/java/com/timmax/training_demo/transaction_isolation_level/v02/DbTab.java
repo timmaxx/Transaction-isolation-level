@@ -85,6 +85,12 @@ public non-sealed class DbTab extends DbTableLike {
         return new ResultOfDMLCommand(null);
     }
 
+    //  ToDo:   Не должен быть public!
+    @Override
+    public void rollbackOfInsert(Integer rowId) {
+        rowId_DbRec_Map.keySet().removeIf(key -> key.equals(rowId));
+    }
+
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
         return update(updateSetCalcFunc, null);
     }
