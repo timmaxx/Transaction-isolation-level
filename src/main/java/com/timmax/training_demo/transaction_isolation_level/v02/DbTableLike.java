@@ -39,19 +39,30 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
     protected ResultOfDMLCommand insert0(DbRec newDbRec) {
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
+
+        insert00(dmlCommandLog, newDbRec);
+
+        return new ResultOfDMLCommand(dmlCommandLog);
+    }
+
+    protected ResultOfDMLCommand insert0(List<DbRec> newDbRec_List) {
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
+
+        for (DbRec newDbRec : newDbRec_List) {
+            insert00(dmlCommandLog, newDbRec);
+        }
+
+        return new ResultOfDMLCommand(dmlCommandLog);
+    }
+
+    private void insert00(DMLCommandLog dmlCommandLog, DbRec newDbRec) {
         Integer rowId;
         rowId = ++lastInsertedRowId;
         if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
-        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
         dmlCommandLog.push(new DMLCommandLogElement(rowId));
-        ResultOfDMLCommand resultOfDMLCommand = new ResultOfDMLCommand(dmlCommandLog);
-        return resultOfDMLCommand;
-    }
-
-    protected void insert0(List<DbRec> newDbRecList) {
-        newDbRecList.forEach(this::insert0);
     }
 
     @Override

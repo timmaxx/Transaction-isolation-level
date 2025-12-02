@@ -188,6 +188,46 @@ public class DbInsertTest {
     }
 
     @Test
+    public void insertTwoRowsIntoEmptyTableViaMainThread() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //         --  0 rows
+        //    INTO person
+        //      (id, name, email)
+        //    VALUES
+        //      (1, "Bob", "@"),
+        //      (2, "Alice", "@")
+        dbTabPerson.insert(List.of(dbRec1_Bob_email, dbRec2_Alice_email));
+
+        DbSelect dbSelect = dbTabPerson.select().getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
+    }
+
+    @Test
+    public void insertTwoRowsIntoEmptyTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //    INTO person   --  0 rows
+        //      (id, name, email)
+        //    VALUES
+        //      (1, "Bob", "@"),
+        //      (2, "Alice", "@")
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandInsert(1L, dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
+    }
+
+    @Test
     public void insertTwoRowsIntoEmptyTablesInDifferentOrderViaMainThread() {
         DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
         DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
@@ -271,6 +311,39 @@ public class DbInsertTest {
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+        //  Код до этой строки - копия того, что в методе
+        //  void insertOneRowIntoEmptyTableViaSQLCommandQueue
+
+        //  ROLLBACK;
+        sqlCommandQueue1.rollback();
+        //  Смущает, что селект после ролбэка сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        Assertions.assertEquals(dbTabPersonEmpty, dbSelect2);
+    }
+
+    //  AndRollBack
+    @Test
+    public void insertTwoRowsIntoEmptyTableViaSQLCommandQueueAndRollBack() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+
+        //  INSERT
+        //         --  0 rows
+        //    INTO person (
+        //      id, name, email
+        //      ) VALUES
+        //      (1, "Bob", "@"),
+        //      (2, "Alice", "@"),
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandInsert(1L, dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
         //  Код до этой строки - копия того, что в методе
         //  void insertOneRowIntoEmptyTableViaSQLCommandQueue
 

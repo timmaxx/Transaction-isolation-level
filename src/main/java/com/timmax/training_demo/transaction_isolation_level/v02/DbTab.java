@@ -58,6 +58,11 @@ public non-sealed class DbTab extends DbTableLike {
         return insert0(newDbRec);
     }
 
+    public ResultOfDMLCommand insert(List<DbRec> newDbRec_List) {
+        validateReadOnlyTable(YOU_CANNOT_INSERT);
+        return insert0(newDbRec_List);
+    }
+
     public ResultOfDMLCommand delete() {
         return delete(null);
     }
