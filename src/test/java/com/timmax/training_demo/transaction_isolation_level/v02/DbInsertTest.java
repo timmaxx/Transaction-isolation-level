@@ -21,12 +21,10 @@ public class DbInsertTest {
     @Test
     public void insertIntoReadOnlyTableViaMainThread() {
         //  INSERT
-        //         --  0 rows and table is read only
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES (
-        //      1, "Bob", "@"
-        //  )
+        //    INTO person   --  0 rows and table is read only
+        //      (id, name, email)
+        //    VALUES
+        //      (1, "Bob", "@")
         DbDataAccessException exception = Assertions.assertThrows(
                 DbDataAccessException.class,
                 () -> dbTabPersonEmpty.insert(dbRec1_Bob_email)
@@ -42,12 +40,10 @@ public class DbInsertTest {
     @Test
     public void insertIntoReadOnlyTableViaSQLCommandQueue() {
         //  INSERT
-        //         --  0 rows and table is read only
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES (
-        //      1, "Bob", "@"
-        //  )
+        //    INTO person   --  0 rows and table is read only
+        //      (id, name, email)
+        //    VALUES
+        //      (1, "Bob", "@")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(1L, dbTabPersonEmpty, dbRec1_Bob_email)
         );
@@ -69,12 +65,10 @@ public class DbInsertTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name
-        //      ) VALUES (
-        //      3, "Tom"
-        //  )
+        //    INTO person   --  0 rows
+        //      (id, name)
+        //    VALUES
+        //      (3, "Tom")
         dbTabPerson.insert(dbRec3_Tom_Null);
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
@@ -87,12 +81,10 @@ public class DbInsertTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name
-        //      ) VALUES (
-        //      3, "Tom"
-        //  )
+        //    INTO person   --  0 rows
+        //      (id, name)
+        //    VALUES
+        //      (3, "Tom")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(1L, dbTabPerson, dbRec3_Tom_Null),
                 new DQLCommandSelect(1L, dbTabPerson)
@@ -110,12 +102,10 @@ public class DbInsertTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES (
-        //      3, "Tom", null
-        //  )
+        //    INTO person   --  0 rows
+        //      (id, name, email)
+        //    VALUES
+        //      (3, "Tom", null)
         dbTabPerson.insert(dbRec3_Tom_Null2);
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
@@ -128,12 +118,10 @@ public class DbInsertTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES (
-        //      3, "Tom", null
-        //  )
+        //    INTO person   --  0 rows
+        //      (id, name, email)
+        //    VALUES
+        //      (3, "Tom", null)
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(1L, dbTabPerson, dbRec3_Tom_Null2),
                 new DQLCommandSelect(1L, dbTabPerson)
@@ -151,12 +139,10 @@ public class DbInsertTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES (
-        //      1, "Bob", "@"
-        //  )
+        //    INTO person   --  0 rows
+        //      (id, name, email)
+        //    VALUES
+        //      (1, "Bob", "@")
         dbTabPerson.insert(dbRec1_Bob_email);
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
@@ -169,12 +155,10 @@ public class DbInsertTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES (
-        //      1, "Bob", "@"
-        //  )
+        //    INTO person   --  0 rows
+        //      (id, name, email)
+        //    VALUES
+        //      (1, "Bob", "@")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(1L, dbTabPerson, dbRec1_Bob_email),
                 new DQLCommandSelect(1L, dbTabPerson)
@@ -188,12 +172,11 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertTwoRowsIntoEmptyTableViaMainThread() {
+    public void insertTwoRowsAtTimeIntoEmptyTableViaMainThread() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person
+        //    INTO person   --  0 rows
         //      (id, name, email)
         //    VALUES
         //      (1, "Bob", "@"),
@@ -206,7 +189,7 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertTwoRowsIntoEmptyTableViaSQLCommandQueue() {
+    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -295,12 +278,10 @@ public class DbInsertTest {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES (
-        //      1, "Bob", "@"
-        //  )
+        //    INTO person   --  0 rows
+        //      (id, name, email)
+        //    VALUES
+        //      (1, "Bob", "@")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(1L, dbTabPerson, dbRec1_Bob_email),
                 new DQLCommandSelect(1L, dbTabPerson)
@@ -316,7 +297,7 @@ public class DbInsertTest {
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
-        //  Смущает, что селект после ролбэка сделал не через SQLCommandQueue:
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbTabPersonEmpty, dbSelect2);
@@ -324,16 +305,15 @@ public class DbInsertTest {
 
     //  AndRollBack
     @Test
-    public void insertTwoRowsIntoEmptyTableViaSQLCommandQueueAndRollBack() {
+    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
-        //         --  0 rows
-        //    INTO person (
-        //      id, name, email
-        //      ) VALUES
+        //    INTO person   --  0 rows
+        //      (id, name, email)
+        //    VALUES
         //      (1, "Bob", "@"),
-        //      (2, "Alice", "@"),
+        //      (2, "Alice", "@")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(1L, dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
                 new DQLCommandSelect(1L, dbTabPerson)
@@ -345,11 +325,11 @@ public class DbInsertTest {
 
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
         //  Код до этой строки - копия того, что в методе
-        //  void insertOneRowIntoEmptyTableViaSQLCommandQueue
+        //  void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
-        //  Смущает, что селект после ролбэка сделал не через SQLCommandQueue:
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
         Assertions.assertEquals(dbTabPersonEmpty, dbSelect2);
