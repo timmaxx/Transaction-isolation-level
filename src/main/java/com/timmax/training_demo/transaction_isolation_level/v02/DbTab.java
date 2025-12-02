@@ -1,12 +1,16 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLog;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElement;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.DELETE;
 
 public non-sealed class DbTab extends DbTableLike {
     protected static final Logger logger = LoggerFactory.getLogger(DbTab.class);
@@ -72,28 +76,57 @@ public non-sealed class DbTab extends DbTableLike {
         return delete0(whereFunc);
     }
 
+    //  ToDo:   Удалить после рефакторинга
+    //          private ResultOfDMLCommand delete0(WhereFunc whereFunc)
     private ResultOfDMLCommand delete0() {
-        //  !!!!!
+
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
+        for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
+            Integer rowId = entry.getKey();
+            DbRec OldDbRec = entry.getValue();
+            dmlCommandLog.push(new DMLCommandLogElement(rowId, OldDbRec));
+        }
+
         rowId_DbRec_Map.clear();
-        //  ToDo:   code for rollback
-        return new ResultOfDMLCommand(null);
+
+        return new ResultOfDMLCommand(dmlCommandLog);
     }
 
     private ResultOfDMLCommand delete0(WhereFunc whereFunc) {
+        //  ToDo:   Вместо вызова delete0() при whereFunc == null можно было-бы сделать так,
+        //          чтобы whereFunc всегда давала true.
+        //          Тогда можно было-бы удалить delete0().
         if (whereFunc == null) {
             return delete0();
         }
-        //  !!!!!
+
+        //  ToDo:   Вероятно можно оптимизировать, т.к. мапа обходится дважды:
+        //          - сначала логирование для возможности отката,
+        //          - потом само удаление.
+        //
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
+        for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
+            if (whereFunc.where(entry.getValue())) {
+                Integer rowId = entry.getKey();
+                DbRec OldDbRec = entry.getValue();
+                dmlCommandLog.push(new DMLCommandLogElement(rowId, OldDbRec));
+            }
+        }
+
         rowId_DbRec_Map.values().removeIf(whereFunc::where);
-        //  ToDo:   code for rollback
-        // return new ResultOfDMLCommand(new DMLCommandQueueLog());
-        return new ResultOfDMLCommand(null);
+        return new ResultOfDMLCommand(dmlCommandLog);
     }
 
     //  ToDo:   Не должен быть public!
     @Override
     public void rollbackOfInsert(Integer rowId) {
+        //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
         rowId_DbRec_Map.keySet().removeIf(key -> key.equals(rowId));
+    }
+
+    @Override
+    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
+        insert000(rowId, oldDbRec);
     }
 
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
@@ -111,7 +144,7 @@ public non-sealed class DbTab extends DbTableLike {
         List<DbRec> newDbRecs = new ArrayList<>();
         int beforeCount = rowId_DbRec_Map.size();
 
-        for (Map.Entry<Integer, DbRec>  entry : rowId_DbRec_Map.entrySet()) {
+        for (Map.Entry<Integer, DbRec> entry : rowId_DbRec_Map.entrySet()) {
             if (whereFunc == null || whereFunc.where(entry.getValue())) {
                 oldDbRecs.add(entry.getValue());
                 //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.

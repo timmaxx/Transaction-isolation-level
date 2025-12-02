@@ -5,9 +5,15 @@ public non-sealed class DbSelect extends DbTableLike {
         super(dbFields);
     }
 
-    //  ToDo:   Возможно здесь rollbackOfInsert даже через исключение можно не делать.
+    //  ToDo:   Возможно здесь метод даже через исключение можно не делать.
     @Override
     public void rollbackOfInsert(Integer rowId) {
+        throw new UnsupportedOperationException();
+    }
+
+    //  ToDo:   Возможно здесь метод даже через исключение можно не делать.
+    @Override
+    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
         throw new UnsupportedOperationException();
     }
 }

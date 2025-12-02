@@ -16,6 +16,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueueState.*;
+import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.DELETE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.INSERT;
 
 public class SQLCommandQueue {
@@ -139,9 +140,10 @@ public class SQLCommandQueue {
                     break;
                 }
                 int rowId = dmlCommandLogElement.getRowId();
+
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (dmlCommandLogElementType == INSERT) {
-                    //  rollbackOfInsert нужен только rowId.
+                    //  для rollbackOfInsert нужен только rowId.
                     dbTableLike.rollbackOfInsert(rowId);
                 }
 /*
@@ -149,20 +151,16 @@ public class SQLCommandQueue {
                 dmlCommandQueueLogElement
                         .getDbTab()
                         .rollback_update(rowId, dmlCommandQueueLogElement.oldDbRecord());
-
-
-            } else if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == DELETE) {
-                dmlCommandQueueLogElement
-                        .getDbTab()
-                        .rollback_insert(rowId, dmlCommandQueueLogElement.oldDbRecord());
-
-
             }
 */
-                else {
+                else if (dmlCommandLogElementType == DELETE) {
+                    //  для rollbackOfDelete нужен и rowId и старое значение записи.
+                    dbTableLike.rollbackOfDelete(rowId, dmlCommandLogElement.getOldDbRec());
+                } else {
                     throw new UnsupportedOperationException();
                 }
             }
-        }        sqlCommandQueueState = ROLLED_BACK;
+        }
+        sqlCommandQueueState = ROLLED_BACK;
     }
 }
