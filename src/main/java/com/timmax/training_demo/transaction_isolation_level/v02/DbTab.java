@@ -83,8 +83,8 @@ public non-sealed class DbTab extends DbTableLike {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
         for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
             Integer rowId = entry.getKey();
-            DbRec OldDbRec = entry.getValue();
-            dmlCommandLog.push(new DMLCommandLogElement(rowId, OldDbRec));
+            DbRec oldDbRec = entry.getValue();
+            dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
         }
 
         rowId_DbRec_Map.clear();
@@ -108,8 +108,8 @@ public non-sealed class DbTab extends DbTableLike {
         for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
             if (whereFunc.where(entry.getValue())) {
                 Integer rowId = entry.getKey();
-                DbRec OldDbRec = entry.getValue();
-                dmlCommandLog.push(new DMLCommandLogElement(rowId, OldDbRec));
+                DbRec oldDbRec = entry.getValue();
+                dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
             }
         }
 
