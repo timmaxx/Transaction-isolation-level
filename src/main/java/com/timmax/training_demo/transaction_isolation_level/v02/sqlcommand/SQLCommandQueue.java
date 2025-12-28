@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueueState.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.DELETE;
+import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.UPDATE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.INSERT;
 
 public class SQLCommandQueue {
@@ -145,15 +146,11 @@ public class SQLCommandQueue {
                 if (dmlCommandLogElementType == INSERT) {
                     //  для rollbackOfInsert нужен только rowId.
                     dbTableLike.rollbackOfInsert(rowId);
-                }
-/*
-            else if (dmlCommandQueueLogElement.getDmlCommandqueuelogelementtype() == UPDATE) {
-                dmlCommandQueueLogElement
-                        .getDbTab()
-                        .rollback_update(rowId, dmlCommandQueueLogElement.oldDbRecord());
-            }
-*/
-                else if (dmlCommandLogElementType == DELETE) {
+                } else if (dmlCommandLogElementType == UPDATE) {
+                    //  для rollbackOfUpdate нужен и rowId и старое значение записи.
+                    logger.info("dmlCommandLogElement.getOldDbRec() = {}", dmlCommandLogElement.getOldDbRec());
+                    dbTableLike.rollbackOfUpdate(rowId, dmlCommandLogElement.getOldDbRec());
+                } else if (dmlCommandLogElementType == DELETE) {
                     //  для rollbackOfDelete нужен и rowId и старое значение записи.
                     dbTableLike.rollbackOfDelete(rowId, dmlCommandLogElement.getOldDbRec());
                 } else {

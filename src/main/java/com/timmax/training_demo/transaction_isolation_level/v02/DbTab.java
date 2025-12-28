@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.DELETE;
+import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.UPDATE;
 
 public non-sealed class DbTab extends DbTableLike {
     protected static final Logger logger = LoggerFactory.getLogger(DbTab.class);
@@ -129,6 +130,12 @@ public non-sealed class DbTab extends DbTableLike {
         insert000(rowId, oldDbRec);
     }
 
+    @Override
+    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+        rollbackOfInsert(rowId);
+        rollbackOfDelete(rowId, oldDbRec);
+    }
+
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
         return update(updateSetCalcFunc, null);
     }
@@ -140,22 +147,25 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        List<DbRec> oldDbRecs = new ArrayList<>();
-        List<DbRec> newDbRecs = new ArrayList<>();
+        Map<Integer, DbRec> old_rowId_DbRec_Map = new HashMap<>();
+        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
         int beforeCount = rowId_DbRec_Map.size();
 
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
         for (Map.Entry<Integer, DbRec> entry : rowId_DbRec_Map.entrySet()) {
             if (whereFunc == null || whereFunc.where(entry.getValue())) {
+                Integer rowId = entry.getKey();
                 DbRec oldDbRec =  entry.getValue();
-                oldDbRecs.add(oldDbRec);
+                old_rowId_DbRec_Map.put(rowId, oldDbRec);
                 //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
                 DbRec newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
-                newDbRecs.add(newDbRec);
+                new_rowId_DbRec_Map.put(rowId, newDbRec);
+                dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
             }
         }
 
-        int oldCount = oldDbRecs.size();
-        int newCount = newDbRecs.size();
+        int oldCount = old_rowId_DbRec_Map.size();
+        int newCount = new_rowId_DbRec_Map.size();
 
         if (oldCount != newCount) {
             logger.error("oldCount != newCount");
@@ -163,20 +173,20 @@ public non-sealed class DbTab extends DbTableLike {
             throw new RuntimeException("oldCount != newCount");
         }
 
-        rowId_DbRec_Map.values().removeAll(oldDbRecs);
+        rowId_DbRec_Map.keySet().removeAll(old_rowId_DbRec_Map.keySet());
         int afterRemoveCount = rowId_DbRec_Map.size();
 
         if (beforeCount - oldCount != afterRemoveCount) {
             logger.error("beforeCount - oldCount != afterRemoveCount");
-            logger.error("oldTestRecordSet = {}", oldDbRecs);
-            logger.error("newTestRecordSet = {}", newDbRecs);
+            logger.error("old_rowId_DbRec_Map = {}", old_rowId_DbRec_Map);
+            logger.error("new_rowId_DbRec_Map = {}", new_rowId_DbRec_Map);
             logger.error("beforeCount = {}, oldCount = {}, newCount = {}", beforeCount, oldCount, newCount);
             logger.error("afterRemoveCount = {}", afterRemoveCount);
             logger.error("after remove:  rowId_DbRec_Map = {}", rowId_DbRec_Map);
             throw new RuntimeException("beforeCount - oldCount != afterRemoveCount");
         }
 
-        insert0(newDbRecs);
+        insert0(new_rowId_DbRec_Map);
         int afterCount = rowId_DbRec_Map.size();
 
         if (afterRemoveCount + newCount != afterCount) {
@@ -185,8 +195,8 @@ public non-sealed class DbTab extends DbTableLike {
             logger.error("after insert0: rowId_DbRec_Map = {}", rowId_DbRec_Map);
             throw new RuntimeException("afterRemoveCount + newCount != afterCount");
         }
-        //  !!!!!
-        return null;
+
+        return new ResultOfDMLCommand(dmlCommandLog);
     }
 
     @Override

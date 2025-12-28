@@ -16,4 +16,9 @@ public non-sealed class DbSelect extends DbTableLike {
     public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+        throw new UnsupportedOperationException();
+    }
 }

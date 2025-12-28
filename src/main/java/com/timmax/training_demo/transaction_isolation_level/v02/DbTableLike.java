@@ -56,10 +56,31 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
+    //  ToDo:   Warning:(60, 34) Return value of the method is never used
+    protected ResultOfDMLCommand insert0(Map<Integer, DbRec> new_roId_DbRec_Map) {
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
+
+        for (Map.Entry<Integer, DbRec> entry : new_roId_DbRec_Map.entrySet()) {
+            insert00(dmlCommandLog, entry);
+        }
+
+        return new ResultOfDMLCommand(dmlCommandLog);
+    }
+
     private void insert00(DMLCommandLog dmlCommandLog, DbRec newDbRec) {
         Integer rowId;
         rowId = ++lastInsertedRowId;
         if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
+            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+        }
+        //  ToDo:   Здесь указываю null, но нужно сделать (иерархию классов) так чтобы null не указывать.
+        dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
+    }
+
+    private void insert00(DMLCommandLog dmlCommandLog, Map.Entry<Integer, DbRec> entry) {
+        Integer rowId;
+        rowId = entry.getKey();
+        if (rowId_DbRec_Map.put(rowId, new DbRec(entry.getValue())) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
         //  ToDo:   Здесь указываю null, но нужно сделать (иерархию классов) так чтобы null не указывать.
@@ -97,4 +118,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     public abstract void rollbackOfInsert(Integer rowId);
 
     public abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
+
+    public abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
 }

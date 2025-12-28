@@ -176,6 +176,7 @@ public class DbUpdateTest {
                 dbRec -> Map.of(
                         DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                 ),
+                //  ToDo:   Warning:(179, 59) 'equals' between objects of inconvertible types 'DbFieldValue' and 'int'
                 dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
         );
 
@@ -198,6 +199,7 @@ public class DbUpdateTest {
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
+                        //  ToDo:   Warning:(201, 67) 'equals' between objects of inconvertible types 'DbFieldValue' and 'int'
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
                 ),
                 new DQLCommandSelect(1L, dbTabPerson)
@@ -252,4 +254,83 @@ public class DbUpdateTest {
         );
     }
 */
+
+    @Test
+    public void updateTwoRowsTableViaSQLCommandQueueAndRollBack() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person   --  2 rows
+        //     SET name = name || " " || name
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandUpdate(
+                        1L,
+                        dbTabPerson,
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        )
+                ),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
+
+        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.rowId_DbRec_Map.values());
+        List<DbRec> values2 = new ArrayList<>(dbSelect.rowId_DbRec_Map.values());
+        values1.sort(Comparator.naturalOrder());
+        values2.sort(Comparator.naturalOrder());
+
+        Assertions.assertEquals(values1, values2);
+        //  Код до этой строки - копия того, что в методе
+        //  void updateTwoRowsTableViaSQLCommandQueue()
+
+        //  ROLLBACK;
+        sqlCommandQueue1.rollback();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+    }
+
+    @Test
+    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollBack() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+
+        //  UPDATE person   --  2 rows
+        //     SET name = name || " " || name
+        //   WHERE id = 2
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+                new DMLCommandUpdate(
+                        1L,
+                        dbTabPerson,
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        //  ToDo:   Warning:(312, 67) 'equals' between objects of inconvertible types 'DbFieldValue' and 'int'
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                ),
+                new DQLCommandSelect(1L, dbTabPerson)
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+        //  Код до этой строки - копия того, что в методе
+        //  void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue
+
+        //  ROLLBACK;
+        sqlCommandQueue1.rollback();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+    }
 }
