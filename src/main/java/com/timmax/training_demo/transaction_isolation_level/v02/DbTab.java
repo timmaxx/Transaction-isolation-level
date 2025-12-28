@@ -146,9 +146,10 @@ public non-sealed class DbTab extends DbTableLike {
 
         for (Map.Entry<Integer, DbRec> entry : rowId_DbRec_Map.entrySet()) {
             if (whereFunc == null || whereFunc.where(entry.getValue())) {
-                oldDbRecs.add(entry.getValue());
+                DbRec oldDbRec =  entry.getValue();
+                oldDbRecs.add(oldDbRec);
                 //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
-                DbRec newDbRec = new DbRec(entry.getValue(), updateSetCalcFunc.setCalcFunc(entry.getValue()));
+                DbRec newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
                 newDbRecs.add(newDbRec);
             }
         }
