@@ -87,15 +87,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
     }
 
-    //  Этот метод вызывается при rollback для delete
-    void insert000(Integer rowId, DbRec oldDbRec) {
-        if (rowId_DbRec_Map.put(rowId, new DbRec(oldDbRec)) != null) {
-            //  Условие в принципе не должно никогда срабатывать, т.к. происходит rollback!!!
-            //  ToDo:   Ошибка должна быть более суровой и дополнена текстом.
-            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
-        }
-    }
-
     @Override
     public String toString() {
         return "DbTableLike{" +

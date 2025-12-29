@@ -1,6 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
+import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElement;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
@@ -127,7 +128,11 @@ public non-sealed class DbTab extends DbTableLike {
 
     @Override
     public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
-        insert000(rowId, oldDbRec);
+        if (rowId_DbRec_Map.put(rowId, new DbRec(oldDbRec)) != null) {
+            //  Условие в принципе не должно никогда срабатывать, т.к. происходит rollback!!!
+            //  ToDo:   Ошибка должна быть более суровой и дополнена текстом.
+            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+        }
     }
 
     @Override
