@@ -56,15 +56,17 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
-    //  ToDo:   Warning:(60, 34) Return value of the method is never used
-    protected ResultOfDMLCommand insert0(Map<Integer, DbRec> new_roId_DbRec_Map) {
+    //  ToDo:   Сюда нужно передавать уже инициированный dmlCommandLog.
+    //          Однако, если так делать, тесты update с rollback ломаются.
+    //          Метод вызывается при update, но тогда там уже определён dmlCommandLog
+    protected void insert0(Map<Integer, DbRec> new_rowId_DbRec_Map) {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
 
-        for (Map.Entry<Integer, DbRec> entry : new_roId_DbRec_Map.entrySet()) {
-            insert00(dmlCommandLog, entry.getKey(), entry.getValue());
+        for (Map.Entry<Integer, DbRec> entry : new_rowId_DbRec_Map.entrySet()) {
+            Integer rowId = entry.getKey();
+            DbRec newDbRec = entry.getValue();
+            insert00(dmlCommandLog, rowId, newDbRec);
         }
-
-        return new ResultOfDMLCommand(dmlCommandLog);
     }
 
     private void insert00(DMLCommandLog dmlCommandLog, DbRec newDbRec) {

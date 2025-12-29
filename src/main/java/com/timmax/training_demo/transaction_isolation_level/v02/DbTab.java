@@ -157,10 +157,11 @@ public non-sealed class DbTab extends DbTableLike {
         int beforeCount = rowId_DbRec_Map.size();
 
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
+
         for (Map.Entry<Integer, DbRec> entry : rowId_DbRec_Map.entrySet()) {
-            if (whereFunc == null || whereFunc.where(entry.getValue())) {
+            DbRec oldDbRec =  entry.getValue();
+            if (whereFunc == null || whereFunc.where(oldDbRec)) {
                 Integer rowId = entry.getKey();
-                DbRec oldDbRec =  entry.getValue();
                 old_rowId_DbRec_Map.put(rowId, oldDbRec);
                 //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
                 DbRec newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
