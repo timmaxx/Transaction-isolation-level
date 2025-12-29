@@ -61,7 +61,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
 
         for (Map.Entry<Integer, DbRec> entry : new_roId_DbRec_Map.entrySet()) {
-            insert00(dmlCommandLog, entry);
+            insert00(dmlCommandLog, entry.getKey(), entry.getValue());
         }
 
         return new ResultOfDMLCommand(dmlCommandLog);
@@ -77,10 +77,8 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
     }
 
-    private void insert00(DMLCommandLog dmlCommandLog, Map.Entry<Integer, DbRec> entry) {
-        Integer rowId;
-        rowId = entry.getKey();
-        if (rowId_DbRec_Map.put(rowId, new DbRec(entry.getValue())) != null) {
+    private void insert00(DMLCommandLog dmlCommandLog, Integer rowId, DbRec newDbRec) {
+        if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
         //  ToDo:   Здесь указываю null, но нужно сделать (иерархию классов) так чтобы null не указывать.
