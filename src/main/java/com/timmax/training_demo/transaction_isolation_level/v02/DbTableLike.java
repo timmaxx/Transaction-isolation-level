@@ -56,19 +56,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
-    //  ToDo:   Сюда нужно передавать уже инициированный dmlCommandLog.
-    //          Однако, если так делать, тесты update с rollback ломаются.
-    //          Метод вызывается при update, но тогда там уже определён dmlCommandLog
-    protected void insert0(Map<Integer, DbRec> new_rowId_DbRec_Map) {
-        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
-
-        for (Map.Entry<Integer, DbRec> entry : new_rowId_DbRec_Map.entrySet()) {
-            Integer rowId = entry.getKey();
-            DbRec newDbRec = entry.getValue();
-            insert00(dmlCommandLog, rowId, newDbRec);
-        }
-    }
-
     private void insert00(DMLCommandLog dmlCommandLog, DbRec newDbRec) {
         Integer rowId;
         rowId = ++lastInsertedRowId;
@@ -80,6 +67,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
         //  ToDo:   Здесь указываю null, но нужно сделать (иерархию классов) так чтобы null не указывать.
+
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
     }
 
