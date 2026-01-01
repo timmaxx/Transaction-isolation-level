@@ -60,13 +60,16 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         Integer rowId;
         rowId = ++lastInsertedRowId;
 
-        //  ToDo:   Этот блок нужно проверить на повторность в других местах.
-        if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
-            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
-        }
+        insert000(rowId, newDbRec);
 
         //  ToDo:   Здесь указываю null, но нужно сделать (иерархию классов) так чтобы null не указывать.
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
+    }
+
+    protected void insert000(Integer rowId, DbRec newDbRec) {
+        if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
+            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+        }
     }
 
     @Override

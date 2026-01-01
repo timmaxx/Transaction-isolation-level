@@ -192,10 +192,8 @@ public non-sealed class DbTab extends DbTableLike {
         for (Map.Entry<Integer, DbRec> entry : new_rowId_DbRec_Map.entrySet()) {
             Integer rowId = entry.getKey();
             DbRec newDbRec = entry.getValue();
-            //  Эта вставка не сопровождается вставкой в журнал отката
-            if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
-                throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
-            }
+            //  После этой вставки нет вставки в журнал отката
+            insert000(rowId, newDbRec);
         }
 
         int countAfterAll = rowId_DbRec_Map.size();
