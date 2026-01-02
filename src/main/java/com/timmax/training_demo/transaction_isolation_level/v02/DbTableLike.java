@@ -3,12 +3,16 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.*;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.INSERT;
 
 public abstract sealed class DbTableLike permits DbTab, DbSelect {
+    protected static final Logger logger = LoggerFactory.getLogger(DbTableLike.class);
+
     public static final String ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE = "ERROR: Duplicate key value violates unique constraint (combinations of all fields must be unique).";
 
     protected final DbFields dbFields;

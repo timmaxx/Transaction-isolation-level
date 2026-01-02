@@ -6,17 +6,12 @@ import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.D
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElement;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.*;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.DELETE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.UPDATE;
 
 public non-sealed class DbTab extends DbTableLike {
-    protected static final Logger logger = LoggerFactory.getLogger(DbTab.class);
-
     private static final String ERROR_TABLE_IS_RO = "ERROR: The table '%s' is read only.";
     private static final String YOU_CANNOT_INSERT = "You cannot insert any row into this table.";
     private static final String YOU_CANNOT_UPDATE = "You cannot update any row in this table.";
