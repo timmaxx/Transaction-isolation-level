@@ -65,43 +65,22 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     public ResultOfDMLCommand delete() {
-        return delete(null);
+        return delete(dbRec -> true);
     }
 
     public ResultOfDMLCommand delete(WhereFunc whereFunc) {
+        validateIsWhereFuncNull(whereFunc);
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         return delete0(whereFunc);
     }
 
-    //  ToDo:   Удалить после рефакторинга
-    //          private ResultOfDMLCommand delete0(WhereFunc whereFunc)
-    private ResultOfDMLCommand delete0() {
-
-        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
-        for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
-            Integer rowId = entry.getKey();
-            DbRec oldDbRec = entry.getValue();
-            dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
-        }
-
-        rowId_DbRec_Map.clear();
-
-        return new ResultOfDMLCommand(dmlCommandLog);
-    }
-
     private ResultOfDMLCommand delete0(WhereFunc whereFunc) {
-        //  ToDo:   Вместо вызова delete0() при whereFunc == null можно было-бы сделать так,
-        //          чтобы whereFunc всегда давала true.
-        //          Тогда можно было-бы удалить delete0().
-        if (whereFunc == null) {
-            return delete0();
-        }
-
         //  ToDo:   Вероятно можно оптимизировать, т.к. мапа обходится дважды:
         //          - сначала логирование для возможности отката,
         //          - потом само удаление.
         //
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
+
         for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
             if (whereFunc.where(entry.getValue())) {
                 Integer rowId = entry.getKey();
@@ -111,6 +90,7 @@ public non-sealed class DbTab extends DbTableLike {
         }
 
         rowId_DbRec_Map.values().removeIf(whereFunc::where);
+
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
@@ -137,10 +117,11 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
-        return update(updateSetCalcFunc, null);
+        return update(updateSetCalcFunc, dbRec -> true);
     }
 
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        validateIsWhereFuncNull(whereFunc);
         validateIsUpdateSetCalcFuncNull(updateSetCalcFunc);
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         return update0(updateSetCalcFunc, whereFunc);
@@ -157,7 +138,7 @@ public non-sealed class DbTab extends DbTableLike {
         //  Наполняем new_rowId_DbRec_Map записями с новыми значениями
         for (Map.Entry<Integer, DbRec> entry : rowId_DbRec_Map.entrySet()) {
             DbRec oldDbRec =  entry.getValue();
-            if (whereFunc == null || whereFunc.where(oldDbRec)) {
+            if (whereFunc.where(oldDbRec)) {
                 Integer rowId = entry.getKey();
                 //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
                 DbRec newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
@@ -170,7 +151,7 @@ public non-sealed class DbTab extends DbTableLike {
         //  Количество записей, которые должны быть обновлены
         int countForUpdating = new_rowId_DbRec_Map.size();
 
-        //  Удаляем все записи, которые нужно будет обновить.
+        //  Удаляем все записи, которые нужно будет обновить
         rowId_DbRec_Map.keySet().removeAll(new_rowId_DbRec_Map.keySet());
 
         //  Количество всех записей в основной таблице, которые получились после промежуточного удаления

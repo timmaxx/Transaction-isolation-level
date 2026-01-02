@@ -6,7 +6,7 @@ import com.timmax.training_demo.transaction_isolation_level.v02.WhereFunc;
 
 public class DMLCommandUpdate extends DMLCommand {
     public DMLCommandUpdate(Long millsBeforeRun, DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc) {
-        this(millsBeforeRun, dbTab, updateSetCalcFunc, null);
+        this(millsBeforeRun, dbTab, updateSetCalcFunc, dbRec -> true);
     }
 
     public DMLCommandUpdate(Long millsBeforeRun, DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {

@@ -15,6 +15,8 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     public static final String ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE = "ERROR: Duplicate key value violates unique constraint (combinations of all fields must be unique).";
 
+    private static final String ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL = "ERROR: Inner trouble. You cannot set WhereFunc into null!";
+
     protected final DbFields dbFields;
     protected final Map<Integer, DbRec> rowId_DbRec_Map = new HashMap<>();
 
@@ -24,18 +26,26 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         this.dbFields = dbFields;
     }
 
+    protected void validateIsWhereFuncNull(WhereFunc whereFunc) {
+        if (whereFunc == null) {
+            logger.error(ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
+            throw new NullPointerException(ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
+        }
+    }
+
     public ResultOfDQLCommand select() {
-        return select(null);
+        return select(dbRec -> true);
     }
 
     public ResultOfDQLCommand select(WhereFunc whereFunc) {
+        validateIsWhereFuncNull(whereFunc);
         return select0(whereFunc);
     }
 
     private ResultOfDQLCommand select0(WhereFunc whereFunc) {
         DbSelect dbSelect = new DbSelect(this.dbFields);
         for (DbRec dbRec : rowId_DbRec_Map.values()) {
-            if (whereFunc == null || whereFunc.where(dbRec)) {
+            if (whereFunc.where(dbRec)) {
                 dbSelect.insert0(dbRec);
             }
         }
