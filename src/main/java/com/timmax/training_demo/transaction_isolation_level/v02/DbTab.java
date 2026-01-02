@@ -75,21 +75,47 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private ResultOfDMLCommand delete0(WhereFunc whereFunc) {
-        //  ToDo:   Вероятно можно оптимизировать, т.к. мапа обходится дважды:
-        //          - сначала логирование для возможности отката,
-        //          - потом само удаление.
-        //
+        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
+
+        //  Общее количество всех записей в основной таблице
+        int countBeforeAll = rowId_DbRec_Map.size();
+
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
 
+        //  1. Подготовка: те записи, которые попали в where, пишутся в лог отката, а для update вычисляются новые значения
         for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
-            if (whereFunc.where(entry.getValue())) {
+            DbRec oldDbRec = entry.getValue();
+            if (whereFunc.where(oldDbRec)) {
                 Integer rowId = entry.getKey();
-                DbRec oldDbRec = entry.getValue();
+
+                //  Отличающийся от update код:
+                new_rowId_DbRec_Map.put(rowId, null);
+
+                //  Создаём запись в журнале отката
                 dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
             }
         }
 
-        rowId_DbRec_Map.values().removeIf(whereFunc::where);
+        //  Количество записей, которые должны быть удалены
+        int countForProcessing = new_rowId_DbRec_Map.size();
+
+        //  2.  Удаление записей, удовлетворяющих where
+        rowId_DbRec_Map.keySet().removeAll(new_rowId_DbRec_Map.keySet());
+
+        //  2.2.    Проверка удаления по количеству записей
+        //  Количество всех записей в основной таблице, которые получились после промежуточного удаления
+        int countAfterRemoving = rowId_DbRec_Map.size();
+
+        if (countBeforeAll - countForProcessing != countAfterRemoving) {
+            logger.error("countBeforeAll({}) - countForProcessing({}) != countAfterRemoving({})", countBeforeAll, countForProcessing, countAfterRemoving);
+            logger.error("new_rowId_DbRec_Map = {}", new_rowId_DbRec_Map);
+            logger.error("after remove:  rowId_DbRec_Map = {}", rowId_DbRec_Map);
+            throw new RuntimeException("beforeCount - countForProcessing != countAfterRemoving");
+        }
+
+        //  Здесь нет кода, который есть в update
+        //  //  3.  Вставка
+        //  //  3.2.    Проверка
 
         return new ResultOfDMLCommand(dmlCommandLog);
     }
@@ -135,36 +161,43 @@ public non-sealed class DbTab extends DbTableLike {
 
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
 
+        //  1. Подготовка: те записи, которые попали в where, пишутся в лог отката, а для update вычисляются новые значения
         //  Наполняем new_rowId_DbRec_Map записями с новыми значениями
         for (Map.Entry<Integer, DbRec> entry : rowId_DbRec_Map.entrySet()) {
             DbRec oldDbRec =  entry.getValue();
             if (whereFunc.where(oldDbRec)) {
                 Integer rowId = entry.getKey();
+
+                //  Отличающийся от delete код:
                 //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
                 DbRec newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
                 new_rowId_DbRec_Map.put(rowId, newDbRec);
+
                 //  Создаём запись в журнале отката
                 dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
             }
         }
 
         //  Количество записей, которые должны быть обновлены
-        int countForUpdating = new_rowId_DbRec_Map.size();
+        int countForProcessing = new_rowId_DbRec_Map.size();
 
-        //  Удаляем все записи, которые нужно будет обновить
+        //  2.  Удаление записей, удовлетворяющих where
         rowId_DbRec_Map.keySet().removeAll(new_rowId_DbRec_Map.keySet());
 
+        //  2.2.    Проверка удаления по количеству записей
         //  Количество всех записей в основной таблице, которые получились после промежуточного удаления
         int countAfterRemoving = rowId_DbRec_Map.size();
 
-        if (countBeforeAll - countForUpdating != countAfterRemoving) {
-            logger.error("countBeforeAll({}) - countForUpdating({}) != countAfterRemoving({})", countBeforeAll, countForUpdating, countAfterRemoving);
+        if (countBeforeAll - countForProcessing != countAfterRemoving) {
+            logger.error("countBeforeAll({}) - countForProcessing({}) != countAfterRemoving({})", countBeforeAll, countForProcessing, countAfterRemoving);
             logger.error("new_rowId_DbRec_Map = {}", new_rowId_DbRec_Map);
             logger.error("after remove:  rowId_DbRec_Map = {}", rowId_DbRec_Map);
-            throw new RuntimeException("beforeCount - countForUpdating != countAfterRemoving");
+            throw new RuntimeException("beforeCount - countForProcessing != countAfterRemoving");
         }
+        //  До этой строки код максимально похож на
+        //  private ResultOfDMLCommand delete0(WhereFunc whereFunc)
 
-        //  Вставляем в основную таблицу те записи, которые были созданы выше в new_rowId_DbRec_Map
+        //  3.  Вставляем в основную таблицу те записи, которые были созданы выше в new_rowId_DbRec_Map
         for (Map.Entry<Integer, DbRec> entry : new_rowId_DbRec_Map.entrySet()) {
             Integer rowId = entry.getKey();
             DbRec newDbRec = entry.getValue();
@@ -172,12 +205,13 @@ public non-sealed class DbTab extends DbTableLike {
             insert000(rowId, newDbRec);
         }
 
+        //  3.2.    Проверка вставки по количеству записей
         int countAfterAll = rowId_DbRec_Map.size();
 
-        if (countAfterRemoving + countForUpdating != countAfterAll) {
-            logger.error("countAfterRemoving({}) + countForUpdating({}) != countAfterAll({})", countAfterRemoving, countForUpdating, countAfterAll);
+        if (countAfterRemoving + countForProcessing != countAfterAll) {
+            logger.error("countAfterRemoving({}) + countForProcessing({}) != countAfterAll({})", countAfterRemoving, countForProcessing, countAfterAll);
             logger.error("after insert0: rowId_DbRec_Map = {}", rowId_DbRec_Map);
-            throw new RuntimeException("countAfterRemoving + countForUpdating != countAfterAll");
+            throw new RuntimeException("countAfterRemoving + countForProcessing != countAfterAll");
         }
 
         return new ResultOfDMLCommand(dmlCommandLog);

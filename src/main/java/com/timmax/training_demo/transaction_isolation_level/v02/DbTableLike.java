@@ -52,6 +52,10 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDQLCommand(dbSelect);
     }
 
+    //  ToDo:   Нужно выделить общий функционал с
+    //          private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc)
+    //          в пунктах 3 и 3.2 и привести к единообразию и убрать дублирующийся код
+    //          (для всех методов insert0, insert00, insert000)
     protected ResultOfDMLCommand insert0(DbRec newDbRec) {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
 
