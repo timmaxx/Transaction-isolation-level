@@ -1,9 +1,7 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
-import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLog;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElement;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 
 import java.util.*;
@@ -35,7 +33,7 @@ public non-sealed class DbTab extends DbTableLike {
 
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
-        dbTab.rowId_DbRec_Map.values().forEach(this::insert0);
+        dbTab.getRows().forEach(this::insert0);
     }
 
     public DbTab(DbTab dbTab, boolean readOnly, List<DbRec> dbRec_List) {
@@ -72,17 +70,14 @@ public non-sealed class DbTab extends DbTableLike {
     @Override
     public void rollbackOfInsert(Integer rowId) {
         //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
-        rowId_DbRec_Map.keySet().removeIf(key -> key.equals(rowId));
+        delete000(rowId);
     }
 
     //  ToDo:   Не должен быть public!
     @Override
     public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
-        if (rowId_DbRec_Map.put(rowId, new DbRec(oldDbRec)) != null) {
-            //  Условие в принципе не должно никогда срабатывать, т.к. происходит rollback!!!
-            //  ToDo:   Ошибка должна быть более суровой и дополнена текстом.
-            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
-        }
+        //  Здесь делается вставка одной строки, но при этом не пишется лог для rollback
+        insert000(rowId, oldDbRec);
     }
 
     //  ToDo:   Не должен быть public!
@@ -111,7 +106,6 @@ public non-sealed class DbTab extends DbTableLike {
                 "dbTabName='" + dbTabName + '\'' +
                 ", readOnly=" + readOnly +
                 ", dbFields=" + dbFields +
-                ", rowId_DbRec_Map=" + rowId_DbRec_Map +
                 '}';
     }
 
@@ -153,54 +147,5 @@ public non-sealed class DbTab extends DbTableLike {
         insert00(new_rowId_DbRec_Map);
 
         return new ResultOfDMLCommand(dmlCommandLog);
-    }
-
-    //  Вычисление новых записей (только для UPDATE);
-    //  Логирование записей, подлежащих удалению или обновлению;
-    //  Удаление этих записей.
-    private void delete00ForDeletingAndUpdating(WhereFunc whereFunc, Map<Integer, DbRec> new_rowId_DbRec_Map, DMLCommandLog dmlCommandLog, UpdateSetCalcFunc updateSetCalcFunc) {
-        //  Количество записей, до выполнения
-        int countBeforeAll = rowId_DbRec_Map.size();
-
-        //  1.  Подготовка для тех записей, которые попали в where:
-        //  1.1.    вычисляются новые значения (только для UPDATE),
-        //  1.2.    пишутся в лог отката
-        for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
-            DbRec oldDbRec = entry.getValue();
-            if (whereFunc.where(oldDbRec)) {
-                Integer rowId = entry.getKey();
-                DbRec newDbRec;
-                if (updateSetCalcFunc == null) {
-                    //  Код для DELETE:
-                    newDbRec = null;
-                } else {
-                    //  Код для UPDATE:
-                    //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
-                    newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
-                }
-                //  Новую запись записываем в промежуточную мапу
-                new_rowId_DbRec_Map.put(rowId, newDbRec);
-
-                //  Создаём запись в журнале отката
-                dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
-            }
-        }
-
-        //  Количество записей, которые должны быть удалены
-        int countForProcessing = new_rowId_DbRec_Map.size();
-
-        //  2.  Удаление записей, удовлетворяющих where
-        rowId_DbRec_Map.keySet().removeAll(new_rowId_DbRec_Map.keySet());
-
-        //  2.2.    Проверка удаления по количеству записей
-        //  Количество всех записей в основной таблице, которые получились после промежуточного удаления
-        int countAfterRemoving = rowId_DbRec_Map.size();
-
-        if (countBeforeAll - countForProcessing != countAfterRemoving) {
-            logger.error("countBeforeAll({}) - countForProcessing({}) != countAfterRemoving({})", countBeforeAll, countForProcessing, countAfterRemoving);
-            logger.error("new_rowId_DbRec_Map = {}", new_rowId_DbRec_Map);
-            logger.error("after remove:  rowId_DbRec_Map = {}", rowId_DbRec_Map);
-            throw new RuntimeException("beforeCount - countForProcessing != countAfterRemoving");
-        }
     }
 }

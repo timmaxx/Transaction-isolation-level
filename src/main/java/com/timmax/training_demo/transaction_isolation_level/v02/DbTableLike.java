@@ -14,12 +14,12 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     public static final String ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE = "ERROR: Duplicate key value violates unique constraint (combinations of all fields must be unique).";
 
     protected static final Logger logger = LoggerFactory.getLogger(DbTableLike.class);
-
     protected static final String ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL = "ERROR: Inner trouble. You cannot set WhereFunc into null!";
 
-    protected final DbFields dbFields;
-    protected final Map<Integer, DbRec> rowId_DbRec_Map = new HashMap<>();
 
+    protected final DbFields dbFields;
+
+    private final Map<Integer, DbRec> rowId_DbRec_Map = new HashMap<>();
     private Integer lastInsertedRowId = 0;
 
 
@@ -27,6 +27,10 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         this.dbFields = dbFields;
     }
 
+
+    public int size() {
+        return rowId_DbRec_Map.size();
+    }
 
     //  Публичный SELECT всех записей (без WHERE)
     public ResultOfDQLCommand select() {
@@ -69,6 +73,40 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     public abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
 
 
+    //  ToDo:   Удалить не публичный метод для одной строки и сделать его через SET
+    protected void delete000(Integer rowId) {
+        int countBeforeAll = size();
+        int countForProcessing = 1;
+
+        rowId_DbRec_Map.keySet().removeIf(key -> key.equals(rowId));
+
+        //  Проверка удаления по количеству записей
+        //  Количество всех записей в основной таблице, которые получились после промежуточного удаления
+        int countAfterRemoving = size();
+
+        if (countBeforeAll - countForProcessing != countAfterRemoving) {
+            logger.error("countBeforeAll({}) - countForProcessing({}) != countAfterRemoving({})", countBeforeAll, countForProcessing, countAfterRemoving);
+            throw new RuntimeException("beforeCount - countForProcessing != countAfterRemoving");
+        }
+    }
+
+    protected void delete000(Set<Integer> rowIdSet) {
+        int countBeforeAll = size();
+        int countForProcessing = rowIdSet.size();
+
+        rowId_DbRec_Map.keySet().removeAll(rowIdSet);
+
+        //  Проверка удаления по количеству записей
+        //  Количество всех записей в основной таблице, которые получились после промежуточного удаления
+        int countAfterRemoving = size();
+
+        if (countBeforeAll - countForProcessing != countAfterRemoving) {
+            logger.error("countBeforeAll({}) - countForProcessing({}) != countAfterRemoving({})", countBeforeAll, countForProcessing, countAfterRemoving);
+            throw new RuntimeException("beforeCount - countForProcessing != countAfterRemoving");
+        }
+    }
+
+    //  ToDo:   Удалить не публичный метод для одной строки и сделать его через SET
     //  INSERT одной записи (без ROWID)
     protected ResultOfDMLCommand insert0(DbRec newDbRec) {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
@@ -111,6 +149,50 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         }
     }
 
+    //  Непосредственная вставка одной записи в мапу-носитель таблицы
+    protected void insert000(Integer rowId, DbRec newDbRec) {
+        if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
+            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+        }
+    }
+
+    protected Collection<DbRec> getRows() {
+        return rowId_DbRec_Map.values();
+    }
+
+    //  Вычисление новых записей (только для UPDATE);
+    //  Логирование записей, подлежащих удалению или обновлению;
+    //  Удаление этих записей.
+    protected void delete00ForDeletingAndUpdating(WhereFunc whereFunc, Map<Integer, DbRec> new_rowId_DbRec_Map, DMLCommandLog dmlCommandLog, UpdateSetCalcFunc updateSetCalcFunc) {
+        //  1.  Подготовка для тех записей, которые попали в where:
+        //  1.1.    вычисляются новые значения (только для UPDATE),
+        //  1.2.    пишутся в лог отката
+        for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
+            DbRec oldDbRec = entry.getValue();
+            if (whereFunc.where(oldDbRec)) {
+                Integer rowId = entry.getKey();
+                DbRec newDbRec;
+                if (updateSetCalcFunc == null) {
+                    //  Код для DELETE:
+                    newDbRec = null;
+                } else {
+                    //  Код для UPDATE:
+                    //  Берём все поля из старой записи и переписываем те, которые поступили ч/з функцию setCalcFunc.
+                    newDbRec = new DbRec(oldDbRec, updateSetCalcFunc.setCalcFunc(oldDbRec));
+                }
+                //  Новую запись записываем в промежуточную мапу
+                new_rowId_DbRec_Map.put(rowId, newDbRec);
+
+                //  Создаём запись в журнале отката
+                dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
+            }
+        }
+        //a(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, updateSetCalcFunc);
+
+        //  2.  Удаление записей, удовлетворяющих where
+        delete000(new_rowId_DbRec_Map.keySet());
+    }
+
     //  Создание объекта DbSelect и наполнение его с помощью insert0
     private ResultOfDQLCommand select0(WhereFunc whereFunc) {
         DbSelect dbSelect = new DbSelect(this.dbFields);
@@ -130,12 +212,5 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
         //  ToDo:   Здесь указываю null, но нужно сделать (иерархию классов) так чтобы null не указывать.
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
-    }
-
-    //  Непосредственная вставка одной записи в мапу-носитель таблицы
-    private void insert000(Integer rowId, DbRec newDbRec) {
-        if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
-            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
-        }
     }
 }

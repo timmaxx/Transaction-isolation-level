@@ -124,8 +124,8 @@ public class DbUpdateTest {
         // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
 
         //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
-        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.rowId_DbRec_Map.values());
-        List<DbRec> values2 = new ArrayList<>(dbSelect.rowId_DbRec_Map.values());
+        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
+        List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
         values1.sort(Comparator.naturalOrder());
         values2.sort(Comparator.naturalOrder());
 
@@ -157,8 +157,8 @@ public class DbUpdateTest {
         // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
 
         //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
-        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.rowId_DbRec_Map.values());
-        List<DbRec> values2 = new ArrayList<>(dbSelect.rowId_DbRec_Map.values());
+        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
+        List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
         values1.sort(Comparator.naturalOrder());
         values2.sort(Comparator.naturalOrder());
 
@@ -280,8 +280,8 @@ public class DbUpdateTest {
         // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
 
         //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
-        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.rowId_DbRec_Map.values());
-        List<DbRec> values2 = new ArrayList<>(dbSelect.rowId_DbRec_Map.values());
+        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
+        List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
         values1.sort(Comparator.naturalOrder());
         values2.sort(Comparator.naturalOrder());
 

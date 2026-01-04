@@ -230,8 +230,8 @@ public class DbInsertTest {
         // Assertions.assertEquals(dbSelect1, dbSelect2);
 
         //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
-        List<DbRec> values1 = new ArrayList<>(dbSelect1.rowId_DbRec_Map.values());
-        List<DbRec> values2 = new ArrayList<>(dbSelect2.rowId_DbRec_Map.values());
+        List<DbRec> values1 = new ArrayList<>(dbSelect1.getRows());
+        List<DbRec> values2 = new ArrayList<>(dbSelect2.getRows());
         values1.sort(Comparator.naturalOrder());
         values2.sort(Comparator.naturalOrder());
 
@@ -264,8 +264,8 @@ public class DbInsertTest {
         // Assertions.assertEquals(dbSelect1, dbSelect2);
 
         //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
-        List<DbRec> values1 = new ArrayList<>(dbSelect1.rowId_DbRec_Map.values());
-        List<DbRec> values2 = new ArrayList<>(dbSelect2.rowId_DbRec_Map.values());
+        List<DbRec> values1 = new ArrayList<>(dbSelect1.getRows());
+        List<DbRec> values2 = new ArrayList<>(dbSelect2.getRows());
         values1.sort(Comparator.naturalOrder());
         values2.sort(Comparator.naturalOrder());
 
