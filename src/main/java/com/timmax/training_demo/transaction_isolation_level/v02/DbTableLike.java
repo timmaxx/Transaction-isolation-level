@@ -120,8 +120,8 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         }
     }
 
-    protected Collection<DbRec> getRows() {
-        return rowId_DbRec_Map.values();
+    protected List<DbRec> getRows() {
+        return rowId_DbRec_Map.values().stream().toList();
     }
 
     //  Вычисление новых записей (только для UPDATE);

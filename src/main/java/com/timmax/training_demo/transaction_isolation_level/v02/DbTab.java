@@ -33,7 +33,7 @@ public non-sealed class DbTab extends DbTableLike {
 
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
-        insert0(dbTab.getRows().stream().toList());
+        insert0(dbTab.getRows());
     }
 
     public DbTab(DbTab dbTab, boolean readOnly, List<DbRec> dbRec_List) {
