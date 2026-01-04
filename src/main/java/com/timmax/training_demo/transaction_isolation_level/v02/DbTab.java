@@ -95,7 +95,7 @@ public non-sealed class DbTab extends DbTableLike {
     //  Публичный UPDATE выборочных записей (с WHERE)
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
-        validateIsUpdateSetCalcFuncNull(updateSetCalcFunc);
+        Objects.requireNonNull(updateSetCalcFunc, ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         return update0(updateSetCalcFunc, whereFunc);
     }
@@ -113,12 +113,6 @@ public non-sealed class DbTab extends DbTableLike {
     private void validateReadOnlyTable(String msgInsUpdDel) {
         if (readOnly) {
             throw new DbDataAccessException(String.format(ERROR_TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
-        }
-    }
-
-    private void validateIsUpdateSetCalcFuncNull(UpdateSetCalcFunc updateSetCalcFunc) {
-        if (updateSetCalcFunc == null) {
-            throw new NullPointerException(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
         }
     }
 
