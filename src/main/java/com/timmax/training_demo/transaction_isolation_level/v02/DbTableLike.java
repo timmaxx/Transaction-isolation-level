@@ -72,24 +72,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     public abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
 
-
-    //  ToDo:   Удалить не публичный метод для одной строки и сделать его через SET
-    protected void delete000(Integer rowId) {
-        int countBeforeAll = size();
-        int countForProcessing = 1;
-
-        rowId_DbRec_Map.keySet().removeIf(key -> key.equals(rowId));
-
-        //  Проверка удаления по количеству записей
-        //  Количество всех записей в основной таблице, которые получились после промежуточного удаления
-        int countAfterRemoving = size();
-
-        if (countBeforeAll - countForProcessing != countAfterRemoving) {
-            logger.error("countBeforeAll({}) - countForProcessing({}) != countAfterRemoving({})", countBeforeAll, countForProcessing, countAfterRemoving);
-            throw new RuntimeException("beforeCount - countForProcessing != countAfterRemoving");
-        }
-    }
-
+    //  ToDo:   Сделать private
     protected void delete000(Set<Integer> rowIdSet) {
         int countBeforeAll = size();
         int countForProcessing = rowIdSet.size();
@@ -106,23 +89,11 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         }
     }
 
-    //  ToDo:   Удалить не публичный метод для одной строки и сделать его через SET
-    //  INSERT одной записи (без ROWID)
-    protected ResultOfDMLCommand insert0(DbRec newDbRec) {
-        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
-
-        insert00(dmlCommandLog, newDbRec);
-
-        return new ResultOfDMLCommand(dmlCommandLog);
-    }
-
     //  INSERT списка записей (без ROWID)
     protected ResultOfDMLCommand insert0(List<DbRec> newDbRec_List) {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
 
-        for (DbRec newDbRec : newDbRec_List) {
-            insert00(dmlCommandLog, newDbRec);
-        }
+        insert00(dmlCommandLog, newDbRec_List);
 
         return new ResultOfDMLCommand(dmlCommandLog);
     }
@@ -146,13 +117,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
             logger.error("countBeforeAll({}) + countForProcessing({}) != countAfterAll({})", countBeforeAll, countForProcessing, countAfterAll);
             logger.error("after insert00: rowId_DbRec_Map = {}", rowId_DbRec_Map);
             throw new RuntimeException("countBeforeAll + countForProcessing != countAfterAll");
-        }
-    }
-
-    //  Непосредственная вставка одной записи в мапу-носитель таблицы
-    protected void insert000(Integer rowId, DbRec newDbRec) {
-        if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
-            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
     }
 
@@ -196,12 +160,19 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     //  Создание объекта DbSelect и наполнение его с помощью insert0
     private ResultOfDQLCommand select0(WhereFunc whereFunc) {
         DbSelect dbSelect = new DbSelect(this.dbFields);
-        for (DbRec dbRec : rowId_DbRec_Map.values()) {
-            if (whereFunc.where(dbRec)) {
-                dbSelect.insert0(dbRec);
-            }
-        }
+        dbSelect.insert0(
+                getRows()
+                        .stream()
+                        .filter(whereFunc::where)
+                        .toList()
+        );
         return new ResultOfDQLCommand(dbSelect);
+    }
+
+    private void insert00(DMLCommandLog dmlCommandLog, List<DbRec> newDbRec_List) {
+        for (DbRec newDbRec : newDbRec_List) {
+            insert00(dmlCommandLog, newDbRec);
+        }
     }
 
     //  Вычисление ROWID для одной записи и создание записи в журнале отката
@@ -212,5 +183,12 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
         //  ToDo:   Здесь указываю null, но нужно сделать (иерархию классов) так чтобы null не указывать.
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
+    }
+
+    //  Непосредственная вставка одной записи в мапу-носитель таблицы без создания записи в журнале отката
+    private void insert000(Integer rowId, DbRec newDbRec) {
+        if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
+            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+        }
     }
 }

@@ -33,19 +33,19 @@ public non-sealed class DbTab extends DbTableLike {
 
     public DbTab(DbTab dbTab, boolean readOnly) {
         this(dbTab.dbTabName, dbTab.dbFields, readOnly);
-        dbTab.getRows().forEach(this::insert0);
+        insert0(dbTab.getRows().stream().toList());
     }
 
     public DbTab(DbTab dbTab, boolean readOnly, List<DbRec> dbRec_List) {
         this(dbTab, readOnly);
-        dbRec_List.forEach(this::insert0);
+        insert0(dbRec_List);
     }
 
 
     //  Публичный INSERT одной записи
     public ResultOfDMLCommand insert(DbRec newDbRec) {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
-        return insert0(newDbRec);
+        return insert0(List.of(newDbRec));
     }
 
     //  Публичный INSERT списка записей
@@ -70,14 +70,14 @@ public non-sealed class DbTab extends DbTableLike {
     @Override
     public void rollbackOfInsert(Integer rowId) {
         //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
-        delete000(rowId);
+        delete000(Set.of(rowId));
     }
 
     //  ToDo:   Не должен быть public!
     @Override
     public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
         //  Здесь делается вставка одной строки, но при этом не пишется лог для rollback
-        insert000(rowId, oldDbRec);
+        insert00(Map.of(rowId, oldDbRec));
     }
 
     //  ToDo:   Не должен быть public!
