@@ -15,7 +15,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     protected static final Logger logger = LoggerFactory.getLogger(DbTableLike.class);
 
-    private static final String ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL = "ERROR: Inner trouble. You cannot set WhereFunc into null!";
+    protected static final String ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL = "ERROR: Inner trouble. You cannot set WhereFunc into null!";
 
     protected final DbFields dbFields;
     protected final Map<Integer, DbRec> rowId_DbRec_Map = new HashMap<>();
@@ -35,7 +35,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     //  Публичный SELECT выборочных записей (с WHERE)
     public ResultOfDQLCommand select(WhereFunc whereFunc) {
-        validateIsWhereFuncNull(whereFunc);
+        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         return select0(whereFunc);
     }
 
@@ -110,14 +110,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
             throw new RuntimeException("countBeforeAll + countForProcessing != countAfterAll");
         }
     }
-
-    protected void validateIsWhereFuncNull(WhereFunc whereFunc) {
-        if (whereFunc == null) {
-            logger.error(ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
-            throw new NullPointerException(ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
-        }
-    }
-
 
     //  Создание объекта DbSelect и наполнение его с помощью insert0
     private ResultOfDQLCommand select0(WhereFunc whereFunc) {

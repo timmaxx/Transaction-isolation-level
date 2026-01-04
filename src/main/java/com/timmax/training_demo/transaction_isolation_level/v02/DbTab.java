@@ -63,7 +63,7 @@ public non-sealed class DbTab extends DbTableLike {
 
     //  Публичный DELETE выборочных записей (с WHERE)
     public ResultOfDMLCommand delete(WhereFunc whereFunc) {
-        validateIsWhereFuncNull(whereFunc);
+        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         return delete0(whereFunc);
     }
@@ -99,7 +99,7 @@ public non-sealed class DbTab extends DbTableLike {
 
     //  Публичный UPDATE выборочных записей (с WHERE)
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        validateIsWhereFuncNull(whereFunc);
+        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         validateIsUpdateSetCalcFuncNull(updateSetCalcFunc);
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         return update0(updateSetCalcFunc, whereFunc);
