@@ -150,16 +150,13 @@ public class DbInsertTest {
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
-    @Test
-    public void insertOneRowIntoEmptyTableViaSQLCommandQueue() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-
+    private void insertOneRowIntoEmptyTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  INSERT
         //    INTO person   --  0 rows
         //      (id, name, email)
         //    VALUES
         //      (1, "Bob", "@")
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue1.add(
                 new DMLCommandInsert(1L, dbTabPerson, dbRec1_Bob_email),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
@@ -169,6 +166,14 @@ public class DbInsertTest {
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+    }
+
+    @Test
+    public void insertOneRowIntoEmptyTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        insertOneRowIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
@@ -188,17 +193,14 @@ public class DbInsertTest {
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
     }
 
-    @Test
-    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
-
+    private void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  INSERT
         //    INTO person   --  0 rows
         //      (id, name, email)
         //    VALUES
         //      (1, "Bob", "@"),
         //      (2, "Alice", "@")
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue1.add(
                 new DMLCommandInsert(1L, dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
@@ -208,6 +210,14 @@ public class DbInsertTest {
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
+    }
+
+    @Test
+    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
@@ -276,62 +286,31 @@ public class DbInsertTest {
     @Test
     public void insertOneRowIntoEmptyTableViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  INSERT
-        //    INTO person   --  0 rows
-        //      (id, name, email)
-        //    VALUES
-        //      (1, "Bob", "@")
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandInsert(1L, dbTabPerson, dbRec1_Bob_email),
-                new DQLCommandSelect(1L, dbTabPerson)
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
-
-        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
-        //  Код до этой строки - копия того, что в методе
-        //  void insertOneRowIntoEmptyTableViaSQLCommandQueue
+        insertOneRowIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        Assertions.assertEquals(dbTabPersonEmpty, dbSelect2);
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect2);
     }
 
     //  AndRollBack
     @Test
     public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  INSERT
-        //    INTO person   --  0 rows
-        //      (id, name, email)
-        //    VALUES
-        //      (1, "Bob", "@"),
-        //      (2, "Alice", "@")
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandInsert(1L, dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
-                new DQLCommandSelect(1L, dbTabPerson)
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
-
-        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
-        //  Код до этой строки - копия того, что в методе
-        //  void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue
+        insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        Assertions.assertEquals(dbTabPersonEmpty, dbSelect2);
+        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect2);
     }
 }
