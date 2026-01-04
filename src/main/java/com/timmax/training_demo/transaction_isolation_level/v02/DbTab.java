@@ -26,6 +26,7 @@ public non-sealed class DbTab extends DbTableLike {
     private final DbTabName dbTabName;
     private final boolean readOnly;
 
+
     public DbTab(DbTabName dbTabName, DbFields dbFields, boolean readOnly) {
         super(dbFields);
         this.dbTabName = dbTabName;
@@ -42,17 +43,6 @@ public non-sealed class DbTab extends DbTableLike {
         dbRec_List.forEach(this::insert0);
     }
 
-    private void validateReadOnlyTable(String msgInsUpdDel) {
-        if (readOnly) {
-            throw new DbDataAccessException(String.format(ERROR_TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
-        }
-    }
-
-    private void validateIsUpdateSetCalcFuncNull(UpdateSetCalcFunc updateSetCalcFunc) {
-        if (updateSetCalcFunc == null) {
-            throw new NullPointerException(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
-        }
-    }
 
     //  Публичный INSERT одной записи
     public ResultOfDMLCommand insert(DbRec newDbRec) {
@@ -76,6 +66,94 @@ public non-sealed class DbTab extends DbTableLike {
         validateIsWhereFuncNull(whereFunc);
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         return delete0(whereFunc);
+    }
+
+    //  ToDo:   Не должен быть public!
+    @Override
+    public void rollbackOfInsert(Integer rowId) {
+        //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
+        rowId_DbRec_Map.keySet().removeIf(key -> key.equals(rowId));
+    }
+
+    //  ToDo:   Не должен быть public!
+    @Override
+    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
+        if (rowId_DbRec_Map.put(rowId, new DbRec(oldDbRec)) != null) {
+            //  Условие в принципе не должно никогда срабатывать, т.к. происходит rollback!!!
+            //  ToDo:   Ошибка должна быть более суровой и дополнена текстом.
+            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
+        }
+    }
+
+    //  ToDo:   Не должен быть public!
+    @Override
+    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+        rollbackOfInsert(rowId);
+        rollbackOfDelete(rowId, oldDbRec);
+    }
+
+    //  Публичный UPDATE всех записей (без WHERE)
+    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
+        return update(updateSetCalcFunc, dbRec -> true);
+    }
+
+    //  Публичный UPDATE выборочных записей (с WHERE)
+    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        validateIsWhereFuncNull(whereFunc);
+        validateIsUpdateSetCalcFuncNull(updateSetCalcFunc);
+        validateReadOnlyTable(YOU_CANNOT_UPDATE);
+        return update0(updateSetCalcFunc, whereFunc);
+    }
+
+    @Override
+    public String toString() {
+        return "DbTab{" +
+                "dbTabName='" + dbTabName + '\'' +
+                ", readOnly=" + readOnly +
+                ", dbFields=" + dbFields +
+                ", rowId_DbRec_Map=" + rowId_DbRec_Map +
+                '}';
+    }
+
+
+    private void validateReadOnlyTable(String msgInsUpdDel) {
+        if (readOnly) {
+            throw new DbDataAccessException(String.format(ERROR_TABLE_IS_RO, dbTabName) + " " + msgInsUpdDel);
+        }
+    }
+
+    private void validateIsUpdateSetCalcFuncNull(UpdateSetCalcFunc updateSetCalcFunc) {
+        if (updateSetCalcFunc == null) {
+            throw new NullPointerException(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
+        }
+    }
+
+    private ResultOfDMLCommand delete0(WhereFunc whereFunc) {
+        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
+
+        //  Для DELETE updateSetCalcFunc делаем null
+        delete00ForDeletingAndUpdating(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, null);
+
+        //  Здесь нет кода, который есть в update (т.е. вставки)
+
+        return new ResultOfDMLCommand(dmlCommandLog);
+    }
+
+    private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
+
+        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
+
+        //  Для UPDATE updateSetCalcFunc передаём в метод
+        delete00ForDeletingAndUpdating(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, updateSetCalcFunc);
+
+        //  Наличием этого кода отличается от
+        //  private ResultOfDMLCommand delete0(WhereFunc whereFunc)
+        //  Вставляем в основную таблицу те записи, которые были созданы выше в new_rowId_DbRec_Map
+        insert00(new_rowId_DbRec_Map);
+
+        return new ResultOfDMLCommand(dmlCommandLog);
     }
 
     //  Вычисление новых записей (только для UPDATE);
@@ -125,79 +203,5 @@ public non-sealed class DbTab extends DbTableLike {
             logger.error("after remove:  rowId_DbRec_Map = {}", rowId_DbRec_Map);
             throw new RuntimeException("beforeCount - countForProcessing != countAfterRemoving");
         }
-    }
-
-    //  Приватный DELETE
-    private ResultOfDMLCommand delete0(WhereFunc whereFunc) {
-        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
-        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
-
-        delete00ForDeletingAndUpdating(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, null);
-
-        //  Здесь нет кода, который есть в update (т.е. вставки)
-
-        return new ResultOfDMLCommand(dmlCommandLog);
-    }
-
-    //  ToDo:   Не должен быть public!
-    @Override
-    public void rollbackOfInsert(Integer rowId) {
-        //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
-        rowId_DbRec_Map.keySet().removeIf(key -> key.equals(rowId));
-    }
-
-    //  ToDo:   Не должен быть public!
-    @Override
-    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
-        if (rowId_DbRec_Map.put(rowId, new DbRec(oldDbRec)) != null) {
-            //  Условие в принципе не должно никогда срабатывать, т.к. происходит rollback!!!
-            //  ToDo:   Ошибка должна быть более суровой и дополнена текстом.
-            throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
-        }
-    }
-
-    //  ToDo:   Не должен быть public!
-    @Override
-    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
-        rollbackOfInsert(rowId);
-        rollbackOfDelete(rowId, oldDbRec);
-    }
-
-    //  Публичный UPDATE всех записей (без WHERE)
-    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
-        return update(updateSetCalcFunc, dbRec -> true);
-    }
-
-    //  Публичный UPDATE выборочных записей (с WHERE)
-    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        validateIsWhereFuncNull(whereFunc);
-        validateIsUpdateSetCalcFuncNull(updateSetCalcFunc);
-        validateReadOnlyTable(YOU_CANNOT_UPDATE);
-        return update0(updateSetCalcFunc, whereFunc);
-    }
-
-    private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
-
-        DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
-
-        delete00ForDeletingAndUpdating(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, updateSetCalcFunc);
-
-        //  Вставляем в основную таблицу те записи, которые были созданы выше в new_rowId_DbRec_Map
-        //  наличием этого кода отличается от
-        //  private ResultOfDMLCommand delete0(WhereFunc whereFunc)
-        insert00(new_rowId_DbRec_Map);
-
-        return new ResultOfDMLCommand(dmlCommandLog);
-    }
-
-    @Override
-    public String toString() {
-        return "DbTab{" +
-                "dbTabName='" + dbTabName + '\'' +
-                ", readOnly=" + readOnly +
-                ", dbFields=" + dbFields +
-                ", rowId_DbRec_Map=" + rowId_DbRec_Map +
-                '}';
     }
 }
