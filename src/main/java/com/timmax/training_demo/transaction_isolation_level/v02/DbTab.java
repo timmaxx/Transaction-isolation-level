@@ -142,7 +142,6 @@ public non-sealed class DbTab extends DbTableLike {
 
     private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
-
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
 
         //  Для UPDATE updateSetCalcFunc передаём в метод

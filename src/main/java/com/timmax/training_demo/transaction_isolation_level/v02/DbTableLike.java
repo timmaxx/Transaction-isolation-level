@@ -39,7 +39,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return select0(whereFunc);
     }
 
-    //  В этом классе нет публичного INSERT, но он (INSERT) понадобится для создания SELECT.
+    //  В этом классе нет публичного INSERT, но он (INSERT, только protected) понадобится для создания SELECT.
     //  Кроме того, в этом классе тем более нет UPDATE и DELETE (никаких - ни публичных, ни приватных),
     //  т.к. они будут реализовываться только для таблиц.
 
