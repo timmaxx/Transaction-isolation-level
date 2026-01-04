@@ -33,15 +33,18 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         }
     }
 
+    //  Публичный SELECT всех записей (без WHERE)
     public ResultOfDQLCommand select() {
         return select(dbRec -> true);
     }
 
+    //  Публичный SELECT выборочных записей (с WHERE)
     public ResultOfDQLCommand select(WhereFunc whereFunc) {
         validateIsWhereFuncNull(whereFunc);
         return select0(whereFunc);
     }
 
+    //  Создание объекта DbSelect и наполнение его с помощью insert0
     private ResultOfDQLCommand select0(WhereFunc whereFunc) {
         DbSelect dbSelect = new DbSelect(this.dbFields);
         for (DbRec dbRec : rowId_DbRec_Map.values()) {
@@ -52,10 +55,12 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDQLCommand(dbSelect);
     }
 
-    //  ToDo:   Нужно выделить общий функционал с
-    //          private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc)
-    //          в пунктах 3 и 3.2 и привести к единообразию и убрать дублирующийся код
-    //          (для всех методов insert0, insert00, insert000)
+    //  В этом классе нет публичного INSERT, но он понадобится для создания SELECT ().
+    //  Кроме того, в этом классе тем более нет UPDATE и DELETE (никаких - ни публичных, ни приватных),
+    //  т.к. они будут реализовываться только для таблиц.
+
+
+    //  INSERT одной записи (без ROWID)
     protected ResultOfDMLCommand insert0(DbRec newDbRec) {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
 
@@ -64,6 +69,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
+    //  INSERT списка записей (без ROWID)
     protected ResultOfDMLCommand insert0(List<DbRec> newDbRec_List) {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, INSERT);
 
@@ -74,9 +80,9 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
+    //  Вычисление ROWID для одной записи и создание записи в журнале отката
     private void insert00(DMLCommandLog dmlCommandLog, DbRec newDbRec) {
-        Integer rowId;
-        rowId = ++lastInsertedRowId;
+        Integer rowId = ++lastInsertedRowId;
 
         insert000(rowId, newDbRec);
 
@@ -84,7 +90,30 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
     }
 
-    protected void insert000(Integer rowId, DbRec newDbRec) {
+    //  Вставка группы записей с заранее определёнными ROWID и не создавать записи в журнале отката
+    protected void insert00(Map<Integer, DbRec> new_rowId_DbRec_Map) {
+        int countBeforeAll = rowId_DbRec_Map.size();
+        int countForProcessing = new_rowId_DbRec_Map.size();
+
+        for (Map.Entry<Integer, DbRec> entry : new_rowId_DbRec_Map.entrySet()) {
+            Integer rowId = entry.getKey();
+            DbRec newDbRec = entry.getValue();
+            //  После этой вставки нет вставки в журнал отката
+            insert000(rowId, newDbRec);
+        }
+
+        //  Проверка вставки по количеству записей
+        int countAfterAll = rowId_DbRec_Map.size();
+
+        if (countBeforeAll + countForProcessing != countAfterAll) {
+            logger.error("countBeforeAll({}) + countForProcessing({}) != countAfterAll({})", countBeforeAll, countForProcessing, countAfterAll);
+            logger.error("after insert00: rowId_DbRec_Map = {}", rowId_DbRec_Map);
+            throw new RuntimeException("countBeforeAll + countForProcessing != countAfterAll");
+        }
+    }
+
+    //  Непосредственная вставка одной записи в мапу-носитель таблицы
+    private void insert000(Integer rowId, DbRec newDbRec) {
         if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }
