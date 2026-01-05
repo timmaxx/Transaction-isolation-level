@@ -48,7 +48,7 @@ public class DbRecTest {
         //   WHERE wrong_field = 1
         DbSQLException exception = Assertions.assertThrows(
                 DbSQLException.class,
-                () -> dbRec1_Bob_email.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(1)
+                () -> dbRec1_Bob_email.getValue(DB_FIELD_NAME_WRONG_FIELD).eq(1)
         );
 
         Assertions.assertEquals(

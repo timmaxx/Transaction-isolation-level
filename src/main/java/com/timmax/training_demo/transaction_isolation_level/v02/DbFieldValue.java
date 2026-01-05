@@ -10,13 +10,14 @@ public class DbFieldValue {
     protected static final Logger logger = LoggerFactory.getLogger(DbFieldValue.class);
 
     public static final String ERROR_VALUE_IS_WRONG_TYPE = "ERROR: Value (%s) is wrong type (right type is %s).";
+    public static final String ERROR_THIS_METHOD_EQUALS_IS_NOT_ALLOWED_FOR_THIS_CLASS = "ERROR: This method (equals) is not allowed for this class.";
 
     private final Class<?> clazz;
     private Object value;
 
     public DbFieldValue(Class<?> clazz, Object value) {
         this.clazz = clazz;
-        setValue(/*(clazz)*/value);
+        setValue(value);
     }
 
     public void setValue(Object value) {
@@ -26,13 +27,7 @@ public class DbFieldValue {
         this.value = value;
     }
 
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
+    public boolean eq(Object o) {
         if (o == null) {
             return false;
         }
@@ -41,9 +36,20 @@ public class DbFieldValue {
     }
 
     @Override
+    public String toString() {
+        return value.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        throw new UnsupportedOperationException(ERROR_THIS_METHOD_EQUALS_IS_NOT_ALLOWED_FOR_THIS_CLASS);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(clazz, value);
     }
+
 
     private void verifyClassOfNewOrComparableValue(Object o) {
         if (!clazz.equals(o.getClass())) {

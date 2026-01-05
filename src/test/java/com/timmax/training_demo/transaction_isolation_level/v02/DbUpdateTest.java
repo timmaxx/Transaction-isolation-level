@@ -176,8 +176,7 @@ public class DbUpdateTest {
                 dbRec -> Map.of(
                         DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                 ),
-                //  ToDo:   Warning:(179, 59) 'equals' between objects of inconvertible types 'DbFieldValue' and 'int'
-                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
         );
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
@@ -199,8 +198,7 @@ public class DbUpdateTest {
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
-                        //  ToDo:   Warning:(201, 67) 'equals' between objects of inconvertible types 'DbFieldValue' and 'int'
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
                 ),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
@@ -311,8 +309,7 @@ public class DbUpdateTest {
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
-                        //  ToDo:   Warning:(312, 67) 'equals' between objects of inconvertible types 'DbFieldValue' and 'int'
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
                 ),
                 new DQLCommandSelect(1L, dbTabPerson)
         );

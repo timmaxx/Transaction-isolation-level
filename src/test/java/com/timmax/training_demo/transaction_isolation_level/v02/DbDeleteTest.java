@@ -152,7 +152,7 @@ public class DbDeleteTest {
         //    FROM person   --  2 rows
         //   WHERE id = 2
         dbTabPerson.delete(
-                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)
+                dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
         );
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
@@ -168,7 +168,7 @@ public class DbDeleteTest {
         //    FROM person   --  2 rows
         //   WHERE id = 2
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)),
+                new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
         sqlCommandQueue1.startThread();
@@ -203,6 +203,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  Warning:(206, 20) 'assertEquals()' between objects of inconvertible types 'DbTab' and 'DbSelect'
         Assertions.assertEquals(dbTabPersonWithOneRow, dbSelect2);
     }
 
@@ -230,6 +231,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  Warning:(233, 20) 'assertEquals()' between objects of inconvertible types 'DbTab' and 'DbSelect'
         Assertions.assertEquals(dbTabPersonWithTwoRows, dbSelect2);
     }
 
@@ -241,7 +243,7 @@ public class DbDeleteTest {
         //    FROM person   --  2 rows
         //   WHERE id = 2
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).equals(2)),
+                new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
         sqlCommandQueue1.startThread();
@@ -258,6 +260,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  Warning:(261, 20) 'assertEquals()' between objects of inconvertible types 'DbTab' and 'DbSelect'
         Assertions.assertEquals(dbTabPersonWithTwoRows, dbSelect2);
     }
 }
