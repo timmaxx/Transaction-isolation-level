@@ -203,8 +203,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  Warning:(206, 20) 'assertEquals()' between objects of inconvertible types 'DbTab' and 'DbSelect'
-        Assertions.assertEquals(dbTabPersonWithOneRow, dbSelect2);
+        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect2);
     }
 
     @Test
@@ -231,8 +230,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  Warning:(233, 20) 'assertEquals()' between objects of inconvertible types 'DbTab' and 'DbSelect'
-        Assertions.assertEquals(dbTabPersonWithTwoRows, dbSelect2);
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 
     @Test
@@ -260,7 +258,6 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  Warning:(261, 20) 'assertEquals()' between objects of inconvertible types 'DbTab' and 'DbSelect'
-        Assertions.assertEquals(dbTabPersonWithTwoRows, dbSelect2);
+        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 }
