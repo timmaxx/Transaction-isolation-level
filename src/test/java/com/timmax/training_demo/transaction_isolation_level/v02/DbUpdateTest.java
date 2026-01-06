@@ -70,7 +70,6 @@ public class DbUpdateTest {
         //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
         NullPointerException exception = Assertions.assertThrows(
                 NullPointerException.class,
-                //  ToDo:   It (verifying on null) must be made on compiler stage!
                 () -> dbTabPersonEmpty.update(null)
         );
 
@@ -89,7 +88,6 @@ public class DbUpdateTest {
                 new DMLCommandUpdate(
                         1L,
                         dbTabPersonEmpty,
-                        //  ToDo:   It (verifying on null) must be made on compiler stage!
                         null
                 )
         );
