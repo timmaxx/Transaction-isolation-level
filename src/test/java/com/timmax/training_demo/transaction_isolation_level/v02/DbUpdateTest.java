@@ -132,13 +132,10 @@ public class DbUpdateTest {
         Assertions.assertEquals(values1, values2);
     }
 
-    @Test
-    public void updateTwoRowsTableViaSQLCommandQueue() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
-
+    private void updateTwoRowsTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue1.add(
                 new DMLCommandUpdate(
                         1L,
                         dbTabPerson,
@@ -163,6 +160,14 @@ public class DbUpdateTest {
         values2.sort(Comparator.naturalOrder());
 
         Assertions.assertEquals(values1, values2);
+    }
+
+    @Test
+    public void updateTwoRowsTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        updateTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
@@ -184,14 +189,11 @@ public class DbUpdateTest {
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 
-    @Test
-    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
-
+    private void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         //   WHERE id = 2
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue1.add(
                 new DMLCommandUpdate(
                         1L,
                         dbTabPerson,
@@ -211,81 +213,20 @@ public class DbUpdateTest {
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 
-/*
     @Test
-    public void updateTwoRowsTableButSetHasWrongFieldsAndWhereHasWrongNameFields() {
+    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  UPDATE person   --  2 rows
-        //     SET wrong_field = wrong_field_2 || " " || name
-        //       , wrong_field_2 = "   "
-        //   WHERE wrong_field = 2
-        //      OR wrong_field_2 = "Bob"
-        DbSQLException exception = Assertions.assertThrows(
-                DbSQLException.class,
-                //  Не получится собрать текст для исключения, в котором можно было-бы описать все ошибки и в where и в set.
-                //  В этом месте сработает одно исключение на первой части where:
-                //      dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2)
-                //  Если его закомментировать, возникнет исключение на второй части where:
-                //      dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob")
-                //  Если-же вообще без where,
-                //      то исключение возникнет при попытке взять значение несуществующего поля перед тем, как вызовется Map.of
-                //          dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2)
-                //      если-же значения для мапы будут рассчитаны, мапа создастся, но ошибка в имени будет найдена в ключах мапы,
-                //      тогда исключение возникнет в setAll.
-                //          DB_FIELD_NAME_WRONG_FIELD.
-                () -> dbTabPerson.update(
-                        dbRec -> Map.of(
-                                DB_FIELD_NAME_WRONG_FIELD, dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2) + " " + dbRec.getValue(DB_FIELD_NAME_NAME),
-                                DB_FIELD_NAME_WRONG_FIELD_2, "   "
-                        ),
-                        dbRec ->
-                                dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD).equals(2) ||
-                                        dbRec.getValue(DB_FIELD_NAME_WRONG_FIELD_2).equals("Bob")
-                )
-        );
-
-        Assertions.assertEquals(
-                String.format(ERROR_COLUMN_DOESNT_EXIST, DB_FIELD_NAME_WRONG_FIELD),
-                exception.getMessage(),
-                EXCEPTION_MESSAGE_DOESNT_MATCH
-        );
+        updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
     }
-*/
 
     @Test
     public void updateTwoRowsTableViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  UPDATE person   --  2 rows
-        //     SET name = name || " " || name
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandUpdate(
-                        1L,
-                        dbTabPerson,
-                        dbRec -> Map.of(
-                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        )
-                ),
-                new DQLCommandSelect(1L, dbTabPerson)
-        );
-
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
-
-        // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
-
-        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
-        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
-        List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
-        values1.sort(Comparator.naturalOrder());
-        values2.sort(Comparator.naturalOrder());
-
-        Assertions.assertEquals(values1, values2);
-        //  Код до этой строки - копия того, что в методе
-        //  void updateTwoRowsTableViaSQLCommandQueue()
+        updateTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
@@ -298,30 +239,9 @@ public class DbUpdateTest {
     @Test
     public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  UPDATE person   --  2 rows
-        //     SET name = name || " " || name
-        //   WHERE id = 2
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandUpdate(
-                        1L,
-                        dbTabPerson,
-                        dbRec -> Map.of(
-                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        ),
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
-                ),
-                new DQLCommandSelect(1L, dbTabPerson)
-        );
-
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
-
-        Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
-        //  Код до этой строки - копия того, что в методе
-        //  void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue
+        updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
