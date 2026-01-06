@@ -95,13 +95,10 @@ public class DbDeleteTest {
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
-    @Test
-    public void deleteFromOneRowTableViaSQLCommandQueue() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
-
+    private void deleteFromOneRowTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  DELETE
         //    FROM person   --  1 row
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue1.add(
                 new DMLCommandDelete(1L, dbTabPerson),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
@@ -111,6 +108,14 @@ public class DbDeleteTest {
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void deleteFromOneRowTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        deleteFromOneRowTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
@@ -126,13 +131,10 @@ public class DbDeleteTest {
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
-    @Test
-    public void deleteFromTwoRowsTableViaSQLCommandQueue() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
-
+    private void deleteFromTwoRowsTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  DELETE
         //    FROM person   --  2 rows
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue1.add(
                 new DMLCommandDelete(1L, dbTabPerson),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
@@ -142,6 +144,14 @@ public class DbDeleteTest {
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+    }
+
+    @Test
+    public void deleteFromTwoRowsTableViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        deleteFromTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
@@ -160,14 +170,11 @@ public class DbDeleteTest {
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
-    @Test
-    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
-
+    private void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  DELETE
         //    FROM person   --  2 rows
         //   WHERE id = 2
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue1.add(
                 new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)),
                 new DQLCommandSelect(1L, dbTabPerson)
         );
@@ -180,23 +187,19 @@ public class DbDeleteTest {
     }
 
     @Test
+    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+    }
+
+    @Test
     public void deleteFromOneRowTableViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  DELETE
-        //    FROM person   --  1 row
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandDelete(1L, dbTabPerson),
-                new DQLCommandSelect(1L, dbTabPerson)
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
-
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
-        //  Код до этой строки - копия того, что в методе
-        //  void deleteFromOneRowTableViaSQLCommandQueue
+        deleteFromOneRowTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
@@ -209,21 +212,9 @@ public class DbDeleteTest {
     @Test
     public void deleteFromTwoRowsTableViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  DELETE
-        //    FROM person   --  2 rows
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandDelete(1L, dbTabPerson),
-                new DQLCommandSelect(1L, dbTabPerson)
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
-
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
-        //  Код до этой строки - копия того, что в методе
-        //  void deleteFromTwoRowsTableViaSQLCommandQueue
+        deleteFromTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
@@ -236,22 +227,9 @@ public class DbDeleteTest {
     @Test
     public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollBack() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        //  DELETE
-        //    FROM person   --  2 rows
-        //   WHERE id = 2
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)),
-                new DQLCommandSelect(1L, dbTabPerson)
-        );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
-
-        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
-        //  Код до этой строки - копия того, что в методе
-        //  void deleteFromTwoRowsTableViaSQLCommandQueue
+        deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
