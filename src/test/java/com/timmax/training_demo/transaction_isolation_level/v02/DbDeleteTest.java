@@ -61,6 +61,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
@@ -79,6 +80,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
@@ -92,6 +94,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
@@ -107,6 +110,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
@@ -128,6 +132,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
@@ -143,6 +148,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
@@ -167,6 +173,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
@@ -183,6 +190,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
@@ -206,6 +214,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect2);
     }
 
@@ -221,6 +230,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 
@@ -236,6 +246,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 }

@@ -73,6 +73,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
@@ -94,6 +95,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
@@ -110,6 +112,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
@@ -131,6 +134,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
@@ -147,6 +151,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
@@ -165,6 +170,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
@@ -190,6 +196,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
     }
 
@@ -209,6 +216,7 @@ public class DbInsertTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
     }
 
@@ -239,7 +247,7 @@ public class DbInsertTest {
 
         // Assertions.assertEquals(dbSelect1, dbSelect2);
 
-        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        //  ToDo:   Переделать. Здесь пример с сортировкой java-списков для сравнения двух выборок.
         List<DbRec> values1 = new ArrayList<>(dbSelect1.getRows());
         List<DbRec> values2 = new ArrayList<>(dbSelect2.getRows());
         values1.sort(Comparator.naturalOrder());
@@ -273,7 +281,7 @@ public class DbInsertTest {
 
         // Assertions.assertEquals(dbSelect1, dbSelect2);
 
-        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        //  ToDo:   Переделать. Здесь пример с сортировкой java-списков для сравнения двух выборок.
         List<DbRec> values1 = new ArrayList<>(dbSelect1.getRows());
         List<DbRec> values2 = new ArrayList<>(dbSelect2.getRows());
         values1.sort(Comparator.naturalOrder());
@@ -295,6 +303,7 @@ public class DbInsertTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect2);
     }
 
@@ -311,6 +320,7 @@ public class DbInsertTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonEmpty, dbSelect2);
     }
 }

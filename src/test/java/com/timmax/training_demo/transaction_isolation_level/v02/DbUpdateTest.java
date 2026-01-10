@@ -119,7 +119,7 @@ public class DbUpdateTest {
 
         // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
 
-        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        //  ToDo:   Переделать. Здесь пример с сортировкой java-списков для сравнения двух выборок.
         List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
         List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
         values1.sort(Comparator.naturalOrder());
@@ -148,7 +148,7 @@ public class DbUpdateTest {
 
         // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
 
-        //  ToDo:   Нужно переделать. Т.к. сейчас в тесте вручную сортировать приходится.
+        //  ToDo:   Переделать. Здесь пример с сортировкой java-списков для сравнения двух выборок.
         List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
         List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
         values1.sort(Comparator.naturalOrder());
@@ -181,6 +181,7 @@ public class DbUpdateTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 
@@ -204,6 +205,7 @@ public class DbUpdateTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 
@@ -227,6 +229,7 @@ public class DbUpdateTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 
@@ -242,6 +245,7 @@ public class DbUpdateTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
+        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
         Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 }

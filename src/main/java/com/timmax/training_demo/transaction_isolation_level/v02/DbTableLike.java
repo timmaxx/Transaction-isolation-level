@@ -120,6 +120,8 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         }
     }
 
+    //  ToDo:   Удалить (либо сделать private) после реализации библиотечного метода,
+    //          который сравнивает результаты двух выборок.
     protected List<DbRec> getRows() {
         return rowId_DbRec_Map.values().stream().toList();
     }
