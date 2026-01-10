@@ -4,15 +4,18 @@ import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbData
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandUpdate;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Map;
 
-import java.util.*;
-
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbUpdateTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbUpdateTest.class);
@@ -30,7 +33,7 @@ public class DbUpdateTest {
                 )
         );
 
-        Assertions.assertEquals(
+        assertEquals(
                 String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
@@ -56,7 +59,7 @@ public class DbUpdateTest {
                 sqlCommandQueue1::joinToThread
         );
 
-        Assertions.assertEquals(
+        assertEquals(
                 String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_UPDATE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
@@ -72,7 +75,7 @@ public class DbUpdateTest {
                 () -> dbTabPersonEmpty.update(null)
         );
 
-        Assertions.assertEquals(
+        assertEquals(
                 String.format(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
@@ -96,7 +99,7 @@ public class DbUpdateTest {
                 sqlCommandQueue1::joinToThread
         );
 
-        Assertions.assertEquals(
+        assertEquals(
                 String.format(ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
@@ -117,15 +120,7 @@ public class DbUpdateTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
-        // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
-
-        //  ToDo:   Переделать. Здесь пример с сортировкой java-списков для сравнения двух выборок.
-        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
-        List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
-        values1.sort(Comparator.naturalOrder());
-        values2.sort(Comparator.naturalOrder());
-
-        Assertions.assertEquals(values1, values2);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
 
     private void updateTwoRowsTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
@@ -146,15 +141,7 @@ public class DbUpdateTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
-        // Assertions.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
-
-        //  ToDo:   Переделать. Здесь пример с сортировкой java-списков для сравнения двух выборок.
-        List<DbRec> values1 = new ArrayList<>(dbSelectPersonWithTwoRowsAllUpdated.getRows());
-        List<DbRec> values2 = new ArrayList<>(dbSelect.getRows());
-        values1.sort(Comparator.naturalOrder());
-        values2.sort(Comparator.naturalOrder());
-
-        Assertions.assertEquals(values1, values2);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
 
     @Test
@@ -181,8 +168,7 @@ public class DbUpdateTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 
     private void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
@@ -205,8 +191,7 @@ public class DbUpdateTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 
     @Test
@@ -229,8 +214,7 @@ public class DbUpdateTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 
     @Test
@@ -245,7 +229,6 @@ public class DbUpdateTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 }

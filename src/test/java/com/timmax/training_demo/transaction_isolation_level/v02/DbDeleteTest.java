@@ -61,8 +61,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
@@ -80,8 +79,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
@@ -94,8 +92,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     private void deleteFromOneRowTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
@@ -110,8 +107,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
@@ -132,8 +128,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     private void deleteFromTwoRowsTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
@@ -148,8 +143,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonEmpty, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
     @Test
@@ -173,8 +167,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
     private void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
@@ -190,8 +183,7 @@ public class DbDeleteTest {
 
         DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
 
     @Test
@@ -214,8 +206,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithOneRow, dbSelect2);
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect2);
     }
 
     @Test
@@ -230,8 +221,7 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 
     @Test
@@ -246,7 +236,6 @@ public class DbDeleteTest {
         //  Смущает, что селект после отката сделал не через SQLCommandQueue:
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
-        //  ToDo:   Переделать. Здесь пример примитивного сравнения двух выборок.
-        Assertions.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 }
