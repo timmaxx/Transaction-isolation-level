@@ -43,7 +43,6 @@ public class DbUpdateTest {
         //     SET name = name || " " || name
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandUpdate(
-                        1L,
                         dbTabPersonEmpty,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
@@ -86,7 +85,6 @@ public class DbUpdateTest {
         //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandUpdate(
-                        1L,
                         dbTabPersonEmpty,
                         null
                 )
@@ -135,13 +133,12 @@ public class DbUpdateTest {
         //     SET name = name || " " || name
         sqlCommandQueue1.add(
                 new DMLCommandUpdate(
-                        1L,
                         dbTabPerson,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         )
                 ),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DQLCommandSelect(dbTabPerson)
         );
 
         sqlCommandQueue1.startThread();
@@ -193,14 +190,13 @@ public class DbUpdateTest {
         //   WHERE id = 2
         sqlCommandQueue1.add(
                 new DMLCommandUpdate(
-                        1L,
                         dbTabPerson,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
                 ),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DQLCommandSelect(dbTabPerson)
         );
 
         sqlCommandQueue1.startThread();

@@ -26,7 +26,7 @@ public class DbSelectTest {
         //  SELECT *
         //    FROM person   --  0 rows
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DQLCommandSelect(1L, dbTabPersonEmpty)
+                new DQLCommandSelect(dbTabPersonEmpty)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -50,7 +50,7 @@ public class DbSelectTest {
         //  SELECT *
         //    FROM person   --  1 row (dbRec1_Bob_email)
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DQLCommandSelect(1L, dbTabPersonWithOneRow)
+                new DQLCommandSelect(dbTabPersonWithOneRow)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -74,7 +74,7 @@ public class DbSelectTest {
         //  SELECT *
         //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DQLCommandSelect(1L, dbTabPersonWithTwoRows)
+                new DQLCommandSelect(dbTabPersonWithTwoRows)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -102,7 +102,7 @@ public class DbSelectTest {
         //    FROM person   --  0 rows
         //   WHERE id = 1
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DQLCommandSelect(1L, dbTabPersonEmpty, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1))
+                new DQLCommandSelect(dbTabPersonEmpty, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1))
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -130,7 +130,7 @@ public class DbSelectTest {
         //    FROM person   --  1 row (dbRec1_Bob_email)
         //   WHERE id = 1
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DQLCommandSelect(1L, dbTabPersonWithOneRow, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1))
+                new DQLCommandSelect(dbTabPersonWithOneRow, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1))
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -158,7 +158,7 @@ public class DbSelectTest {
         //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
         //   WHERE id = 1
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DQLCommandSelect(1L, dbTabPersonWithTwoRows, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1))
+                new DQLCommandSelect(dbTabPersonWithTwoRows, dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1))
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();

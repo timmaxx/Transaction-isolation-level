@@ -45,7 +45,7 @@ public class DbInsertTest {
         //    VALUES
         //      (1, "Bob", "@")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandInsert(1L, dbTabPersonEmpty, dbRec1_Bob_email)
+                new DMLCommandInsert(dbTabPersonEmpty, dbRec1_Bob_email)
         );
         sqlCommandQueue1.startThread();
         DbDataAccessException exception = Assertions.assertThrows(
@@ -86,8 +86,8 @@ public class DbInsertTest {
         //    VALUES
         //      (3, "Tom")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandInsert(1L, dbTabPerson, dbRec3_Tom_Null),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandInsert(dbTabPerson, dbRec3_Tom_Null),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -123,8 +123,8 @@ public class DbInsertTest {
         //    VALUES
         //      (3, "Tom", null)
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandInsert(1L, dbTabPerson, dbRec3_Tom_Null2),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandInsert(dbTabPerson, dbRec3_Tom_Null2),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -157,8 +157,8 @@ public class DbInsertTest {
         //    VALUES
         //      (1, "Bob", "@")
         sqlCommandQueue1.add(
-                new DMLCommandInsert(1L, dbTabPerson, dbRec1_Bob_email),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandInsert(dbTabPerson, dbRec1_Bob_email),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -201,8 +201,8 @@ public class DbInsertTest {
         //      (1, "Bob", "@"),
         //      (2, "Alice", "@")
         sqlCommandQueue1.add(
-                new DMLCommandInsert(1L, dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandInsert(dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -258,12 +258,12 @@ public class DbInsertTest {
         //  INSERT INTO person2 (id, name, email) VALUES (2, "Alice", "@"); --  0 rows
         //  INSERT INTO person2 (id, name, email) VALUES (1, "Bob", "@");   --  1 rows
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandInsert(1L, dbTabPerson1, dbRec1_Bob_email),
-                new DMLCommandInsert(1L, dbTabPerson1, dbRec2_Alice_email),
-                new DMLCommandInsert(1L, dbTabPerson2, dbRec2_Alice_email),
-                new DMLCommandInsert(1L, dbTabPerson2, dbRec1_Bob_email),
-                new DQLCommandSelect(1L, dbTabPerson1),
-                new DQLCommandSelect(1L, dbTabPerson2)
+                new DMLCommandInsert(dbTabPerson1, dbRec1_Bob_email),
+                new DMLCommandInsert(dbTabPerson1, dbRec2_Alice_email),
+                new DMLCommandInsert(dbTabPerson2, dbRec2_Alice_email),
+                new DMLCommandInsert(dbTabPerson2, dbRec1_Bob_email),
+                new DQLCommandSelect(dbTabPerson1),
+                new DQLCommandSelect(dbTabPerson2)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();

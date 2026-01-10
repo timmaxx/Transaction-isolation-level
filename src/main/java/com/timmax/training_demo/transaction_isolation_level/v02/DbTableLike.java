@@ -151,7 +151,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
                 dmlCommandLog.push(new DMLCommandLogElement(rowId, oldDbRec));
             }
         }
-        //a(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, updateSetCalcFunc);
 
         //  2.  Удаление записей, удовлетворяющих where
         delete000(new_rowId_DbRec_Map.keySet());

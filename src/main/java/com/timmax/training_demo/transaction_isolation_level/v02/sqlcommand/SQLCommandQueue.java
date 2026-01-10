@@ -33,6 +33,7 @@ public class SQLCommandQueue {
 
     private final AtomicReference<Throwable> exceptionRef = new AtomicReference<>(); // Для передачи исключения наружу
 
+
     public SQLCommandQueue(SQLCommand... sqlCommands) {
         super();
         add(sqlCommands);
@@ -87,8 +88,10 @@ public class SQLCommandQueue {
     }
 
     public void joinToThread() {
-        if (sqlCommandQueueState != STARTED) {
-            logger.info("sqlCommandQueueState = {}", sqlCommandQueueState);
+        //  ToDo:   Пока так. Но правильно ли так?
+        if (sqlCommandQueueState != STARTED
+                && sqlCommandQueueState != MALFUNCTIONED_ROLLED_BACK
+        ) {
             throw new UnsupportedOperationException();
         }
         try {
@@ -148,7 +151,6 @@ public class SQLCommandQueue {
                     dbTableLike.rollbackOfInsert(rowId);
                 } else if (dmlCommandLogElementType == UPDATE) {
                     //  для rollbackOfUpdate нужен и rowId и старое значение записи.
-                    logger.info("dmlCommandLogElement.getOldDbRec() = {}", dmlCommandLogElement.getOldDbRec());
                     dbTableLike.rollbackOfUpdate(rowId, dmlCommandLogElement.getOldDbRec());
                 } else if (dmlCommandLogElementType == DELETE) {
                     //  для rollbackOfDelete нужен и rowId и старое значение записи.

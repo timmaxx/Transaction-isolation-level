@@ -36,7 +36,7 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person   --  0 rows and table is read only
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandDelete(1L, dbTabPersonEmpty)
+                new DMLCommandDelete(dbTabPersonEmpty)
         );
         sqlCommandQueue1.startThread();
         DbDataAccessException exception = Assertions.assertThrows(
@@ -71,8 +71,8 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person   --  0 rows
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                new DMLCommandDelete(1L, dbTabPerson),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandDelete(dbTabPerson),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -99,8 +99,8 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person   --  1 row
         sqlCommandQueue1.add(
-                new DMLCommandDelete(1L, dbTabPerson),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandDelete(dbTabPerson),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -135,8 +135,8 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person   --  2 rows
         sqlCommandQueue1.add(
-                new DMLCommandDelete(1L, dbTabPerson),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandDelete(dbTabPerson),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -175,8 +175,8 @@ public class DbDeleteTest {
         //    FROM person   --  2 rows
         //   WHERE id = 2
         sqlCommandQueue1.add(
-                new DMLCommandDelete(1L, dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)),
-                new DQLCommandSelect(1L, dbTabPerson)
+                new DMLCommandDelete(dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)),
+                new DQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
