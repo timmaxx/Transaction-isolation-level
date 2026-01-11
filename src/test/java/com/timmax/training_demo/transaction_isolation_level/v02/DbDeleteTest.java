@@ -4,13 +4,16 @@ import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbData
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandDelete;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.*;
+import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbDeleteTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbDeleteTest.class);
@@ -24,7 +27,7 @@ public class DbDeleteTest {
                 dbTabPersonEmpty::delete
         );
 
-        Assertions.assertEquals(
+        assertEquals(
                 String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
@@ -44,7 +47,7 @@ public class DbDeleteTest {
                 sqlCommandQueue1::joinToThread
         );
 
-        Assertions.assertEquals(
+        assertEquals(
                 String.format(ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE, DB_TAB_NAME_PERSON),
                 exception.getMessage(),
                 EXCEPTION_MESSAGE_DOESNT_MATCH
