@@ -283,6 +283,22 @@ public class DbInsertTest {
     }
 
     @Test
+    public void insertOneRowIntoEmptyTableViaSQLCommandQueueAndCommit() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        insertOneRowIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+
+        //  COMMIT;
+        sqlCommandQueue1.commit();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect2);
+    }
+
+    @Test
     public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
@@ -295,5 +311,21 @@ public class DbInsertTest {
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect2);
+    }
+
+    @Test
+    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndCommit() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+
+        //  COMMIT;
+        sqlCommandQueue1.commit();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
     }
 }
