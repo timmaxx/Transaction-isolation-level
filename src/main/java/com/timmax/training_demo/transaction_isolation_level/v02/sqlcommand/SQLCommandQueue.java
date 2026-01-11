@@ -127,6 +127,7 @@ public class SQLCommandQueue {
                 break;
             }
 
+            //  Отсюда и до конца тела while есть код, которого нет в commit
             DbTableLike dbTableLike = dmlCommandLog.getDbTabLike();
             DMLCommandLogElementType dmlCommandLogElementType = dmlCommandLog.getDmlCommandLogElementType();
 
@@ -155,5 +156,25 @@ public class SQLCommandQueue {
             }
         }
         sqlCommandQueueState = ROLLED_BACK;
+    }
+
+    public void commit() {
+        if (thread.getState() != Thread.State.TERMINATED) {
+            throw new UnsupportedOperationException();
+        }
+
+        while (true) {
+            DMLCommandLog dmlCommandLog;
+            try {
+                dmlCommandLog = dmlCommandQueueLog.pop();
+            } catch (EmptyStackException ese) {
+                break;
+            }
+
+            //  Вызов метода, который очищает стек журнала отката
+            dmlCommandLog.clear();
+            //  Здесь нет кода, который есть в rollback
+        }
+        sqlCommandQueueState = COMMITTED;
     }
 }

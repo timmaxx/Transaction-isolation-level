@@ -29,4 +29,9 @@ public class DMLCommandLog {
     public DMLCommandLogElement pop() {
         return dmlCommandQueueLogElement_Stack.pop();
     }
+
+    //  ToDo:   Сделать не публичным. Но придётся перемещать в другой пакет (или делать класс вложенным)
+    public void clear() {
+        dmlCommandQueueLogElement_Stack.clear();
+    }
 }
