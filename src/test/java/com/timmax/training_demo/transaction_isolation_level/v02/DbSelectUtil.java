@@ -1,7 +1,9 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import org.junit.jupiter.api.Assertions;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 
+import org.junit.jupiter.api.Assertions;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,12 +37,24 @@ public class DbSelectUtil {
     //  Он рабочий, но для его работы требуется доступ к строкам выборок (ч/з getRows()).
     //  Сейчас getRows() объявлен как protected, а следовательно тесты должны быть в том же пакете, что и DbSelect.
     //  Ну и при правильной реализации getRows() можно будет удалить.
-    static public void assertEquals(DbSelect dbSelect1, DbSelect dbSelect2) {
-        List<DbRec> values1 = new ArrayList<>(dbSelect1.getRows());
-        List<DbRec> values2 = new ArrayList<>(dbSelect2.getRows());
-        values1.sort(Comparator.naturalOrder());
-        values2.sort(Comparator.naturalOrder());
+    static public void assertEquals(DbSelect dbSelectExpected, DbSelect dbSelectActual) {
+        List<DbRec> expectedList = new ArrayList<>(dbSelectExpected.getRows());
+        List<DbRec> actualList = new ArrayList<>(dbSelectActual.getRows());
+        expectedList.sort(Comparator.naturalOrder());
+        actualList.sort(Comparator.naturalOrder());
 
-        Assertions.assertEquals(values1, values2);
+        Assertions.assertEquals(expectedList, actualList);
+    }
+
+    static public void selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(DbSelect expectedDbSelect, SQLCommandQueue sqlCommandQueue, DbTab actualDbTab) {
+        //  SELECT *
+        //    FROM person
+        sqlCommandQueue.add(new DQLCommandSelect(actualDbTab));
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
+
+        DbSelect actualDbSelect = sqlCommandQueue.popFromDQLResultLog();
+
+        DbSelectUtil.assertEquals(expectedDbSelect, actualDbSelect);
     }
 }

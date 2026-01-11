@@ -277,15 +277,7 @@ public class DbInsertTest {
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        //  SELECT *
-        //    FROM person
-        sqlCommandQueue1.add(new DQLCommandSelect(dbTabPerson));
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
-
-        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect2);
+        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
@@ -298,15 +290,7 @@ public class DbInsertTest {
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        //  SELECT *
-        //    FROM person
-        sqlCommandQueue1.add(new DQLCommandSelect(dbTabPerson));
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
-
-        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect2);
+        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithOneRow, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
@@ -319,15 +303,7 @@ public class DbInsertTest {
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        //  SELECT *
-        //    FROM person
-        sqlCommandQueue1.add(new DQLCommandSelect(dbTabPerson));
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
-
-        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect2);
+        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
@@ -340,14 +316,6 @@ public class DbInsertTest {
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        //  SELECT *
-        //    FROM person
-        sqlCommandQueue1.add(new DQLCommandSelect(dbTabPerson));
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
-
-        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
-
-        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
     }
 }
