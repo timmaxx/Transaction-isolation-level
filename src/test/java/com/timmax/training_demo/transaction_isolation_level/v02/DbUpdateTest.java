@@ -218,6 +218,21 @@ public class DbUpdateTest {
     }
 
     @Test
+    public void updateTwoRowsTableViaSQLCommandQueueAndCommit() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        updateTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+
+        //  COMMIT;
+        sqlCommandQueue1.commit();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect2);
+    }
+
+    @Test
     public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
@@ -230,5 +245,20 @@ public class DbUpdateTest {
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+    }
+
+    @Test
+    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndCommit() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+
+        //  COMMIT;
+        sqlCommandQueue1.commit();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect2);
     }
 }
