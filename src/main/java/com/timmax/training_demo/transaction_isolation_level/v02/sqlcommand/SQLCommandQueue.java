@@ -88,12 +88,6 @@ public class SQLCommandQueue {
     }
 
     public void joinToThread() {
-        //  ToDo:   Пока так. Но правильно ли так?
-        if (sqlCommandQueueState != STARTED
-                && sqlCommandQueueState != MALFUNCTIONED_ROLLED_BACK
-        ) {
-            throw new UnsupportedOperationException();
-        }
         try {
             // Ждём завершения потока (в реальном коде это может быть join() с таймаутом)
             thread.join();
