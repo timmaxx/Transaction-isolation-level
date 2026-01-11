@@ -31,9 +31,12 @@ public class SQLCommandQueue {
 
     private final AtomicReference<Throwable> exceptionRef = new AtomicReference<>(); // Для передачи исключения наружу
 
+    public SQLCommandQueue() {
+        super();
+    }
 
     public SQLCommandQueue(SQLCommand... sqlCommands) {
-        super();
+        this();
         add(sqlCommands);
     }
 
