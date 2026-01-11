@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueueState.*;
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.DELETE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.UPDATE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLogElementType.INSERT;
@@ -24,7 +23,6 @@ public class SQLCommandQueue {
     protected static final Logger logger = LoggerFactory.getLogger(SQLCommandQueue.class);
 
     private final Queue<SQLCommand> sqlCommandQueue = new LinkedList<>();
-    private SQLCommandQueueState sqlCommandQueueState = IN_PREPARATION;
     private Thread thread;
     //  !!! Нехорошо, что этот класс должен управлять экземплярами классов, которые лежат во вложенном пакете!!!
     DMLCommandQueueLog dmlCommandQueueLog = new DMLCommandQueueLog();
@@ -40,18 +38,18 @@ public class SQLCommandQueue {
     }
 
     public void add(SQLCommand... sqlCommands) {
-        if (sqlCommandQueueState != IN_PREPARATION) {
-            throw new UnsupportedOperationException();
-        }
         Collections.addAll(sqlCommandQueue, sqlCommands);
     }
 
     public void startThread() {
-        if (sqlCommandQueueState != IN_PREPARATION) {
-            throw new UnsupportedOperationException();
-        }
-        sqlCommandQueueState = STARTED;
+        //  ToDo:   Следует сделать проверку, что если thread был определён и он в данный момент выполняется,
+        //          то:
+        //          - либо ждать здесь окончания его выполнения и потом определить новый,
+        //          - либо выбросить исключение о том, что поток занят,
+        //          - либо вернуть управление, но thread и так выполнит новые команды.
+
         thread = new Thread(() -> {
+            //  В цикле не очищается очередь команд. Так не задумывалось изначально.
             for (SQLCommand sqlCommand : sqlCommandQueue) {
                 ResultOfSQLCommand resultOfSQLCommand;
                 try {
@@ -60,7 +58,6 @@ public class SQLCommandQueue {
                     exceptionRef.set(dbSQLException);
                     //  !!!!!
                     // rollback();
-                    sqlCommandQueueState = MALFUNCTIONED_ROLLED_BACK;
                     throw dbSQLException;
                 }
 
@@ -73,6 +70,8 @@ public class SQLCommandQueue {
                     dqlResultLog.push(resultOfDQLCommand.getDbSelect());
                 }
             }
+            //  Очистим очередь команд для возможного следующего использования объекта.
+            sqlCommandQueue.clear();
         });
 
         thread.setUncaughtExceptionHandler(
@@ -95,8 +94,6 @@ public class SQLCommandQueue {
             // Восстанавливаем прерванный статус
             Thread.currentThread().interrupt();
             throw new RuntimeException(interruptedException);
-        } finally {
-            sqlCommandQueueState = STOPPED;
         }
 
         // Если исключение было брошено, бросаем его заново в основной поток
@@ -155,7 +152,6 @@ public class SQLCommandQueue {
                 }
             }
         }
-        sqlCommandQueueState = ROLLED_BACK;
     }
 
     public void commit() {
@@ -175,6 +171,5 @@ public class SQLCommandQueue {
             dmlCommandLog.clear();
             //  Здесь нет кода, который есть в rollback
         }
-        sqlCommandQueueState = COMMITTED;
     }
 }
