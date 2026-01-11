@@ -203,7 +203,7 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTableViaSQLCommandQueueAndRollBack() {
+    public void updateTwoRowsTableViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
@@ -218,7 +218,7 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollBack() {
+    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 

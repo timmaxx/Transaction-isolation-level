@@ -267,9 +267,8 @@ public class DbInsertTest {
         DbSelectUtil.assertEquals(dbSelect1, dbSelect2);
     }
 
-    //  AndRollBack
     @Test
-    public void insertOneRowIntoEmptyTableViaSQLCommandQueueAndRollBack() {
+    public void insertOneRowIntoEmptyTableViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
@@ -283,9 +282,8 @@ public class DbInsertTest {
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect2);
     }
 
-    //  AndRollBack
     @Test
-    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndRollBack() {
+    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 

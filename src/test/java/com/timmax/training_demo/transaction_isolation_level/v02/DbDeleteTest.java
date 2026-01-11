@@ -198,7 +198,7 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromOneRowTableViaSQLCommandQueueAndRollBack() {
+    public void deleteFromOneRowTableViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
@@ -213,7 +213,7 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromTwoRowsTableViaSQLCommandQueueAndRollBack() {
+    public void deleteFromTwoRowsTableViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
@@ -228,7 +228,7 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollBack() {
+    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
