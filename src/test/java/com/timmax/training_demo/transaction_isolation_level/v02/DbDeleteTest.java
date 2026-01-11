@@ -213,6 +213,21 @@ public class DbDeleteTest {
     }
 
     @Test
+    public void deleteFromOneRowTableViaSQLCommandQueueAndCommit() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        deleteFromOneRowTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+
+        //  COMMIT;
+        sqlCommandQueue1.commit();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect2);
+    }
+
+    @Test
     public void deleteFromTwoRowsTableViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
@@ -228,6 +243,21 @@ public class DbDeleteTest {
     }
 
     @Test
+    public void deleteFromTwoRowsTableViaSQLCommandQueueAndCommit() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        deleteFromTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+
+        //  COMMIT;
+        sqlCommandQueue1.commit();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect2);
+    }
+
+    @Test
     public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
@@ -240,5 +270,20 @@ public class DbDeleteTest {
         DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect2);
+    }
+
+    @Test
+    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndCommit() {
+        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+
+        deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+
+        //  COMMIT;
+        sqlCommandQueue1.commit();
+        //  Смущает, что селект после отката сделал не через SQLCommandQueue:
+        DbSelect dbSelect2 = dbTabPerson.select().getDbSelect();
+
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect2);
     }
 }
