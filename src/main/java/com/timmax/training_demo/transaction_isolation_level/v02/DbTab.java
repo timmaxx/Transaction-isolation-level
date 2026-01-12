@@ -57,17 +57,13 @@ public non-sealed class DbTab extends DbTableLike {
         return delete0(whereFunc);
     }
 
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы обновление можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный UPDATE всех записей (без WHERE)
-    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
+    //  UPDATE всех записей (без WHERE)
+    private ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
         return update(updateSetCalcFunc, dbRec -> true);
     }
 
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы обновление можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный UPDATE выборочных записей (с WHERE)
-    public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+    //  UPDATE выборочных записей (с WHERE)
+    private ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         Objects.requireNonNull(updateSetCalcFunc, ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
@@ -263,6 +259,40 @@ public non-sealed class DbTab extends DbTableLike {
         protected DMLCommandDelete(Long millsBeforeRun, DbTab dbTab, WhereFunc whereFunc) {
             super(millsBeforeRun, dbTab);
             runnable = () -> dbTab.delete(whereFunc);
+        }
+    }
+
+
+    //  Из пакета dml удалил класс DMLCommandUpdate и сделал его внутренними в DbTab.
+    //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand update() сделать не публичным,
+    //  а это нужно, для того, чтобы обновление можно было делать только из SQLCommandQueue
+    //  (т.е. внутри транзакции в дочернем процессе).
+
+    public DMLCommandUpdate getDMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc) {
+        return new DMLCommandUpdate(dbTab, updateSetCalcFunc);
+    }
+
+    public DMLCommandUpdate getDMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        return new DMLCommandUpdate(dbTab, updateSetCalcFunc, whereFunc);
+    }
+
+    public static class DMLCommandUpdate extends DMLCommand {
+        public DMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc) {
+            this(0L, dbTab, updateSetCalcFunc);
+        }
+
+        public DMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+            this(0L, dbTab, updateSetCalcFunc, whereFunc);
+        }
+
+
+        protected DMLCommandUpdate(Long millsBeforeRun, DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc) {
+            this(millsBeforeRun, dbTab, updateSetCalcFunc, dbRec -> true);
+        }
+
+        protected DMLCommandUpdate(Long millsBeforeRun, DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+            super(millsBeforeRun, dbTab);
+            runnable = () -> dbTab.update(updateSetCalcFunc, whereFunc);
         }
     }
 }
