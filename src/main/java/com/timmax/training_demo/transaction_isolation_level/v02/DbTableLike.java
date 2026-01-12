@@ -32,11 +32,11 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return rowId_DbRec_Map.size();
     }
 
-    //  SELECT всех записей (без WHERE)
-    ResultOfDQLCommand select() {
-        return select(dbRec -> true);
-    }
-
+    //  Этот метод объявлен как package-private только лишь для того, чтобы он был доступен в конструкторе
+    //  DbTab.DQLCommandSelect.
+    //  Из-за этого он оказался доступен и для тестов в этом-же пакете, что не очень хорошо.
+    //  В других-же классах он не должен быть доступен.
+    //  И именно так (т.е. private) для insert, update, delete сделано в классе DbTab.
     //  SELECT выборочных записей (с WHERE)
     ResultOfDQLCommand select(WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
@@ -189,7 +189,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         dmlCommandLog.push(new DMLCommandLogElement(rowId, null));
     }
 
-    //  Непосредственная вставка одной записи в мапу-носитель таблицы без создания записи в журнале отката
+    //  Непосредственная вставка одной записи в мапу - носитель таблицы без создания записи в журнале отката
     private void insert000(Integer rowId, DbRec newDbRec) {
         if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);

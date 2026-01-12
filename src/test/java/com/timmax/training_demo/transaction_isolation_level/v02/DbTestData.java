@@ -37,19 +37,22 @@ public class DbTestData {
             true
     );
 
-    public static final DbSelect dbSelectPersonEmpty = dbTabPersonEmpty.select().getDbSelect();
+    //  Для этой и других подобных строк:
+    //  Работает только потому, что select(where) объявлен как package-private и тесты находятся в том-же пакете.
+    //  Прямое использование select(where) нежелательно, т.к. все SQL команды следует выполнять в транзакции.
+    public static final DbSelect dbSelectPersonEmpty = dbTabPersonEmpty.select(dbRec -> true).getDbSelect();
 
     public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, List.of(dbRec1_Bob_email));
-    public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select().getDbSelect();
+    public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select(dbRec -> true).getDbSelect();
 
     public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, List.of(dbRec2_Alice_email));
-    public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select().getDbSelect();
+    public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select(dbRec -> true).getDbSelect();
 
     public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, List.of(dbRec1_BobBob_email, dbRec2_AliceAlice_email));
-    public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select().getDbSelect();
+    public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select(dbRec -> true).getDbSelect();
 
     public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, List.of(dbRec2_AliceAlice_email));
-    public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select().getDbSelect();
+    public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select(dbRec -> true).getDbSelect();
 
     public static final DbRec dbRec3_Tom_Null = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 3, DB_FIELD_NAME_NAME, "Tom"));
 
@@ -65,5 +68,5 @@ public class DbTestData {
     }
 
     public static final DbTab dbTabPersonWithOneRowNameIsNull = new DbTab(dbTabPersonEmpty, true, List.of(dbRec3_Tom_Null));
-    public static final DbSelect dbSelectPersonWithOneRowEmailIsNull = dbTabPersonWithOneRowNameIsNull.select().getDbSelect();
+    public static final DbSelect dbSelectPersonWithOneRowEmailIsNull = dbTabPersonWithOneRowNameIsNull.select(dbRec -> true).getDbSelect();
 }

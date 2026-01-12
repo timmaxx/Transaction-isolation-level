@@ -9,11 +9,14 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 public class DbSelectTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbSelectTest.class);
 
+    //  Для этого и других ...ViaMainThread методов:
+    //  Работает только потому, что select(where) объявлен как package-private и тесты находятся в том-же пакете.
+    //  Прямое использование select(where) нежелательно, т.к. все SQL команды следует выполнять в транзакции.
     @Test
     public void selectFromEmptyTableViaMainThread() {
         //  SELECT *
         //    FROM person   --  0 rows
-        DbSelect dbSelect = dbTabPersonEmpty.select().getDbSelect();
+        DbSelect dbSelect = dbTabPersonEmpty.select(dbRec -> true).getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -37,7 +40,7 @@ public class DbSelectTest {
     public void selectFromOneRowTableViaMainThread() {
         //  SELECT *
         //    FROM person   --  1 row (dbRec1_Bob_email)
-        DbSelect dbSelect = dbTabPersonWithOneRow.select().getDbSelect();
+        DbSelect dbSelect = dbTabPersonWithOneRow.select(dbRec -> true).getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
@@ -61,7 +64,7 @@ public class DbSelectTest {
     public void selectFromTwoRowsTableViaMainThread() {
         //  SELECT *
         //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
-        DbSelect dbSelect = dbTabPersonWithTwoRows.select().getDbSelect();
+        DbSelect dbSelect = dbTabPersonWithTwoRows.select(dbRec -> true).getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
     }
