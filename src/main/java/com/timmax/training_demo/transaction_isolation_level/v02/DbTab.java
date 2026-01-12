@@ -44,25 +44,37 @@ public non-sealed class DbTab extends DbTableLike {
         insert0(dbRec_List);
     }
 
-    //  INSERT списка записей
-    private ResultOfDMLCommand insert(List<DbRec> newDbRec_List) {
-        validateReadOnlyTable(YOU_CANNOT_INSERT);
-        return insert0(newDbRec_List);
+
+    public DQLCommandSelect getDQLCommandSelect() {
+        return new DQLCommandSelect();
     }
 
-    //  DELETE выборочных записей (с WHERE)
-    private ResultOfDMLCommand delete(WhereFunc whereFunc) {
-        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
-        validateReadOnlyTable(YOU_CANNOT_DELETE);
-        return delete0(whereFunc);
+    public DQLCommandSelect getDQLCommandSelect(WhereFunc whereFunc) {
+        return new DQLCommandSelect(whereFunc);
     }
 
-    //  UPDATE выборочных записей (с WHERE)
-    private ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
-        Objects.requireNonNull(updateSetCalcFunc, ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
-        validateReadOnlyTable(YOU_CANNOT_UPDATE);
-        return update0(updateSetCalcFunc, whereFunc);
+    public DMLCommandInsert getDMLCommandInsert(DbRec newDbRec) {
+        return new DMLCommandInsert(newDbRec);
+    }
+
+    public DMLCommandInsert getDMLCommandInsert(List<DbRec> newDbRec_List) {
+        return new DMLCommandInsert(newDbRec_List);
+    }
+
+    public DMLCommandDelete getDMLCommandDelete() {
+        return new DMLCommandDelete();
+    }
+
+    public DMLCommandDelete getDMLCommandDelete(WhereFunc whereFunc) {
+        return new DMLCommandDelete(whereFunc);
+    }
+
+    public DMLCommandUpdate getDMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc) {
+        return new DMLCommandUpdate(updateSetCalcFunc);
+    }
+
+    public DMLCommandUpdate getDMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        return new DMLCommandUpdate(updateSetCalcFunc, whereFunc);
     }
 
     //  ToDo:   Сделать этот метод не публичным!
@@ -95,6 +107,27 @@ public non-sealed class DbTab extends DbTableLike {
                 '}';
     }
 
+
+    //  INSERT списка записей
+    private ResultOfDMLCommand insert(List<DbRec> newDbRec_List) {
+        validateReadOnlyTable(YOU_CANNOT_INSERT);
+        return insert0(newDbRec_List);
+    }
+
+    //  DELETE выборочных записей (с WHERE)
+    private ResultOfDMLCommand delete(WhereFunc whereFunc) {
+        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
+        validateReadOnlyTable(YOU_CANNOT_DELETE);
+        return delete0(whereFunc);
+    }
+
+    //  UPDATE выборочных записей (с WHERE)
+    private ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
+        Objects.requireNonNull(updateSetCalcFunc, ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
+        validateReadOnlyTable(YOU_CANNOT_UPDATE);
+        return update0(updateSetCalcFunc, whereFunc);
+    }
 
     private void validateReadOnlyTable(String msgInsUpdDel) {
         if (readOnly) {
@@ -134,7 +167,7 @@ public non-sealed class DbTab extends DbTableLike {
     //  Вот иерархия для наследников:
     //      -   DML команды (INSERT, UPDATE, DELETE);
     //      -   DQL команда (SELECT).
-    public abstract static class SQLCommand {
+    abstract static class SQLCommand {
         protected RunnableWithResultOfSQLCommand runnable;
 
         private final Long millsBeforeRun;
@@ -184,7 +217,7 @@ public non-sealed class DbTab extends DbTableLike {
     //  DQL команда (SELECT)
     //      -   не изменяет данные, а значит НЕ порождает журнал изменения,
     //      -   возвращают данные, а значит содержит результат.
-    public abstract static class DQLCommand extends SQLCommand {
+    private abstract static class DQLCommand extends SQLCommand {
         public DQLCommand() {
             this(0L);
         }
@@ -200,14 +233,6 @@ public non-sealed class DbTab extends DbTableLike {
         }
     }
 
-
-    public DQLCommandSelect getDQLCommandSelect() {
-        return new DQLCommandSelect();
-    }
-
-    public DQLCommandSelect getDQLCommandSelect(WhereFunc whereFunc) {
-        return new DQLCommandSelect(whereFunc);
-    }
 
     public class DQLCommandSelect extends DQLCommand {
         public DQLCommandSelect() {
@@ -239,7 +264,7 @@ public non-sealed class DbTab extends DbTableLike {
     //  DML команды (INSERT, UPDATE, DELETE)
     //      -   могут изменять данные, а значит порождают журнал изменения,
     //      -   не возвращают данные, а значит не содержат результата.
-    public abstract static class DMLCommand extends SQLCommand {
+    private abstract static class DMLCommand extends SQLCommand {
         public DMLCommand() {
             this(0L);
         }
@@ -259,14 +284,6 @@ public non-sealed class DbTab extends DbTableLike {
     //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand insert() сделать не публичным,
     //  а это нужно, для того, чтобы вставку можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
-
-    public DMLCommandInsert getDMLCommandInsert(DbRec newDbRec) {
-        return new DMLCommandInsert(newDbRec);
-    }
-
-    public DMLCommandInsert getDMLCommandInsert(List<DbRec> newDbRec_List) {
-        return new DMLCommandInsert(newDbRec_List);
-    }
 
     public class DMLCommandInsert extends DMLCommand {
         public DMLCommandInsert(DbRec newDbRec) {
@@ -294,14 +311,6 @@ public non-sealed class DbTab extends DbTableLike {
     //  а это нужно, для того, чтобы удаление можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
 
-    public DMLCommandDelete getDMLCommandDelete() {
-        return new DMLCommandDelete();
-    }
-
-    public DMLCommandDelete getDMLCommandDelete(WhereFunc whereFunc) {
-        return new DMLCommandDelete(whereFunc);
-    }
-
     public class DMLCommandDelete extends DMLCommand {
         public DMLCommandDelete() {
             this(0L, dbRec -> true);
@@ -327,14 +336,6 @@ public non-sealed class DbTab extends DbTableLike {
     //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand update() сделать не публичным,
     //  а это нужно, для того, чтобы обновление можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
-
-    public DMLCommandUpdate getDMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc) {
-        return new DMLCommandUpdate(updateSetCalcFunc);
-    }
-
-    public DMLCommandUpdate getDMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        return new DMLCommandUpdate(updateSetCalcFunc, whereFunc);
-    }
 
     public class DMLCommandUpdate extends DMLCommand {
         public DMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc) {

@@ -32,20 +32,18 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return rowId_DbRec_Map.size();
     }
 
-    //  Этот метод объявлен как package-private только лишь для того, чтобы он был доступен в конструкторе
-    //  DbTab.DQLCommandSelect.
-    //  Из-за этого он оказался доступен и для тестов в этом-же пакете, что не очень хорошо.
-    //  В других-же классах он не должен быть доступен.
-    //  И именно так (т.е. private) для insert, update, delete сделано в классе DbTab.
-    //  SELECT выборочных записей (с WHERE)
-    ResultOfDQLCommand select(WhereFunc whereFunc) {
-        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
-        return select0(whereFunc);
-    }
-
     //  В этом классе нет публичного INSERT, но он (INSERT, только protected) понадобится для создания SELECT.
     //  Кроме того, в этом классе тем более нет UPDATE и DELETE (никаких - ни публичных, ни приватных),
     //  т.к. они будут реализовываться только для таблиц.
+
+    //  ToDo:   Сделать этот метод не публичным!
+    public abstract void rollbackOfInsert(Integer rowId);
+
+    //  ToDo:   Сделать этот метод не публичным!
+    public abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
+
+    //  ToDo:   Сделать этот метод не публичным!
+    public abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
 
     @Override
     public String toString() {
@@ -66,14 +64,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return Objects.hash(dbFields, rowId_DbRec_Map);
     }
 
-    //  ToDo:   Сделать этот метод не публичным!
-    public abstract void rollbackOfInsert(Integer rowId);
-
-    //  ToDo:   Сделать этот метод не публичным!
-    public abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
-
-    //  ToDo:   Сделать этот метод не публичным!
-    public abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
 
     //  ToDo:   Сделать private
     protected void delete000(Set<Integer> rowIdSet) {
@@ -160,6 +150,19 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         //  2.  Удаление записей, удовлетворяющих where
         delete000(new_rowId_DbRec_Map.keySet());
     }
+
+
+    //  Этот метод объявлен как package-private только лишь для того, чтобы он был доступен в конструкторе
+    //  DbTab.DQLCommandSelect.
+    //  Из-за этого он оказался доступен и для тестов в этом-же пакете, что не очень хорошо.
+    //  В других-же классах он не должен быть доступен.
+    //  И именно так (т.е. private) для insert, update, delete сделано в классе DbTab.
+    //  SELECT выборочных записей (с WHERE)
+    ResultOfDQLCommand select(WhereFunc whereFunc) {
+        Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
+        return select0(whereFunc);
+    }
+
 
     //  Создание объекта DbSelect и наполнение его с помощью insert0
     private ResultOfDQLCommand select0(WhereFunc whereFunc) {
