@@ -50,17 +50,8 @@ public non-sealed class DbTab extends DbTableLike {
         return insert0(newDbRec_List);
     }
 
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы удаление можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный DELETE всех записей (без WHERE)
-    public ResultOfDMLCommand delete() {
-        return delete(dbRec -> true);
-    }
-
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы удаление можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный DELETE выборочных записей (с WHERE)
-    public ResultOfDMLCommand delete(WhereFunc whereFunc) {
+    //  DELETE выборочных записей (с WHERE)
+    private ResultOfDMLCommand delete(WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         return delete0(whereFunc);
@@ -210,8 +201,9 @@ public non-sealed class DbTab extends DbTableLike {
 
     //  Из пакета dml удалил класс DMLCommandInsert и сделал его внутренними в DbTab.
     //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand insert() сделать не публичным,
-    //  а это нужно, для того, чтобы выборку можно было делать только из SQLCommandQueue
+    //  а это нужно, для того, чтобы вставку можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
+
     public DMLCommandInsert getDMLCommandInsert(DbTab dbTab, DbRec newDbRec) {
         return new DMLCommandInsert(dbTab, newDbRec);
     }
@@ -237,6 +229,40 @@ public non-sealed class DbTab extends DbTableLike {
         protected DMLCommandInsert(Long millsBeforeRun, DbTab dbTab, List<DbRec> newDbRec_List) {
             super(millsBeforeRun, dbTab);
             runnable = () -> dbTab.insert(newDbRec_List);
+        }
+    }
+
+
+    //  Из пакета dml удалил класс DMLCommandDelete и сделал его внутренними в DbTab.
+    //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand delete() сделать не публичным,
+    //  а это нужно, для того, чтобы удаление можно было делать только из SQLCommandQueue
+    //  (т.е. внутри транзакции в дочернем процессе).
+
+    public DMLCommandDelete getDMLCommandDelete(DbTab dbTab) {
+        return new DMLCommandDelete(dbTab);
+    }
+
+    public DMLCommandDelete getDMLCommandDelete(DbTab dbTab, WhereFunc whereFunc) {
+        return new DMLCommandDelete(dbTab, whereFunc);
+    }
+
+    public static class DMLCommandDelete extends DMLCommand {
+        public DMLCommandDelete(DbTab dbTab) {
+            this(0L, dbTab, dbRec -> true);
+        }
+
+        public DMLCommandDelete(DbTab dbTab, WhereFunc whereFunc) {
+            this(0L, dbTab, whereFunc);
+        }
+
+
+        protected DMLCommandDelete(Long millsBeforeRun, DbTab dbTab) {
+            this(millsBeforeRun, dbTab, dbRec -> true);
+        }
+
+        protected DMLCommandDelete(Long millsBeforeRun, DbTab dbTab, WhereFunc whereFunc) {
+            super(millsBeforeRun, dbTab);
+            runnable = () -> dbTab.delete(whereFunc);
         }
     }
 }
