@@ -143,12 +143,24 @@ public class SQLCommandQueue {
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (dmlCommandLogElementType == INSERT) {
                     //  для rollbackOfInsert нужен только rowId.
+                    //  ToDo:   Метод
+                    //          DbTableLike :: rollbackOfInsert(rowId)
+                    //          сделать не публичным.
+                    //          Здесь идёт вызов метода, который не должен быть публичным, но он публичный.
                     dbTableLike.rollbackOfInsert(rowId);
                 } else if (dmlCommandLogElementType == UPDATE) {
                     //  для rollbackOfUpdate нужен и rowId и старое значение записи.
+                    //  ToDo:   Метод
+                    //          DbTableLike :: rollbackOfUpdate(rowId, dmlCommandLogElement.getOldDbRec())
+                    //          сделать не публичным.
+                    //          Здесь идёт вызов метода, который не должен быть публичным, но он публичный.
                     dbTableLike.rollbackOfUpdate(rowId, dmlCommandLogElement.getOldDbRec());
                 } else if (dmlCommandLogElementType == DELETE) {
                     //  для rollbackOfDelete нужен и rowId и старое значение записи.
+                    //  ToDo:   Метод
+                    //          DbTableLike :: rollbackOfDelete(rowId, dmlCommandLogElement.getOldDbRec())
+                    //          сделать не публичным.
+                    //          Здесь идёт вызов метода, который не должен быть публичным, но он публичный.
                     dbTableLike.rollbackOfDelete(rowId, dmlCommandLogElement.getOldDbRec());
                 } else {
                     throw new UnsupportedOperationException();

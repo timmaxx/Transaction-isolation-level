@@ -41,24 +41,31 @@ public non-sealed class DbTab extends DbTableLike {
         insert0(dbRec_List);
     }
 
-
+    //  ToDo:   Сделать этот метод не публичным, для того чтобы вставку можно было делать только из SQLCommandQueue
+    //          (т.е. внутри транзакции в дочернем процессе).
     //  Публичный INSERT одной записи
     public ResultOfDMLCommand insert(DbRec newDbRec) {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
         return insert0(List.of(newDbRec));
     }
 
+    //  ToDo:   Сделать этот метод не публичным, для того чтобы вставку можно было делать только из SQLCommandQueue
+    //          (т.е. внутри транзакции в дочернем процессе).
     //  Публичный INSERT списка записей
     public ResultOfDMLCommand insert(List<DbRec> newDbRec_List) {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
         return insert0(newDbRec_List);
     }
 
+    //  ToDo:   Сделать этот метод не публичным, для того чтобы удаление можно было делать только из SQLCommandQueue
+    //          (т.е. внутри транзакции в дочернем процессе).
     //  Публичный DELETE всех записей (без WHERE)
     public ResultOfDMLCommand delete() {
         return delete(dbRec -> true);
     }
 
+    //  ToDo:   Сделать этот метод не публичным, для того чтобы удаление можно было делать только из SQLCommandQueue
+    //          (т.е. внутри транзакции в дочернем процессе).
     //  Публичный DELETE выборочных записей (с WHERE)
     public ResultOfDMLCommand delete(WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
@@ -66,38 +73,42 @@ public non-sealed class DbTab extends DbTableLike {
         return delete0(whereFunc);
     }
 
-    //  ToDo:   Не должен быть public!
-    @Override
-    public void rollbackOfInsert(Integer rowId) {
-        //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
-        delete000(Set.of(rowId));
-    }
-
-    //  ToDo:   Не должен быть public!
-    @Override
-    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
-        //  Здесь делается вставка одной строки, но при этом не пишется лог для rollback
-        insert00(Map.of(rowId, oldDbRec));
-    }
-
-    //  ToDo:   Не должен быть public!
-    @Override
-    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
-        rollbackOfInsert(rowId);
-        rollbackOfDelete(rowId, oldDbRec);
-    }
-
+    //  ToDo:   Сделать этот метод не публичным, для того чтобы обновление можно было делать только из SQLCommandQueue
+    //          (т.е. внутри транзакции в дочернем процессе).
     //  Публичный UPDATE всех записей (без WHERE)
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
         return update(updateSetCalcFunc, dbRec -> true);
     }
 
+    //  ToDo:   Сделать этот метод не публичным, для того чтобы обновление можно было делать только из SQLCommandQueue
+    //          (т.е. внутри транзакции в дочернем процессе).
     //  Публичный UPDATE выборочных записей (с WHERE)
     public ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         Objects.requireNonNull(updateSetCalcFunc, ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
         return update0(updateSetCalcFunc, whereFunc);
+    }
+
+    //  ToDo:   Сделать этот метод не публичным!
+    @Override
+    public void rollbackOfInsert(Integer rowId) {
+        //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
+        delete000(Set.of(rowId));
+    }
+
+    //  ToDo:   Сделать этот метод не публичным!
+    @Override
+    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
+        //  Здесь делается вставка одной строки, но при этом не пишется лог для rollback
+        insert00(Map.of(rowId, oldDbRec));
+    }
+
+    //  ToDo:   Сделать этот метод не публичным!
+    @Override
+    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+        rollbackOfInsert(rowId);
+        rollbackOfDelete(rowId, oldDbRec);
     }
 
     @Override
