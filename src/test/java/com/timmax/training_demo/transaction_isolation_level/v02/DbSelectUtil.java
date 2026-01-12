@@ -1,7 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 
 import org.junit.jupiter.api.Assertions;
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class DbSelectUtil {
     static public void selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(DbSelect expectedDbSelect, SQLCommandQueue sqlCommandQueue, DbTab actualDbTab) {
         //  SELECT *
         //    FROM person
-        sqlCommandQueue.add(new DQLCommandSelect(actualDbTab));
+        sqlCommandQueue.add(actualDbTab.getDQLCommandSelect(actualDbTab));
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 

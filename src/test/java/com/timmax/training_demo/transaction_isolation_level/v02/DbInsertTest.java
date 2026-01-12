@@ -3,7 +3,6 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandInsert;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -88,7 +87,7 @@ public class DbInsertTest {
         //      (3, "Tom")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(dbTabPerson, dbRec3_Tom_Null),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -125,7 +124,7 @@ public class DbInsertTest {
         //      (3, "Tom", null)
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandInsert(dbTabPerson, dbRec3_Tom_Null2),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -159,7 +158,7 @@ public class DbInsertTest {
         //      (1, "Bob", "@")
         sqlCommandQueue1.add(
                 new DMLCommandInsert(dbTabPerson, dbRec1_Bob_email),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -203,7 +202,7 @@ public class DbInsertTest {
         //      (2, "Alice", "@")
         sqlCommandQueue1.add(
                 new DMLCommandInsert(dbTabPerson, List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -255,8 +254,8 @@ public class DbInsertTest {
                 new DMLCommandInsert(dbTabPerson1, dbRec2_Alice_email),
                 new DMLCommandInsert(dbTabPerson2, dbRec2_Alice_email),
                 new DMLCommandInsert(dbTabPerson2, dbRec1_Bob_email),
-                new DQLCommandSelect(dbTabPerson1),
-                new DQLCommandSelect(dbTabPerson2)
+                dbTabPerson1.getDQLCommandSelect(dbTabPerson1),
+                dbTabPerson2.getDQLCommandSelect(dbTabPerson2)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();

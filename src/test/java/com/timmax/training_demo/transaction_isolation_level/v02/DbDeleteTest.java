@@ -2,9 +2,8 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandDelete;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandDelete;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -75,7 +74,7 @@ public class DbDeleteTest {
         //    FROM person   --  0 rows
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 new DMLCommandDelete(dbTabPerson),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -103,7 +102,7 @@ public class DbDeleteTest {
         //    FROM person   --  1 row
         sqlCommandQueue1.add(
                 new DMLCommandDelete(dbTabPerson),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -139,7 +138,7 @@ public class DbDeleteTest {
         //    FROM person   --  2 rows
         sqlCommandQueue1.add(
                 new DMLCommandDelete(dbTabPerson),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
@@ -179,7 +178,7 @@ public class DbDeleteTest {
         //   WHERE id = 2
         sqlCommandQueue1.add(
                 new DMLCommandDelete(dbTabPerson,dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();

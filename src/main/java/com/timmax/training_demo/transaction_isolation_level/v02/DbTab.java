@@ -1,8 +1,10 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
 
 import java.util.*;
 
@@ -152,5 +154,63 @@ public non-sealed class DbTab extends DbTableLike {
         insert00(new_rowId_DbRec_Map);
 
         return new ResultOfDMLCommand(dmlCommandLog);
+    }
+
+    //  Из пакета dql удалил классы DQLCommand и DQLCommandSelect и сделал их внутренними в DbTab.
+    //  Это было сделано для того, чтобы методы DbTableLike :: ResultOfDQLCommand select() сделать не публичным,
+    //  а это нужно, для того, чтобы выборку можно было делать только из SQLCommandQueue
+    //  (т.е. внутри транзакции в дочернем процессе).
+    //  Как альтернатива, можно было эти классы перенести в тот-же пакет, что и DbTab. Попробую такой вариант позже.
+    //  Но и методы insert, update и delete тоже нужно делать не публичными,
+    //  а значит ещё несколько классов в отдельных пакетах нужно удалять и делать внутренними.
+    //  Поскольку эти классы стали (станут) внутренними, то передавать DbTab как параметр и иметь переменную класса,
+    //  станет не нужно, но только при полном переносе этих классов как внутренние сюда.
+    //  Как главный недостаток такого варианта вижу раздувание класса DbTab.
+
+    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab) {
+        return new DQLCommandSelect(dbTab);
+    }
+
+    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab, WhereFunc whereFunc) {
+        return new DQLCommandSelect(dbTab, whereFunc);
+    }
+
+    //  DQL команда (SELECT)
+    //      -   не изменяет данные, а значит НЕ порождает журнал изменения,
+    //      -   возвращают данные, а значит содержит результат.
+    public abstract static class DQLCommand extends SQLCommand {
+        public DQLCommand(DbTab dbTab) {
+            this(0L, dbTab);
+        }
+
+
+        protected DQLCommand(Long millsBeforeRun, DbTab dbTab) {
+            super(millsBeforeRun, dbTab);
+        }
+
+        @Override
+        protected final ResultOfDQLCommand run() {
+            return (ResultOfDQLCommand)super.run();
+        }
+    }
+
+    public static class DQLCommandSelect extends DQLCommand {
+        public DQLCommandSelect(DbTab dbTab) {
+            this(0L, dbTab);
+        }
+
+        public DQLCommandSelect(DbTab dbTab, WhereFunc whereFunc) {
+            this(0L, dbTab, whereFunc);
+        }
+
+
+        protected DQLCommandSelect(Long millsBeforeRun, DbTab dbTab) {
+            this(millsBeforeRun, dbTab, dbRec -> true);
+        }
+
+        protected DQLCommandSelect(Long millsBeforeRun, DbTab dbTab, WhereFunc whereFunc) {
+            super(millsBeforeRun, dbTab);
+            runnable = () -> dbTab.select(whereFunc);
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandUpdate;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.DQLCommandSelect;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -133,7 +132,7 @@ public class DbUpdateTest {
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         )
                 ),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
 
         sqlCommandQueue1.startThread();
@@ -183,7 +182,7 @@ public class DbUpdateTest {
                         ),
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
                 ),
-                new DQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect(dbTabPerson)
         );
 
         sqlCommandQueue1.startThread();
