@@ -32,16 +32,12 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         return rowId_DbRec_Map.size();
     }
 
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы выборку можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный SELECT всех записей (без WHERE)
+    //  SELECT всех записей (без WHERE)
     ResultOfDQLCommand select() {
         return select(dbRec -> true);
     }
 
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы выборку можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный SELECT выборочных записей (с WHERE)
+    //  SELECT выборочных записей (с WHERE)
     ResultOfDQLCommand select(WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         return select0(whereFunc);
