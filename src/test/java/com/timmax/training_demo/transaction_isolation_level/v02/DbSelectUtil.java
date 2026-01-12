@@ -46,7 +46,7 @@ public class DbSelectUtil {
     static public void selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(DbSelect expectedDbSelect, SQLCommandQueue sqlCommandQueue, DbTab actualDbTab) {
         //  SELECT *
         //    FROM person
-        sqlCommandQueue.add(actualDbTab.getDQLCommandSelect(actualDbTab));
+        sqlCommandQueue.add(actualDbTab.getDQLCommandSelect());
         sqlCommandQueue.startThread();
         sqlCommandQueue.joinToThread();
 

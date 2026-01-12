@@ -24,7 +24,6 @@ public class DbUpdateTest {
         //     SET name = name || " " || name
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
                 dbTabPersonEmpty.getDMLCommandUpdate(
-                        dbTabPersonEmpty,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         )
@@ -49,10 +48,7 @@ public class DbUpdateTest {
         //  UPDATE person   --  0 rows and table is read only
         //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                dbTabPersonEmpty.getDMLCommandUpdate(
-                        dbTabPersonEmpty,
-                        null
-                )
+                dbTabPersonEmpty.getDMLCommandUpdate(null)
         );
 
         sqlCommandQueue1.startThread();
@@ -73,12 +69,11 @@ public class DbUpdateTest {
         //     SET name = name || " " || name
         sqlCommandQueue1.add(
                 dbTabPerson.getDMLCommandUpdate(
-                        dbTabPerson,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         )
                 ),
-                dbTabPerson.getDQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect()
         );
 
         sqlCommandQueue1.startThread();
@@ -103,13 +98,12 @@ public class DbUpdateTest {
         //   WHERE id = 2
         sqlCommandQueue1.add(
                 dbTabPerson.getDMLCommandUpdate(
-                        dbTabPerson,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
                 ),
-                dbTabPerson.getDQLCommandSelect(dbTabPerson)
+                dbTabPerson.getDQLCommandSelect()
         );
 
         sqlCommandQueue1.startThread();

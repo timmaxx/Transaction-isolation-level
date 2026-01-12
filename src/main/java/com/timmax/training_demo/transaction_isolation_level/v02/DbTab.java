@@ -134,16 +134,14 @@ public non-sealed class DbTab extends DbTableLike {
     //  Вот иерархия для наследников:
     //      -   DML команды (INSERT, UPDATE, DELETE);
     //      -   DQL команда (SELECT).
-    public static abstract class SQLCommand {
-        protected final DbTab dbTab;
-
+    public abstract static class SQLCommand {
         protected RunnableWithResultOfSQLCommand runnable;
 
         private final Long millsBeforeRun;
 
 
-        public SQLCommand(DbTab dbTab) {
-            this(0L, dbTab);
+        public SQLCommand() {
+            this(0L);
         }
 
 
@@ -152,8 +150,7 @@ public non-sealed class DbTab extends DbTableLike {
         //          лучше сделать не public (protected или package-private),
         //          т.к. в явном виде такие конструкторы нужны только для тестирования
         //          (особенно тестирование для разных уровней изоляции).
-        protected SQLCommand(Long millsBeforeRun, DbTab dbTab) {
-            this.dbTab = dbTab;
+        protected SQLCommand(Long millsBeforeRun) {
             this.millsBeforeRun = millsBeforeRun;
         }
 
@@ -188,13 +185,13 @@ public non-sealed class DbTab extends DbTableLike {
     //      -   не изменяет данные, а значит НЕ порождает журнал изменения,
     //      -   возвращают данные, а значит содержит результат.
     public abstract static class DQLCommand extends SQLCommand {
-        public DQLCommand(DbTab dbTab) {
-            this(0L, dbTab);
+        public DQLCommand() {
+            this(0L);
         }
 
 
-        protected DQLCommand(Long millsBeforeRun, DbTab dbTab) {
-            super(millsBeforeRun, dbTab);
+        protected DQLCommand(Long millsBeforeRun) {
+            super(millsBeforeRun);
         }
 
         @Override
@@ -204,31 +201,31 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
 
-    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab) {
-        return new DQLCommandSelect(dbTab);
+    public DQLCommandSelect getDQLCommandSelect() {
+        return new DQLCommandSelect();
     }
 
-    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab, WhereFunc whereFunc) {
-        return new DQLCommandSelect(dbTab, whereFunc);
+    public DQLCommandSelect getDQLCommandSelect(WhereFunc whereFunc) {
+        return new DQLCommandSelect(whereFunc);
     }
 
-    public static class DQLCommandSelect extends DQLCommand {
-        public DQLCommandSelect(DbTab dbTab) {
-            this(0L, dbTab);
+    public class DQLCommandSelect extends DQLCommand {
+        public DQLCommandSelect() {
+            this(0L);
         }
 
-        public DQLCommandSelect(DbTab dbTab, WhereFunc whereFunc) {
-            this(0L, dbTab, whereFunc);
+        public DQLCommandSelect(WhereFunc whereFunc) {
+            this(0L, whereFunc);
         }
 
 
-        protected DQLCommandSelect(Long millsBeforeRun, DbTab dbTab) {
-            this(millsBeforeRun, dbTab, dbRec -> true);
+        protected DQLCommandSelect(Long millsBeforeRun) {
+            this(millsBeforeRun, dbRec -> true);
         }
 
-        protected DQLCommandSelect(Long millsBeforeRun, DbTab dbTab, WhereFunc whereFunc) {
-            super(millsBeforeRun, dbTab);
-            runnable = () -> dbTab.select(whereFunc);
+        protected DQLCommandSelect(Long millsBeforeRun, WhereFunc whereFunc) {
+            super(millsBeforeRun);
+            runnable = () -> select(whereFunc);
         }
     }
 
@@ -242,14 +239,14 @@ public non-sealed class DbTab extends DbTableLike {
     //  DML команды (INSERT, UPDATE, DELETE)
     //      -   могут изменять данные, а значит порождают журнал изменения,
     //      -   не возвращают данные, а значит не содержат результата.
-    public static abstract class DMLCommand extends SQLCommand {
-        public DMLCommand(DbTab dbTab) {
-            this(0L, dbTab);
+    public abstract static class DMLCommand extends SQLCommand {
+        public DMLCommand() {
+            this(0L);
         }
 
 
-        protected DMLCommand(Long millsBeforeRun, DbTab dbTab) {
-            super(millsBeforeRun, dbTab);
+        protected DMLCommand(Long millsBeforeRun) {
+            super(millsBeforeRun);
         }
 
         @Override
@@ -263,31 +260,31 @@ public non-sealed class DbTab extends DbTableLike {
     //  а это нужно, для того, чтобы вставку можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
 
-    public DMLCommandInsert getDMLCommandInsert(DbTab dbTab, DbRec newDbRec) {
-        return new DMLCommandInsert(dbTab, newDbRec);
+    public DMLCommandInsert getDMLCommandInsert(DbRec newDbRec) {
+        return new DMLCommandInsert(newDbRec);
     }
 
-    public DMLCommandInsert getDMLCommandInsert(DbTab dbTab, List<DbRec> newDbRec_List) {
-        return new DMLCommandInsert(dbTab, newDbRec_List);
+    public DMLCommandInsert getDMLCommandInsert(List<DbRec> newDbRec_List) {
+        return new DMLCommandInsert(newDbRec_List);
     }
 
-    public static class DMLCommandInsert extends DMLCommand {
-        public DMLCommandInsert(DbTab dbTab, DbRec newDbRec) {
-            this(0L, dbTab, newDbRec);
+    public class DMLCommandInsert extends DMLCommand {
+        public DMLCommandInsert(DbRec newDbRec) {
+            this(0L, newDbRec);
         }
 
-        public DMLCommandInsert(DbTab dbTab, List<DbRec> newDbRec_List) {
-            this(0L, dbTab, newDbRec_List);
+        public DMLCommandInsert(List<DbRec> newDbRec_List) {
+            this(0L, newDbRec_List);
         }
 
 
-        protected DMLCommandInsert(Long millsBeforeRun, DbTab dbTab, DbRec newDbRec) {
-            this(millsBeforeRun, dbTab, List.of(newDbRec));
+        protected DMLCommandInsert(Long millsBeforeRun, DbRec newDbRec) {
+            this(millsBeforeRun, List.of(newDbRec));
         }
 
-        protected DMLCommandInsert(Long millsBeforeRun, DbTab dbTab, List<DbRec> newDbRec_List) {
-            super(millsBeforeRun, dbTab);
-            runnable = () -> dbTab.insert(newDbRec_List);
+        protected DMLCommandInsert(Long millsBeforeRun, List<DbRec> newDbRec_List) {
+            super(millsBeforeRun);
+            runnable = () -> insert(newDbRec_List);
         }
     }
 
@@ -297,31 +294,31 @@ public non-sealed class DbTab extends DbTableLike {
     //  а это нужно, для того, чтобы удаление можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
 
-    public DMLCommandDelete getDMLCommandDelete(DbTab dbTab) {
-        return new DMLCommandDelete(dbTab);
+    public DMLCommandDelete getDMLCommandDelete() {
+        return new DMLCommandDelete();
     }
 
-    public DMLCommandDelete getDMLCommandDelete(DbTab dbTab, WhereFunc whereFunc) {
-        return new DMLCommandDelete(dbTab, whereFunc);
+    public DMLCommandDelete getDMLCommandDelete(WhereFunc whereFunc) {
+        return new DMLCommandDelete(whereFunc);
     }
 
-    public static class DMLCommandDelete extends DMLCommand {
-        public DMLCommandDelete(DbTab dbTab) {
-            this(0L, dbTab, dbRec -> true);
+    public class DMLCommandDelete extends DMLCommand {
+        public DMLCommandDelete() {
+            this(0L, dbRec -> true);
         }
 
-        public DMLCommandDelete(DbTab dbTab, WhereFunc whereFunc) {
-            this(0L, dbTab, whereFunc);
+        public DMLCommandDelete(WhereFunc whereFunc) {
+            this(0L, whereFunc);
         }
 
 
-        protected DMLCommandDelete(Long millsBeforeRun, DbTab dbTab) {
-            this(millsBeforeRun, dbTab, dbRec -> true);
+        protected DMLCommandDelete(Long millsBeforeRun) {
+            this(millsBeforeRun, dbRec -> true);
         }
 
-        protected DMLCommandDelete(Long millsBeforeRun, DbTab dbTab, WhereFunc whereFunc) {
-            super(millsBeforeRun, dbTab);
-            runnable = () -> dbTab.delete(whereFunc);
+        protected DMLCommandDelete(Long millsBeforeRun, WhereFunc whereFunc) {
+            super(millsBeforeRun);
+            runnable = () -> delete(whereFunc);
         }
     }
 
@@ -331,31 +328,31 @@ public non-sealed class DbTab extends DbTableLike {
     //  а это нужно, для того, чтобы обновление можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
 
-    public DMLCommandUpdate getDMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc) {
-        return new DMLCommandUpdate(dbTab, updateSetCalcFunc);
+    public DMLCommandUpdate getDMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc) {
+        return new DMLCommandUpdate(updateSetCalcFunc);
     }
 
-    public DMLCommandUpdate getDMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        return new DMLCommandUpdate(dbTab, updateSetCalcFunc, whereFunc);
+    public DMLCommandUpdate getDMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        return new DMLCommandUpdate(updateSetCalcFunc, whereFunc);
     }
 
-    public static class DMLCommandUpdate extends DMLCommand {
-        public DMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc) {
-            this(0L, dbTab, updateSetCalcFunc);
+    public class DMLCommandUpdate extends DMLCommand {
+        public DMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc) {
+            this(0L, updateSetCalcFunc);
         }
 
-        public DMLCommandUpdate(DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-            this(0L, dbTab, updateSetCalcFunc, whereFunc);
+        public DMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+            this(0L, updateSetCalcFunc, whereFunc);
         }
 
 
-        protected DMLCommandUpdate(Long millsBeforeRun, DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc) {
-            this(millsBeforeRun, dbTab, updateSetCalcFunc, dbRec -> true);
+        protected DMLCommandUpdate(Long millsBeforeRun, UpdateSetCalcFunc updateSetCalcFunc) {
+            this(millsBeforeRun, updateSetCalcFunc, dbRec -> true);
         }
 
-        protected DMLCommandUpdate(Long millsBeforeRun, DbTab dbTab, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-            super(millsBeforeRun, dbTab);
-            runnable = () -> dbTab.update(updateSetCalcFunc, whereFunc);
+        protected DMLCommandUpdate(Long millsBeforeRun, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+            super(millsBeforeRun);
+            runnable = () -> update(updateSetCalcFunc, whereFunc);
         }
     }
 }
