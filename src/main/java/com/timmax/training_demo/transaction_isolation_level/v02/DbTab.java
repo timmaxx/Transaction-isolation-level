@@ -2,7 +2,6 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommand;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
@@ -55,11 +54,6 @@ public non-sealed class DbTab extends DbTableLike {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         validateReadOnlyTable(YOU_CANNOT_DELETE);
         return delete0(whereFunc);
-    }
-
-    //  UPDATE всех записей (без WHERE)
-    private ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc) {
-        return update(updateSetCalcFunc, dbRec -> true);
     }
 
     //  UPDATE выборочных записей (с WHERE)
@@ -134,6 +128,7 @@ public non-sealed class DbTab extends DbTableLike {
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
+
     //  Из пакета dql удалил классы DQLCommand и DQLCommandSelect и сделал их внутренними в DbTab.
     //  Это было сделано для того, чтобы методы DbTableLike :: ResultOfDQLCommand select() сделать не публичным,
     //  а это нужно, для того, чтобы выборку можно было делать только из SQLCommandQueue
@@ -147,13 +142,6 @@ public non-sealed class DbTab extends DbTableLike {
     //  станет не нужно, но только при полном переносе этих классов как внутренние сюда.
     //  Как главный недостаток такого варианта вижу раздувание класса DbTab.
 
-    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab) {
-        return new DQLCommandSelect(dbTab);
-    }
-
-    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab, WhereFunc whereFunc) {
-        return new DQLCommandSelect(dbTab, whereFunc);
-    }
 
     //  DQL команда (SELECT)
     //      -   не изменяет данные, а значит НЕ порождает журнал изменения,
@@ -172,6 +160,15 @@ public non-sealed class DbTab extends DbTableLike {
         protected final ResultOfDQLCommand run() {
             return (ResultOfDQLCommand)super.run();
         }
+    }
+
+
+    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab) {
+        return new DQLCommandSelect(dbTab);
+    }
+
+    public DQLCommandSelect getDQLCommandSelect(DbTab dbTab, WhereFunc whereFunc) {
+        return new DQLCommandSelect(dbTab, whereFunc);
     }
 
     public static class DQLCommandSelect extends DQLCommand {
@@ -194,6 +191,31 @@ public non-sealed class DbTab extends DbTableLike {
         }
     }
 
+
+    //  Из пакета dml удалил класс DMLCommand и сделал его внутренними в DbTab.
+    //  Это было сделано для того, чтобы следующим шагом также поступить с классом SQLCommand
+    //  и уже можно будет избавиться от DbTab dbTab как от внутренней переменной,
+    //  так и от параметров конструкторов.
+
+
+    //  DML команды (INSERT, UPDATE, DELETE)
+    //      -   могут изменять данные, а значит порождают журнал изменения,
+    //      -   не возвращают данные, а значит не содержат результата.
+    public static abstract class DMLCommand extends SQLCommand {
+        public DMLCommand(DbTab dbTab) {
+            this(0L, dbTab);
+        }
+
+
+        protected DMLCommand(Long millsBeforeRun, DbTab dbTab) {
+            super(millsBeforeRun, dbTab);
+        }
+
+        @Override
+        protected final ResultOfDMLCommand run() {
+            return (ResultOfDMLCommand)super.run();
+        }
+    }
 
     //  Из пакета dml удалил класс DMLCommandInsert и сделал его внутренними в DbTab.
     //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand insert() сделать не публичным,
