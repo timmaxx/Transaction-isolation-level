@@ -1,7 +1,5 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
-
 import org.junit.jupiter.api.Assertions;
 import java.util.ArrayList;
 import java.util.Comparator;

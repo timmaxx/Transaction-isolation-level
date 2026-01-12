@@ -1,7 +1,8 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommand;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.ResultOfSQLCommand;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.RunnableWithResultOfSQLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
@@ -129,6 +130,46 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
 
+    //  Будем считать, что SELECT относится к DQL (Data Query Language), но не к DML (Data Manipulation Language).
+    //  Вот иерархия для наследников:
+    //      -   DML команды (INSERT, UPDATE, DELETE);
+    //      -   DQL команда (SELECT).
+    public static abstract class SQLCommand {
+        protected final DbTab dbTab;
+
+        protected RunnableWithResultOfSQLCommand runnable;
+
+        private final Long millsBeforeRun;
+
+
+        public SQLCommand(DbTab dbTab) {
+            this(0L, dbTab);
+        }
+
+
+        //  Done:   Для этого класса и его наследников, конструкторы с явным параметром
+        //          Long millsBeforeRun
+        //          лучше сделать не public (protected или package-private),
+        //          т.к. в явном виде такие конструкторы нужны только для тестирования
+        //          (особенно тестирование для разных уровней изоляции).
+        protected SQLCommand(Long millsBeforeRun, DbTab dbTab) {
+            this.dbTab = dbTab;
+            this.millsBeforeRun = millsBeforeRun;
+        }
+
+        ResultOfSQLCommand run() {
+            if (millsBeforeRun > 0) {
+                try {
+                    Thread.sleep(millsBeforeRun);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return runnable.run();
+        }
+    }
+
+
     //  Из пакета dql удалил классы DQLCommand и DQLCommandSelect и сделал их внутренними в DbTab.
     //  Это было сделано для того, чтобы методы DbTableLike :: ResultOfDQLCommand select() сделать не публичным,
     //  а это нужно, для того, чтобы выборку можно было делать только из SQLCommandQueue
@@ -157,7 +198,7 @@ public non-sealed class DbTab extends DbTableLike {
         }
 
         @Override
-        protected final ResultOfDQLCommand run() {
+        final ResultOfDQLCommand run() {
             return (ResultOfDQLCommand)super.run();
         }
     }
@@ -212,7 +253,7 @@ public non-sealed class DbTab extends DbTableLike {
         }
 
         @Override
-        protected final ResultOfDMLCommand run() {
+        final ResultOfDMLCommand run() {
             return (ResultOfDMLCommand)super.run();
         }
     }

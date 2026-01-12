@@ -1,8 +1,7 @@
-package com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand;
+package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import com.timmax.training_demo.transaction_isolation_level.v02.DbSelect;
-import com.timmax.training_demo.transaction_isolation_level.v02.DbTableLike;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbSQLException;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.ResultOfSQLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.*;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.*;
 
@@ -22,7 +21,7 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.sqlcomman
 public class SQLCommandQueue {
     protected static final Logger logger = LoggerFactory.getLogger(SQLCommandQueue.class);
 
-    private final Queue<SQLCommand> sqlCommandQueue = new LinkedList<>();
+    private final Queue<DbTab.SQLCommand> sqlCommandQueue = new LinkedList<>();
     private Thread thread;
     //  !!! Нехорошо, что этот класс должен управлять экземплярами классов, которые лежат во вложенном пакете!!!
     DMLCommandQueueLog dmlCommandQueueLog = new DMLCommandQueueLog();
@@ -35,12 +34,12 @@ public class SQLCommandQueue {
         super();
     }
 
-    public SQLCommandQueue(SQLCommand... sqlCommands) {
+    public SQLCommandQueue(DbTab.SQLCommand... sqlCommands) {
         this();
         add(sqlCommands);
     }
 
-    public void add(SQLCommand... sqlCommands) {
+    public void add(DbTab.SQLCommand... sqlCommands) {
         Collections.addAll(sqlCommandQueue, sqlCommands);
     }
 
@@ -53,7 +52,7 @@ public class SQLCommandQueue {
 
         thread = new Thread(() -> {
             //  В цикле не очищается очередь команд. Так не задумывалось изначально.
-            for (SQLCommand sqlCommand : sqlCommandQueue) {
+            for (DbTab.SQLCommand sqlCommand : sqlCommandQueue) {
                 ResultOfSQLCommand resultOfSQLCommand;
                 try {
                     resultOfSQLCommand = sqlCommand.run();

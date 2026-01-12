@@ -1,7 +1,5 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
-import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommandQueue;
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
