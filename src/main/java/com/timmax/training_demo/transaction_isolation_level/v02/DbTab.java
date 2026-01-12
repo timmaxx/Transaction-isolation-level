@@ -2,6 +2,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.SQLCommand;
+import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.DMLCommandLog;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml.ResultOfDMLCommand;
 import com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dql.ResultOfDQLCommand;
@@ -43,18 +44,8 @@ public non-sealed class DbTab extends DbTableLike {
         insert0(dbRec_List);
     }
 
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы вставку можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный INSERT одной записи
-    public ResultOfDMLCommand insert(DbRec newDbRec) {
-        validateReadOnlyTable(YOU_CANNOT_INSERT);
-        return insert0(List.of(newDbRec));
-    }
-
-    //  ToDo:   Сделать этот метод не публичным, для того чтобы вставку можно было делать только из SQLCommandQueue
-    //          (т.е. внутри транзакции в дочернем процессе).
-    //  Публичный INSERT списка записей
-    public ResultOfDMLCommand insert(List<DbRec> newDbRec_List) {
+    //  INSERT списка записей
+    private ResultOfDMLCommand insert(List<DbRec> newDbRec_List) {
         validateReadOnlyTable(YOU_CANNOT_INSERT);
         return insert0(newDbRec_List);
     }
@@ -160,7 +151,9 @@ public non-sealed class DbTab extends DbTableLike {
     //  Это было сделано для того, чтобы методы DbTableLike :: ResultOfDQLCommand select() сделать не публичным,
     //  а это нужно, для того, чтобы выборку можно было делать только из SQLCommandQueue
     //  (т.е. внутри транзакции в дочернем процессе).
+
     //  Как альтернатива, можно было эти классы перенести в тот-же пакет, что и DbTab. Попробую такой вариант позже.
+
     //  Но и методы insert, update и delete тоже нужно делать не публичными,
     //  а значит ещё несколько классов в отдельных пакетах нужно удалять и делать внутренними.
     //  Поскольку эти классы стали (станут) внутренними, то передавать DbTab как параметр и иметь переменную класса,
@@ -211,6 +204,39 @@ public non-sealed class DbTab extends DbTableLike {
         protected DQLCommandSelect(Long millsBeforeRun, DbTab dbTab, WhereFunc whereFunc) {
             super(millsBeforeRun, dbTab);
             runnable = () -> dbTab.select(whereFunc);
+        }
+    }
+
+
+    //  Из пакета dml удалил класс DMLCommandInsert и сделал его внутренними в DbTab.
+    //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand insert() сделать не публичным,
+    //  а это нужно, для того, чтобы выборку можно было делать только из SQLCommandQueue
+    //  (т.е. внутри транзакции в дочернем процессе).
+    public DMLCommandInsert getDMLCommandInsert(DbTab dbTab, DbRec newDbRec) {
+        return new DMLCommandInsert(dbTab, newDbRec);
+    }
+
+    public DMLCommandInsert getDMLCommandInsert(DbTab dbTab, List<DbRec> newDbRec_List) {
+        return new DMLCommandInsert(dbTab, newDbRec_List);
+    }
+
+    public static class DMLCommandInsert extends DMLCommand {
+        public DMLCommandInsert(DbTab dbTab, DbRec newDbRec) {
+            this(0L, dbTab, newDbRec);
+        }
+
+        public DMLCommandInsert(DbTab dbTab, List<DbRec> newDbRec_List) {
+            this(0L, dbTab, newDbRec_List);
+        }
+
+
+        protected DMLCommandInsert(Long millsBeforeRun, DbTab dbTab, DbRec newDbRec) {
+            this(millsBeforeRun, dbTab, List.of(newDbRec));
+        }
+
+        protected DMLCommandInsert(Long millsBeforeRun, DbTab dbTab, List<DbRec> newDbRec_List) {
+            super(millsBeforeRun, dbTab);
+            runnable = () -> dbTab.insert(newDbRec_List);
         }
     }
 }
