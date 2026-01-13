@@ -36,14 +36,11 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     //  Кроме того, в этом классе тем более нет UPDATE и DELETE (никаких - ни публичных, ни приватных),
     //  т.к. они будут реализовываться только для таблиц.
 
-    //  ToDo:   Сделать этот метод не публичным!
-    public abstract void rollbackOfInsert(Integer rowId);
+    abstract void rollbackOfInsert(Integer rowId);
 
-    //  ToDo:   Сделать этот метод не публичным!
-    public abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
+    abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
 
-    //  ToDo:   Сделать этот метод не публичным!
-    public abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
+    abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
 
     @Override
     public String toString() {

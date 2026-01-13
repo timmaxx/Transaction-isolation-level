@@ -5,24 +5,18 @@ public non-sealed class DbSelect extends DbTableLike {
         super(dbFields);
     }
 
-    //  ToDo:   Сделать этот метод не публичным!
-    //  ToDo:   Возможно здесь метод даже через исключение можно не делать.
     @Override
-    public void rollbackOfInsert(Integer rowId) {
+    void rollbackOfInsert(Integer rowId) {
         throw new UnsupportedOperationException();
     }
 
-    //  ToDo:   Сделать этот метод не публичным!
-    //  ToDo:   Возможно здесь метод даже через исключение можно не делать.
     @Override
-    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
+    void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
         throw new UnsupportedOperationException();
     }
 
-    //  ToDo:   Сделать этот метод не публичным!
-    //  ToDo:   Возможно здесь метод даже через исключение можно не делать.
     @Override
-    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+    void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
         throw new UnsupportedOperationException();
     }
 }

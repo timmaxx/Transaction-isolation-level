@@ -77,23 +77,20 @@ public non-sealed class DbTab extends DbTableLike {
         return new DMLCommandUpdate(updateSetCalcFunc, whereFunc);
     }
 
-    //  ToDo:   Сделать этот метод не публичным!
     @Override
-    public void rollbackOfInsert(Integer rowId) {
-        //  Здесь делается удаление одной строки, но при этом не пишется лог для rollback
+    void rollbackOfInsert(Integer rowId) {
+        //  Здесь делается удаление одной строки, но при этом не пишется лог отката
         delete000(Set.of(rowId));
     }
 
-    //  ToDo:   Сделать этот метод не публичным!
     @Override
-    public void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
-        //  Здесь делается вставка одной строки, но при этом не пишется лог для rollback
+    void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
+        //  Здесь делается вставка одной строки, но при этом не пишется лог отката
         insert00(Map.of(rowId, oldDbRec));
     }
 
-    //  ToDo:   Сделать этот метод не публичным!
     @Override
-    public void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+    void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
         rollbackOfInsert(rowId);
         rollbackOfDelete(rowId, oldDbRec);
     }
@@ -167,7 +164,7 @@ public non-sealed class DbTab extends DbTableLike {
     //  Вот иерархия для наследников:
     //      -   DML команды (INSERT, UPDATE, DELETE);
     //      -   DQL команда (SELECT).
-    abstract static class SQLCommand {
+    public abstract static class SQLCommand {
         protected RunnableWithResultOfSQLCommand runnable;
 
         private final Long millsBeforeRun;
