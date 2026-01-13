@@ -36,12 +36,6 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     //  Кроме того, в этом классе тем более нет UPDATE и DELETE (никаких - ни публичных, ни приватных),
     //  т.к. они будут реализовываться только для таблиц.
 
-    abstract void rollbackOfInsert(Integer rowId);
-
-    abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
-
-    abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
-
     @Override
     public String toString() {
         return "DbTableLike{" +
@@ -148,6 +142,12 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
         delete000(new_rowId_DbRec_Map.keySet());
     }
 
+
+    abstract void rollbackOfInsert(Integer rowId);
+
+    abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
+
+    abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
 
     //  Этот метод объявлен как package-private только лишь для того, чтобы он был доступен в конструкторе
     //  DbTab.DQLCommandSelect.

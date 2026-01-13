@@ -78,6 +78,16 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     @Override
+    public String toString() {
+        return "DbTab{" +
+                "dbTabName='" + dbTabName + '\'' +
+                ", readOnly=" + readOnly +
+                ", dbFields=" + dbFields +
+                '}';
+    }
+
+
+    @Override
     void rollbackOfInsert(Integer rowId) {
         //  Здесь делается удаление одной строки, но при этом не пишется лог отката
         delete000(Set.of(rowId));
@@ -93,15 +103,6 @@ public non-sealed class DbTab extends DbTableLike {
     void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
         rollbackOfInsert(rowId);
         rollbackOfDelete(rowId, oldDbRec);
-    }
-
-    @Override
-    public String toString() {
-        return "DbTab{" +
-                "dbTabName='" + dbTabName + '\'' +
-                ", readOnly=" + readOnly +
-                ", dbFields=" + dbFields +
-                '}';
     }
 
 
@@ -160,6 +161,21 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
 
+    //  Удалил классы и сделал их внутренними в классе DbTab:
+    //  - из пакета sqlcommand класс SQLCommand,
+    //  - из пакета sqlcommand\dql классы DQLCommand и DQLCommandSelect,
+    //  - из пакета sqlcommand\dml классы DMLCommand, DMLCommandInsert, DMLCommandUpdate, DMLCommandDelete.
+    //  Это было сделано для того, чтобы методы
+    //  - DbTableLike :: ResultOfDQLCommand select() и
+    //  - DbTab :: insert(), update() и delete()
+    //  сделать не публичным, а это нужно, для того, чтобы выборку, вставку, обновление и удаление
+    //  можно было делать только из SQLCommandQueue (т.е. внутри транзакции в дочернем процессе).
+
+    //  Как альтернатива, можно было эти классы перенести в тот-же пакет, что и DbTab.
+
+    //  Как главный недостаток такого варианта вижу раздувание класса DbTab.
+
+
     //  Будем считать, что SELECT относится к DQL (Data Query Language), но не к DML (Data Manipulation Language).
     //  Вот иерархия для наследников:
     //      -   DML команды (INSERT, UPDATE, DELETE);
@@ -195,20 +211,6 @@ public non-sealed class DbTab extends DbTableLike {
             return runnable.run();
         }
     }
-
-
-    //  Из пакета dql удалил классы DQLCommand и DQLCommandSelect и сделал их внутренними в DbTab.
-    //  Это было сделано для того, чтобы методы DbTableLike :: ResultOfDQLCommand select() сделать не публичным,
-    //  а это нужно, для того, чтобы выборку можно было делать только из SQLCommandQueue
-    //  (т.е. внутри транзакции в дочернем процессе).
-
-    //  Как альтернатива, можно было эти классы перенести в тот-же пакет, что и DbTab. Попробую такой вариант позже.
-
-    //  Но и методы insert, update и delete тоже нужно делать не публичными,
-    //  а значит ещё несколько классов в отдельных пакетах нужно удалять и делать внутренними.
-    //  Поскольку эти классы стали (станут) внутренними, то передавать DbTab как параметр и иметь переменную класса,
-    //  станет не нужно, но только при полном переносе этих классов как внутренние сюда.
-    //  Как главный недостаток такого варианта вижу раздувание класса DbTab.
 
 
     //  DQL команда (SELECT)
@@ -252,12 +254,6 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
 
-    //  Из пакета dml удалил класс DMLCommand и сделал его внутренними в DbTab.
-    //  Это было сделано для того, чтобы следующим шагом также поступить с классом SQLCommand
-    //  и уже можно будет избавиться от DbTab dbTab как от внутренней переменной,
-    //  так и от параметров конструкторов.
-
-
     //  DML команды (INSERT, UPDATE, DELETE)
     //      -   могут изменять данные, а значит порождают журнал изменения,
     //      -   не возвращают данные, а значит не содержат результата.
@@ -277,10 +273,6 @@ public non-sealed class DbTab extends DbTableLike {
         }
     }
 
-    //  Из пакета dml удалил класс DMLCommandInsert и сделал его внутренними в DbTab.
-    //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand insert() сделать не публичным,
-    //  а это нужно, для того, чтобы вставку можно было делать только из SQLCommandQueue
-    //  (т.е. внутри транзакции в дочернем процессе).
 
     public class DMLCommandInsert extends DMLCommand {
         public DMLCommandInsert(DbRec newDbRec) {
@@ -303,11 +295,6 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
 
-    //  Из пакета dml удалил класс DMLCommandDelete и сделал его внутренними в DbTab.
-    //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand delete() сделать не публичным,
-    //  а это нужно, для того, чтобы удаление можно было делать только из SQLCommandQueue
-    //  (т.е. внутри транзакции в дочернем процессе).
-
     public class DMLCommandDelete extends DMLCommand {
         public DMLCommandDelete() {
             this(0L, dbRec -> true);
@@ -328,11 +315,6 @@ public non-sealed class DbTab extends DbTableLike {
         }
     }
 
-
-    //  Из пакета dml удалил класс DMLCommandUpdate и сделал его внутренними в DbTab.
-    //  Это было сделано для того, чтобы методы DbTab :: ResultOfDQLCommand update() сделать не публичным,
-    //  а это нужно, для того, чтобы обновление можно было делать только из SQLCommandQueue
-    //  (т.е. внутри транзакции в дочернем процессе).
 
     public class DMLCommandUpdate extends DMLCommand {
         public DMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc) {
