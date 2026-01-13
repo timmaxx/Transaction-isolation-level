@@ -19,7 +19,7 @@ public class DbUpdateTest {
 
 
     @Test
-    public void updateReadOnlyTableViaMainThreadViaSQLCommandQueue() {
+    public void updateReadOnlyTableViaMainThread() {
         //  UPDATE person   --  0 rows and table is read only
         //     SET name = name || " " || name
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
@@ -44,7 +44,7 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateReadOnlyTableWithUpdateSetCalcFuncIsNullViaSQLCommandQueue() {
+    public void updateReadOnlyTableWithUpdateSetCalcFuncIsNull() {
         //  UPDATE person   --  0 rows and table is read only
         //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
@@ -64,7 +64,7 @@ public class DbUpdateTest {
         );
     }
 
-    private void updateTwoRowsTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void updateTwoRowsTable(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         sqlCommandQueue1.add(
@@ -85,14 +85,14 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTableViaSQLCommandQueue() {
+    public void updateTwoRowsTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        updateTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
     }
 
-    private void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void updateTwoRowsTableWhereIdEq2(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         //   WHERE id = 2
@@ -115,62 +115,62 @@ public class DbUpdateTest {
     }
 
     @Test
-    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
+    public void updateTwoRowsTableWhereIdEq2() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
-    public void updateTwoRowsTableViaSQLCommandQueueAndRollback() {
+    public void updateTwoRowsTableAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        updateTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void updateTwoRowsTableViaSQLCommandQueueAndCommit() {
+    public void updateTwoRowsTableAndCommit() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        updateTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
 
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsAllUpdated, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsAllUpdated, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollback() {
+    public void updateTwoRowsTableWhereIdEq2AndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void updateTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndCommit() {
+    public void updateTwoRowsTableWhereIdEq2AndCommit() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        updateTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
 
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsIdEq2Updated, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsIdEq2Updated, sqlCommandQueue1, dbTabPerson);
     }
 }

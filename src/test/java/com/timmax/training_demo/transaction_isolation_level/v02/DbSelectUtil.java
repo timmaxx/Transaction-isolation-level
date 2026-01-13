@@ -43,7 +43,7 @@ public class DbSelectUtil {
         Assertions.assertEquals(expectedList, actualList);
     }
 
-    static public void selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(DbSelect expectedDbSelect, SQLCommandQueue sqlCommandQueue, DbTab actualDbTab) {
+    static public void selectFromDbTabAndAssertEqualsWithExpectedDbSelect(DbSelect expectedDbSelect, SQLCommandQueue sqlCommandQueue, DbTab actualDbTab) {
         //  SELECT *
         //    FROM person
         sqlCommandQueue.add(actualDbTab.getDQLCommandSelect());

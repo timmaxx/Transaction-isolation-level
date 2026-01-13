@@ -18,7 +18,7 @@ public class DbInsertTest {
 
 
     @Test
-    public void insertIntoReadOnlyTableViaSQLCommandQueue() {
+    public void insertIntoReadOnlyTable() {
         //  INSERT
         //    INTO person   --  0 rows and table is read only
         //      (id, name, email)
@@ -41,7 +41,7 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertOneRowWithEmailIsNullIntoEmptyTableViaSQLCommandQueue() {
+    public void insertOneRowWithEmailIsNullIntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -62,7 +62,7 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertOneRowWithEmailIsNull2IntoEmptyTableViaSQLCommandQueue() {
+    public void insertOneRowWithEmailIsNull2IntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  INSERT
@@ -82,7 +82,7 @@ public class DbInsertTest {
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
     }
 
-    private void insertOneRowIntoEmptyTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void insertOneRowIntoEmptyTable(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  INSERT
         //    INTO person   --  0 rows
         //      (id, name, email)
@@ -101,14 +101,14 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTableViaSQLCommandQueue() {
+    public void insertOneRowIntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        insertOneRowIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        insertOneRowIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
     }
 
-    private void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void insertTwoRowsAtTimeIntoEmptyTable(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  INSERT
         //    INTO person   --  0 rows
         //      (id, name, email)
@@ -128,15 +128,15 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue() {
+    public void insertTwoRowsAtTimeIntoEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        insertTwoRowsAtTimeIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
-    public void insertTwoRowsIntoEmptyTablesInDifferentOrderViaSQLCommandQueue() {
+    public void insertTwoRowsIntoEmptyTablesInDifferentOrder() {
         DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
         DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
 
@@ -162,54 +162,54 @@ public class DbInsertTest {
     }
 
     @Test
-    public void insertOneRowIntoEmptyTableViaSQLCommandQueueAndRollback() {
+    public void insertOneRowIntoEmptyTableAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        insertOneRowIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        insertOneRowIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void insertOneRowIntoEmptyTableViaSQLCommandQueueAndCommit() {
+    public void insertOneRowIntoEmptyTableAndCommit() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        insertOneRowIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        insertOneRowIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
 
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithOneRow, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithOneRow, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndRollback() {
+    public void insertTwoRowsAtTimeIntoEmptyTableAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        insertTwoRowsAtTimeIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueueAndCommit() {
+    public void insertTwoRowsAtTimeIntoEmptyTableAndCommit() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        insertTwoRowsAtTimeIntoEmptyTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        insertTwoRowsAtTimeIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
 
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
     }
 }

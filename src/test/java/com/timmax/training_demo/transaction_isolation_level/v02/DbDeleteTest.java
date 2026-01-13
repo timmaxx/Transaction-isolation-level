@@ -17,7 +17,7 @@ public class DbDeleteTest {
 
 
     @Test
-    public void deleteFromReadOnlyTableViaSQLCommandQueue() {
+    public void deleteFromReadOnlyTable() {
         //  DELETE
         //    FROM person   --  0 rows and table is read only
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
@@ -37,7 +37,7 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromEmptyTableViaSQLCommandQueue() {
+    public void deleteFromEmptyTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
 
         //  DELETE
@@ -54,7 +54,7 @@ public class DbDeleteTest {
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
 
-    private void deleteFromOneRowTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void deleteFromOneRowTable(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  DELETE
         //    FROM person   --  1 row
         sqlCommandQueue1.add(
@@ -70,14 +70,14 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromOneRowTableViaSQLCommandQueue() {
+    public void deleteFromOneRowTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromOneRowTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromOneRowTable(dbTabPerson, sqlCommandQueue1);
     }
 
-    private void deleteFromTwoRowsTableViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void deleteFromTwoRowsTable(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  DELETE
         //    FROM person   --  2 rows
         sqlCommandQueue1.add(
@@ -93,14 +93,14 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromTwoRowsTableViaSQLCommandQueue() {
+    public void deleteFromTwoRowsTable() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromTwoRowsTable(dbTabPerson, sqlCommandQueue1);
     }
 
-    private void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void deleteFromTwoRowsTableWhereIdEq2(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
         //  DELETE
         //    FROM person   --  2 rows
         //   WHERE id = 2
@@ -119,88 +119,88 @@ public class DbDeleteTest {
     }
 
     @Test
-    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue() {
+    public void deleteFromTwoRowsTableWhereIdEq2() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
     }
 
     @Test
-    public void deleteFromOneRowTableViaSQLCommandQueueAndRollback() {
+    public void deleteFromOneRowTableAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromOneRowTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromOneRowTable(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithOneRow, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithOneRow, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void deleteFromOneRowTableViaSQLCommandQueueAndCommit() {
+    public void deleteFromOneRowTableAndCommit() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromOneRowTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromOneRowTable(dbTabPerson, sqlCommandQueue1);
 
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void deleteFromTwoRowsTableViaSQLCommandQueueAndRollback() {
+    public void deleteFromTwoRowsTableAndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromTwoRowsTable(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void deleteFromTwoRowsTableViaSQLCommandQueueAndCommit() {
+    public void deleteFromTwoRowsTableAndCommit() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromTwoRowsTableViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromTwoRowsTable(dbTabPerson, sqlCommandQueue1);
 
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonEmpty, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndRollback() {
+    public void deleteFromTwoRowsTableWhereIdEq2AndRollback() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
 
         //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
     }
 
     @Test
-    public void deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueueAndCommit() {
+    public void deleteFromTwoRowsTableWhereIdEq2AndCommit() {
         DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
-        deleteFromTwoRowsTableWhereIdEq2ViaSQLCommandQueue(dbTabPerson, sqlCommandQueue1);
+        deleteFromTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
 
         //  COMMIT;
         sqlCommandQueue1.commit();
 
-        DbSelectUtil.selectFromDbTabViaSQLCommandQueueAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithOneRow, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithOneRow, sqlCommandQueue1, dbTabPerson);
     }
 }
