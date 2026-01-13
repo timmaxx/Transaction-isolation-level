@@ -3,6 +3,7 @@ package com.timmax.training_demo.transaction_isolation_level.v02;
 import com.timmax.training_demo.transaction_isolation_level.v02.exception.DbDataAccessException;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DbUpdateTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbUpdateTest.class);
 
+    DbTab dbTabPersonWithTwoRows;
+    SQLCommandQueue sqlCommandQueue;
+
+
+    @BeforeEach
+    public void beforeEach() {
+        dbTabPersonWithTwoRows = new DbTab(dbTabPersonRoWithTwoRows, false);
+        sqlCommandQueue = new SQLCommandQueue();
+    }
 
     @Test
     public void updateReadOnlyTableViaMainThread() {
         //  UPDATE person   --  0 rows and table is read only
         //     SET name = name || " " || name
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue.add(
                 dbTabPersonRoEmpty.getDMLCommandUpdate(
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
@@ -30,10 +40,10 @@ public class DbUpdateTest {
                 )
         );
 
-        sqlCommandQueue1.startThread();
+        sqlCommandQueue.startThread();
         DbDataAccessException exception = Assertions.assertThrows(
                 DbDataAccessException.class,
-                sqlCommandQueue1::joinToThread
+                sqlCommandQueue::joinToThread
         );
 
         assertEquals(
@@ -47,14 +57,14 @@ public class DbUpdateTest {
     public void updateReadOnlyTableWithUpdateSetCalcFuncIsNull() {
         //  UPDATE person   --  0 rows and table is read only
         //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
+        sqlCommandQueue.add(
                 dbTabPersonRoEmpty.getDMLCommandUpdate(null)
         );
 
-        sqlCommandQueue1.startThread();
+        sqlCommandQueue.startThread();
         NullPointerException exception = Assertions.assertThrows(
                 NullPointerException.class,
-                sqlCommandQueue1::joinToThread
+                sqlCommandQueue::joinToThread
         );
 
         assertEquals(
@@ -64,10 +74,10 @@ public class DbUpdateTest {
         );
     }
 
-    private void updateTwoRowsTable(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void updateTwoRowsTable(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue) {
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
-        sqlCommandQueue1.add(
+        sqlCommandQueue.add(
                 dbTabPerson.getDMLCommandUpdate(
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
@@ -76,27 +86,26 @@ public class DbUpdateTest {
                 dbTabPerson.getDQLCommandSelect()
         );
 
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
 
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
 
     @Test
     public void updateTwoRowsTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
-        updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTable(dbTabPerson, sqlCommandQueue);
     }
 
-    private void updateTwoRowsTableWhereIdEq2(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue1) {
+    private void updateTwoRowsTableWhereIdEq2(DbTab dbTabPerson, SQLCommandQueue sqlCommandQueue) {
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         //   WHERE id = 2
-        sqlCommandQueue1.add(
+        sqlCommandQueue.add(
                 dbTabPerson.getDMLCommandUpdate(
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
@@ -106,71 +115,66 @@ public class DbUpdateTest {
                 dbTabPerson.getDQLCommandSelect()
         );
 
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
+        sqlCommandQueue.startThread();
+        sqlCommandQueue.joinToThread();
 
-        DbSelect dbSelect = sqlCommandQueue1.popFromDQLResultLog();
+        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 
     @Test
     public void updateTwoRowsTableWhereIdEq2() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
-        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue);
     }
 
     @Test
     public void updateTwoRowsTableAndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
-        updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTable(dbTabPerson, sqlCommandQueue);
 
         //  ROLLBACK;
-        sqlCommandQueue1.rollback();
+        sqlCommandQueue.rollback();
 
-        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue, dbTabPerson);
     }
 
     @Test
     public void updateTwoRowsTableAndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
-        updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTable(dbTabPerson, sqlCommandQueue);
 
         //  COMMIT;
-        sqlCommandQueue1.commit();
+        sqlCommandQueue.commit();
 
-        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsAllUpdated, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsAllUpdated, sqlCommandQueue, dbTabPerson);
     }
 
     @Test
     public void updateTwoRowsTableWhereIdEq2AndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
-        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue);
 
         //  ROLLBACK;
-        sqlCommandQueue1.rollback();
+        sqlCommandQueue.rollback();
 
-        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRows, sqlCommandQueue, dbTabPerson);
     }
 
     @Test
     public void updateTwoRowsTableWhereIdEq2AndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
-        final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
-        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
+        updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue);
 
         //  COMMIT;
-        sqlCommandQueue1.commit();
+        sqlCommandQueue.commit();
 
-        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsIdEq2Updated, sqlCommandQueue1, dbTabPerson);
+        DbSelectUtil.selectFromDbTabAndAssertEqualsWithExpectedDbSelect(dbSelectPersonWithTwoRowsIdEq2Updated, sqlCommandQueue, dbTabPerson);
     }
 }
