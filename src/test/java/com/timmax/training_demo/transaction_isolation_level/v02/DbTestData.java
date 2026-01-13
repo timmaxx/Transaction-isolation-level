@@ -31,7 +31,8 @@ public class DbTestData {
     public static final DbRec dbRec1_BobBob_email = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 1, DB_FIELD_NAME_NAME, "Bob Bob", DB_FIELD_NAME_EMAIL, "@"));
     public static final DbRec dbRec2_AliceAlice_email = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 2, DB_FIELD_NAME_NAME, "Alice Alice", DB_FIELD_NAME_EMAIL, "@"));
 
-    public static final DbTab dbTabPersonEmpty = new DbTab(
+    //  Here and throughout this document, "Ro" written after the table name in the names of the test tables means "Read-only"
+    public static final DbTab dbTabPersonRoEmpty = new DbTab(
             DB_TAB_NAME_PERSON,
             DB_FIELDS,
             true
@@ -40,19 +41,19 @@ public class DbTestData {
     //  Для этой и других подобных строк:
     //  Работает только потому, что select(where) объявлен как package-private и тесты находятся в том-же пакете.
     //  Прямое использование select(where) нежелательно, т.к. все SQL команды следует выполнять в транзакции.
-    public static final DbSelect dbSelectPersonEmpty = dbTabPersonEmpty.select(dbRec -> true).getDbSelect();
+    public static final DbSelect dbSelectPersonEmpty = dbTabPersonRoEmpty.select(dbRec -> true).getDbSelect();
 
-    public static final DbTab dbTabPersonWithOneRow = new DbTab(dbTabPersonEmpty, true, List.of(dbRec1_Bob_email));
-    public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonWithOneRow.select(dbRec -> true).getDbSelect();
+    public static final DbTab dbTabPersonRoWithOneRow = new DbTab(dbTabPersonRoEmpty, true, List.of(dbRec1_Bob_email));
+    public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonRoWithOneRow.select(dbRec -> true).getDbSelect();
 
-    public static final DbTab dbTabPersonWithTwoRows = new DbTab(dbTabPersonWithOneRow, true, List.of(dbRec2_Alice_email));
-    public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonWithTwoRows.select(dbRec -> true).getDbSelect();
+    public static final DbTab dbTabPersonRoWithTwoRows = new DbTab(dbTabPersonRoWithOneRow, true, List.of(dbRec2_Alice_email));
+    public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonRoWithTwoRows.select(dbRec -> true).getDbSelect();
 
-    public static final DbTab dbTabPersonWithTwoRowsAllUpdated = new DbTab(dbTabPersonEmpty, true, List.of(dbRec1_BobBob_email, dbRec2_AliceAlice_email));
-    public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonWithTwoRowsAllUpdated.select(dbRec -> true).getDbSelect();
+    public static final DbTab dbTabPersonRoWithTwoRowsAllUpdated = new DbTab(dbTabPersonRoEmpty, true, List.of(dbRec1_BobBob_email, dbRec2_AliceAlice_email));
+    public static final DbSelect dbSelectPersonWithTwoRowsAllUpdated = dbTabPersonRoWithTwoRowsAllUpdated.select(dbRec -> true).getDbSelect();
 
-    public static final DbTab dbTabPersonWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonWithOneRow, true, List.of(dbRec2_AliceAlice_email));
-    public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonWithTwoRowsIdEq2Updated.select(dbRec -> true).getDbSelect();
+    public static final DbTab dbTabPersonRoWithTwoRowsIdEq2Updated = new DbTab(dbTabPersonRoWithOneRow, true, List.of(dbRec2_AliceAlice_email));
+    public static final DbSelect dbSelectPersonWithTwoRowsIdEq2Updated = dbTabPersonRoWithTwoRowsIdEq2Updated.select(dbRec -> true).getDbSelect();
 
     public static final DbRec dbRec3_Tom_Null = new DbRec(DB_FIELDS, Map.of(DB_FIELD_NAME_ID, 3, DB_FIELD_NAME_NAME, "Tom"));
 
@@ -67,6 +68,6 @@ public class DbTestData {
         dbRec3_Tom_Null2 = new DbRec(DB_FIELDS, m);
     }
 
-    public static final DbTab dbTabPersonWithOneRowNameIsNull = new DbTab(dbTabPersonEmpty, true, List.of(dbRec3_Tom_Null));
-    public static final DbSelect dbSelectPersonWithOneRowEmailIsNull = dbTabPersonWithOneRowNameIsNull.select(dbRec -> true).getDbSelect();
+    public static final DbTab dbTabPersonRoWithOneRowNameIsNull = new DbTab(dbTabPersonRoEmpty, true, List.of(dbRec3_Tom_Null));
+    public static final DbSelect dbSelectPersonWithOneRowEmailIsNull = dbTabPersonRoWithOneRowNameIsNull.select(dbRec -> true).getDbSelect();
 }

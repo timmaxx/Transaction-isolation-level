@@ -23,7 +23,7 @@ public class DbUpdateTest {
         //  UPDATE person   --  0 rows and table is read only
         //     SET name = name || " " || name
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                dbTabPersonEmpty.getDMLCommandUpdate(
+                dbTabPersonRoEmpty.getDMLCommandUpdate(
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         )
@@ -48,7 +48,7 @@ public class DbUpdateTest {
         //  UPDATE person   --  0 rows and table is read only
         //     SET -- updateSetCalcFunc is null - WRONG SYNTAX OF UPDATE
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                dbTabPersonEmpty.getDMLCommandUpdate(null)
+                dbTabPersonRoEmpty.getDMLCommandUpdate(null)
         );
 
         sqlCommandQueue1.startThread();
@@ -86,7 +86,7 @@ public class DbUpdateTest {
 
     @Test
     public void updateTwoRowsTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
@@ -116,7 +116,7 @@ public class DbUpdateTest {
 
     @Test
     public void updateTwoRowsTableWhereIdEq2() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
@@ -124,7 +124,7 @@ public class DbUpdateTest {
 
     @Test
     public void updateTwoRowsTableAndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
@@ -137,7 +137,7 @@ public class DbUpdateTest {
 
     @Test
     public void updateTwoRowsTableAndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         updateTwoRowsTable(dbTabPerson, sqlCommandQueue1);
@@ -150,7 +150,7 @@ public class DbUpdateTest {
 
     @Test
     public void updateTwoRowsTableWhereIdEq2AndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
@@ -163,7 +163,7 @@ public class DbUpdateTest {
 
     @Test
     public void updateTwoRowsTableWhereIdEq2AndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         updateTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);

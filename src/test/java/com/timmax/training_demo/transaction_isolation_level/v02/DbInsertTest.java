@@ -25,7 +25,7 @@ public class DbInsertTest {
         //    VALUES
         //      (1, "Bob", "@")
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                dbTabPersonEmpty.getDMLCommandInsert(dbRec1_Bob_email)
+                dbTabPersonRoEmpty.getDMLCommandInsert(dbRec1_Bob_email)
         );
         sqlCommandQueue1.startThread();
         DbDataAccessException exception = Assertions.assertThrows(
@@ -42,7 +42,7 @@ public class DbInsertTest {
 
     @Test
     public void insertOneRowWithEmailIsNullIntoEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
 
         //  INSERT
         //    INTO person   --  0 rows
@@ -63,7 +63,7 @@ public class DbInsertTest {
 
     @Test
     public void insertOneRowWithEmailIsNull2IntoEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
 
         //  INSERT
         //    INTO person   --  0 rows
@@ -102,7 +102,7 @@ public class DbInsertTest {
 
     @Test
     public void insertOneRowIntoEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
         SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         insertOneRowIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
@@ -129,7 +129,7 @@ public class DbInsertTest {
 
     @Test
     public void insertTwoRowsAtTimeIntoEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         insertTwoRowsAtTimeIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
@@ -137,8 +137,8 @@ public class DbInsertTest {
 
     @Test
     public void insertTwoRowsIntoEmptyTablesInDifferentOrder() {
-        DbTab dbTabPerson1 = new DbTab(dbTabPersonEmpty, false);
-        DbTab dbTabPerson2 = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson1 = new DbTab(dbTabPersonRoEmpty, false);
+        DbTab dbTabPerson2 = new DbTab(dbTabPersonRoEmpty, false);
 
         //  INSERT INTO person1 (id, name, email) VALUES (1, "Bob", "@");   --  0 rows
         //  INSERT INTO person1 (id, name, email) VALUES (2, "Alice", "@"); --  1 rows
@@ -163,7 +163,7 @@ public class DbInsertTest {
 
     @Test
     public void insertOneRowIntoEmptyTableAndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         insertOneRowIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
@@ -176,7 +176,7 @@ public class DbInsertTest {
 
     @Test
     public void insertOneRowIntoEmptyTableAndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         insertOneRowIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
@@ -189,7 +189,7 @@ public class DbInsertTest {
 
     @Test
     public void insertTwoRowsAtTimeIntoEmptyTableAndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         insertTwoRowsAtTimeIntoEmptyTable(dbTabPerson, sqlCommandQueue1);
@@ -202,7 +202,7 @@ public class DbInsertTest {
 
     @Test
     public void insertTwoRowsAtTimeIntoEmptyTableAndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         insertTwoRowsAtTimeIntoEmptyTable(dbTabPerson, sqlCommandQueue1);

@@ -21,7 +21,7 @@ public class DbDeleteTest {
         //  DELETE
         //    FROM person   --  0 rows and table is read only
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue(
-                dbTabPersonEmpty.getDMLCommandDelete()
+                dbTabPersonRoEmpty.getDMLCommandDelete()
         );
         sqlCommandQueue1.startThread();
         DbDataAccessException exception = Assertions.assertThrows(
@@ -38,7 +38,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromEmptyTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonEmpty, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoEmpty, false);
 
         //  DELETE
         //    FROM person   --  0 rows
@@ -71,7 +71,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromOneRowTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithOneRow, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromOneRowTable(dbTabPerson, sqlCommandQueue1);
@@ -94,7 +94,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromTwoRowsTable() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromTwoRowsTable(dbTabPerson, sqlCommandQueue1);
@@ -120,7 +120,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromTwoRowsTableWhereIdEq2() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
@@ -128,7 +128,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromOneRowTableAndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithOneRow, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromOneRowTable(dbTabPerson, sqlCommandQueue1);
@@ -141,7 +141,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromOneRowTableAndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithOneRow, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromOneRowTable(dbTabPerson, sqlCommandQueue1);
@@ -154,7 +154,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromTwoRowsTableAndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromTwoRowsTable(dbTabPerson, sqlCommandQueue1);
@@ -167,7 +167,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromTwoRowsTableAndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromTwoRowsTable(dbTabPerson, sqlCommandQueue1);
@@ -180,7 +180,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromTwoRowsTableWhereIdEq2AndRollback() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);
@@ -193,7 +193,7 @@ public class DbDeleteTest {
 
     @Test
     public void deleteFromTwoRowsTableWhereIdEq2AndCommit() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithTwoRows, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithTwoRows, false);
         final SQLCommandQueue sqlCommandQueue1 = new SQLCommandQueue();
 
         deleteFromTwoRowsTableWhereIdEq2(dbTabPerson, sqlCommandQueue1);

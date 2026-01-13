@@ -17,7 +17,7 @@ public class DbSelectViaMainThreadTest {
     public void selectFromEmptyTableViaMainThread() {
         //  SELECT *
         //    FROM person   --  0 rows
-        DbSelect dbSelect = dbTabPersonEmpty.select(dbRec -> true).getDbSelect();
+        DbSelect dbSelect = dbTabPersonRoEmpty.select(dbRec -> true).getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -26,7 +26,7 @@ public class DbSelectViaMainThreadTest {
     public void selectFromOneRowTableViaMainThread() {
         //  SELECT *
         //    FROM person   --  1 row (dbRec1_Bob_email)
-        DbSelect dbSelect = dbTabPersonWithOneRow.select(dbRec -> true).getDbSelect();
+        DbSelect dbSelect = dbTabPersonRoWithOneRow.select(dbRec -> true).getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
@@ -35,7 +35,7 @@ public class DbSelectViaMainThreadTest {
     public void selectFromTwoRowsTableViaMainThread() {
         //  SELECT *
         //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
-        DbSelect dbSelect = dbTabPersonWithTwoRows.select(dbRec -> true).getDbSelect();
+        DbSelect dbSelect = dbTabPersonRoWithTwoRows.select(dbRec -> true).getDbSelect();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
     }
@@ -45,7 +45,7 @@ public class DbSelectViaMainThreadTest {
         //  SELECT *
         //    FROM person   --  0 rows
         //   WHERE id = 1
-        DbSelect dbSelect = dbTabPersonEmpty.select(
+        DbSelect dbSelect = dbTabPersonRoEmpty.select(
                 dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
         ).getDbSelect();
 
@@ -57,7 +57,7 @@ public class DbSelectViaMainThreadTest {
         //  SELECT *
         //    FROM person   --  1 row (dbRec1_Bob_email)
         //   WHERE id = 1
-        DbSelect dbSelect = dbTabPersonWithOneRow.select(
+        DbSelect dbSelect = dbTabPersonRoWithOneRow.select(
                 dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
         ).getDbSelect();
 
@@ -69,7 +69,7 @@ public class DbSelectViaMainThreadTest {
         //  SELECT *
         //    FROM person   --  2 rows (dbRec1_Bob_email, dbRec2_Alice_email)
         //   WHERE id = 1
-        DbSelect dbSelect = dbTabPersonWithTwoRows.select(
+        DbSelect dbSelect = dbTabPersonRoWithTwoRows.select(
                 dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
         ).getDbSelect();
 

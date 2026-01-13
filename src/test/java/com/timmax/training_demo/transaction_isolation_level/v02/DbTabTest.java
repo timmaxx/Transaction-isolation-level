@@ -12,10 +12,10 @@ public class DbTabTest {
 
     @Test
     public void dbTabCopyMustHaveOwnDbRecCopy() {
-        DbTab dbTabPerson = new DbTab(dbTabPersonWithOneRow, false);
+        DbTab dbTabPerson = new DbTab(dbTabPersonRoWithOneRow, false);
 
         Assertions.assertNotSame(
-                dbTabPersonWithOneRow.getRows().stream().findAny().get(),
+                dbTabPersonRoWithOneRow.getRows().stream().findAny().get(),
                 dbTabPerson.getRows().stream().findAny().get()
         );
     }
@@ -32,6 +32,6 @@ public class DbTabTest {
                 true
         );
 
-        Assertions.assertEquals(dbTabPersonEmpty, dbTabPerson);
+        Assertions.assertEquals(dbTabPersonRoEmpty, dbTabPerson);
     }
 }
