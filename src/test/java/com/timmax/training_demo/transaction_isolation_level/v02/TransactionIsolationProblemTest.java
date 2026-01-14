@@ -29,12 +29,15 @@ public class TransactionIsolationProblemTest {
     public void lostUpdateProblem() {
         DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
-        //  --  Transaction 1:
-        //  UPDATE person   --  2 rows
-        //     SET name = name || " " || name
-        //   WHERE id = 2
+        //  --  Transaction 1:                      |   --  Transaction 2:
+        //  UPDATE person   --  2 rows              |   UPDATE person   --  2 rows
+        //     SET name = name || " " || name       |      SET name = name || " " || name
+        //   WHERE id = 2;                          |    WHERE id = 2;
+        //                                          |   SELECT *
+        //                                          |     FROM person;
+
         sqlCommandQueue1.add(
-                //  Пауза внутри update сильно нужна для демонстрации lostUpdateProblem, но не для других проблем.
+                //  Пауза внутри update нужна для демонстрации lostUpdateProblem, но не для других проблем.
                 //  И она должна быть больше, чем пауза перед стартом update в другой транзакции.
                 dbTabPerson.getDMLCommandUpdate(
                         0L, 100L,
@@ -45,12 +48,6 @@ public class TransactionIsolationProblemTest {
                 )
         );
 
-        //  --  Transaction 2:
-        //  UPDATE person   --  2 rows
-        //     SET name = name || " " || name
-        //   WHERE id = 2;
-        //  SELECT *
-        //    FROM person;
         sqlCommandQueue2.add(
                 dbTabPerson.getDMLCommandUpdate(
                         10L, 100L,
