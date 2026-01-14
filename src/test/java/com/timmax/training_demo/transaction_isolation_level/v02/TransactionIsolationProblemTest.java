@@ -66,6 +66,6 @@ public class TransactionIsolationProblemTest {
 
         DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
 
-        assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
 }
