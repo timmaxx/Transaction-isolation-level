@@ -67,4 +67,37 @@ public class TransactionIsolationProblemTest {
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
+
+    //  2.  Dirty read - Грязное чтение
+    @Test
+    public void dirtyReadProblem() {
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
+
+        sqlCommandQueue1.add(
+                dbTabPerson.getDMLCommandUpdate(
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
+                )
+        );
+
+        sqlCommandQueue2.add(
+                dbTabPerson.getDQLCommandSelect(
+                        200L,
+                        dbRec -> true
+                )
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue2.startThread();
+        sqlCommandQueue1.joinToThread();
+        sqlCommandQueue2.joinToThread();
+
+        sqlCommandQueue1.rollback();
+
+        DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
+
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+    }
 }

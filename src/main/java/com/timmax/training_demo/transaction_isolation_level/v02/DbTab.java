@@ -53,6 +53,10 @@ public non-sealed class DbTab extends DbTableLike {
         return new DQLCommandSelect(whereFunc);
     }
 
+    public DQLCommandSelect getDQLCommandSelect(Long millsBeforeRun, WhereFunc whereFunc) {
+        return new DQLCommandSelect(millsBeforeRun, whereFunc);
+    }
+
     public DMLCommandInsert getDMLCommandInsert(DbRec newDbRec) {
         return new DMLCommandInsert(newDbRec);
     }
