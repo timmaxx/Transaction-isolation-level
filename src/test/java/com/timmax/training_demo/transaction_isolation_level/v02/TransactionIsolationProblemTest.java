@@ -128,10 +128,6 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.add(
                 dbTabPerson.getDQLCommandSelect(
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
-                ),
-                dbTabPerson.getDQLCommandSelect(
-                        200L,
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
                 )
         );
 
@@ -150,8 +146,19 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
-        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
         DbSelect dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
+
+        sqlCommandQueue2.commit();
+
+        sqlCommandQueue1.add(
+                dbTabPerson.getDQLCommandSelect(
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
+                )
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
 
         DbSelectUtil.assertNotEquals(dbSelect1, dbSelect2);
     }
