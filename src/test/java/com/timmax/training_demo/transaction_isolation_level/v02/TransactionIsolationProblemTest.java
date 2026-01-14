@@ -77,6 +77,10 @@ public class TransactionIsolationProblemTest {
     public void dirtyReadProblem() {
         DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
+        //  --  Transaction 1:
+        //  UPDATE person   --  2 rows
+        //     SET name = name || " " || name
+        //   WHERE id = 2
         sqlCommandQueue1.add(
                 dbTabPerson.getDMLCommandUpdate(
                         dbRec -> Map.of(
@@ -86,6 +90,9 @@ public class TransactionIsolationProblemTest {
                 )
         );
 
+        //  --  Transaction 2:
+        //  SELECT *
+        //    FROM person;
         sqlCommandQueue2.add(
                 dbTabPerson.getDQLCommandSelect(
                         200L,
@@ -98,6 +105,8 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
+        //  --  Transaction 1:
+        //  ROLLBACK;
         sqlCommandQueue1.rollback();
 
         DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
