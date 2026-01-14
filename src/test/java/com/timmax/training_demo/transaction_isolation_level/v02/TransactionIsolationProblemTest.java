@@ -109,4 +109,50 @@ public class TransactionIsolationProblemTest {
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
+
+    //  3.  Non-repeatable read - Неповторяющееся чтение
+    @Test
+    public void NonRepeatableReadProblem() {
+        DbTab dbTabPerson = dbTabPersonWithTwoRows;
+
+        //  --  Transaction 1:                      |   --  Transaction 2:
+        //  SELECT *                                |
+        //    FROM person;                          |
+        //                                          |   UPDATE person   --  2 rows
+        //                                          |      SET name = name || " " || name
+        //                                          |    WHERE id = 2;
+        //                                          |   COMMIT;
+        //  SELECT *                                |
+        //    FROM person;                          |
+
+        sqlCommandQueue1.add(
+                dbTabPerson.getDQLCommandSelect(
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
+                ),
+                dbTabPerson.getDQLCommandSelect(
+                        200L,
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
+                )
+        );
+
+        sqlCommandQueue2.add(
+                dbTabPerson.getDMLCommandUpdate(
+                        100L, 0L,
+                        dbRec -> Map.of(
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                        ),
+                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
+                )
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue2.startThread();
+        sqlCommandQueue1.joinToThread();
+        sqlCommandQueue2.joinToThread();
+
+        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
+        DbSelect dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
+
+        DbSelectUtil.assertNotEquals(dbSelect1, dbSelect2);
+    }
 }

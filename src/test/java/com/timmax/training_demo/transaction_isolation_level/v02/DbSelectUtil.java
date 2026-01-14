@@ -43,6 +43,15 @@ public class DbSelectUtil {
         Assertions.assertEquals(expectedList, actualList);
     }
 
+    static public void assertNotEquals(DbSelect dbSelectExpected, DbSelect dbSelectActual) {
+        List<DbRec> expectedList = new ArrayList<>(dbSelectExpected.getRows());
+        List<DbRec> actualList = new ArrayList<>(dbSelectActual.getRows());
+        expectedList.sort(Comparator.naturalOrder());
+        actualList.sort(Comparator.naturalOrder());
+
+        Assertions.assertNotEquals(expectedList, actualList);
+    }
+
     static public void selectFromDbTabAndAssertEqualsWithExpectedDbSelect(DbSelect expectedDbSelect, SQLCommandQueue sqlCommandQueue, DbTab actualDbTab) {
         //  SELECT *
         //    FROM person
