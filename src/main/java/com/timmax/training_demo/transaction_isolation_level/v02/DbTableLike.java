@@ -113,12 +113,22 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     //  Вычисление новых записей (только для UPDATE);
     //  Логирование записей, подлежащих удалению или обновлению;
     //  Удаление этих записей.
-    protected void delete00ForDeletingAndUpdating(WhereFunc whereFunc, Map<Integer, DbRec> new_rowId_DbRec_Map, DMLCommandLog dmlCommandLog, UpdateSetCalcFunc updateSetCalcFunc) {
+    protected void delete00ForDeletingAndUpdating(Long millsInsideUpdate, WhereFunc whereFunc, Map<Integer, DbRec> new_rowId_DbRec_Map, DMLCommandLog dmlCommandLog, UpdateSetCalcFunc updateSetCalcFunc) {
         //  1.  Подготовка для тех записей, которые попали в where:
         //  1.1.    вычисляются новые значения (только для UPDATE),
         //  1.2.    пишутся в лог отката
         for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
             DbRec oldDbRec = entry.getValue();
+
+            //  Пауза нужна для демонстрации lostUpdateProblem, но не для других проблем
+            if (millsInsideUpdate > 0) {
+                try {
+                    Thread.sleep(millsInsideUpdate);
+                } catch (InterruptedException ie) {
+                    throw new RuntimeException(ie);
+                }
+            }
+
             if (whereFunc.where(oldDbRec)) {
                 Integer rowId = entry.getKey();
                 DbRec newDbRec;

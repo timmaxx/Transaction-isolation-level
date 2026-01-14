@@ -77,6 +77,10 @@ public non-sealed class DbTab extends DbTableLike {
         return new DMLCommandUpdate(updateSetCalcFunc, whereFunc);
     }
 
+    public DMLCommandUpdate getDMLCommandUpdate(Long millsBeforeRun, Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        return new DMLCommandUpdate(millsBeforeRun, millsInsideUpdate, updateSetCalcFunc, whereFunc);
+    }
+
     @Override
     public String toString() {
         return "DbTab{" +
@@ -120,11 +124,11 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     //  UPDATE выборочных записей (с WHERE)
-    private ResultOfDMLCommand update(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+    private ResultOfDMLCommand update(Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         Objects.requireNonNull(whereFunc, ERROR_INNER_TROUBLE_YOU_CANNOT_SET_WHERE_FUNC_INTO_NULL);
         Objects.requireNonNull(updateSetCalcFunc, ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL);
         validateReadOnlyTable(YOU_CANNOT_UPDATE);
-        return update0(updateSetCalcFunc, whereFunc);
+        return update0(millsInsideUpdate, updateSetCalcFunc, whereFunc);
     }
 
     private void validateReadOnlyTable(String msgInsUpdDel) {
@@ -138,19 +142,19 @@ public non-sealed class DbTab extends DbTableLike {
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
 
         //  Для DELETE updateSetCalcFunc делаем null
-        delete00ForDeletingAndUpdating(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, null);
+        delete00ForDeletingAndUpdating(0L, whereFunc, new_rowId_DbRec_Map, dmlCommandLog, null);
 
         //  Здесь нет кода, который есть в update (т.е. вставки)
 
         return new ResultOfDMLCommand(dmlCommandLog);
     }
 
-    private ResultOfDMLCommand update0(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+    private ResultOfDMLCommand update0(Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
         Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
 
         //  Для UPDATE updateSetCalcFunc передаём в метод
-        delete00ForDeletingAndUpdating(whereFunc, new_rowId_DbRec_Map, dmlCommandLog, updateSetCalcFunc);
+        delete00ForDeletingAndUpdating(millsInsideUpdate, whereFunc, new_rowId_DbRec_Map, dmlCommandLog, updateSetCalcFunc);
 
         //  Наличием этого кода отличается от
         //  private ResultOfDMLCommand delete0(WhereFunc whereFunc)
@@ -318,21 +322,21 @@ public non-sealed class DbTab extends DbTableLike {
 
     public class DMLCommandUpdate extends DMLCommand {
         public DMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc) {
-            this(0L, updateSetCalcFunc);
+            this(0L, 0L, updateSetCalcFunc);
         }
 
         public DMLCommandUpdate(UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-            this(0L, updateSetCalcFunc, whereFunc);
+            this(0L, 0L, updateSetCalcFunc, whereFunc);
         }
 
 
-        protected DMLCommandUpdate(Long millsBeforeRun, UpdateSetCalcFunc updateSetCalcFunc) {
-            this(millsBeforeRun, updateSetCalcFunc, dbRec -> true);
+        protected DMLCommandUpdate(Long millsBeforeRun, Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc) {
+            this(millsBeforeRun, millsInsideUpdate, updateSetCalcFunc, dbRec -> true);
         }
 
-        protected DMLCommandUpdate(Long millsBeforeRun, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
+        protected DMLCommandUpdate(Long millsBeforeRun, Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
             super(millsBeforeRun);
-            runnable = () -> update(updateSetCalcFunc, whereFunc);
+            runnable = () -> update(millsInsideUpdate, updateSetCalcFunc, whereFunc);
         }
     }
 }
