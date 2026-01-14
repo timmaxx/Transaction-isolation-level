@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //  Уровень изолированности транзакций
 //  Проблемы параллельного доступа с использованием транзакций
