@@ -65,6 +65,10 @@ public non-sealed class DbTab extends DbTableLike {
         return new DMLCommandInsert(newDbRec_List);
     }
 
+    public DMLCommandInsert getDMLCommandInsert(Long millsBeforeRun, DbRec newDbRec) {
+        return new DMLCommandInsert(millsBeforeRun, newDbRec);
+    }
+
     public DMLCommandDelete getDMLCommandDelete() {
         return new DMLCommandDelete();
     }

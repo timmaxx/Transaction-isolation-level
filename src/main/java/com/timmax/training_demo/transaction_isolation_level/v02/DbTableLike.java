@@ -28,7 +28,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
 
-    public int size() {
+    public int count() {
         return rowId_DbRec_Map.size();
     }
 
@@ -58,14 +58,14 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     //  ToDo:   Сделать private
     protected void delete000(Set<Integer> rowIdSet) {
-        int countBeforeAll = size();
+        int countBeforeAll = count();
         int countForProcessing = rowIdSet.size();
 
         rowId_DbRec_Map.keySet().removeAll(rowIdSet);
 
         //  Проверка удаления по количеству записей
         //  Количество всех записей в основной таблице, которые получились после промежуточного удаления
-        int countAfterRemoving = size();
+        int countAfterRemoving = count();
 
         if (countBeforeAll - countForProcessing != countAfterRemoving) {
             logger.error("countBeforeAll({}) - countForProcessing({}) != countAfterRemoving({})", countBeforeAll, countForProcessing, countAfterRemoving);

@@ -1,5 +1,6 @@
 package com.timmax.training_demo.transaction_isolation_level.v02;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,7 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 //  https://ru.wikipedia.org/wiki/%D0%A3%D1%80%D0%BE%D0%B2%D0%B5%D0%BD%D1%8C_%D0%B8%D0%B7%D0%BE%D0%BB%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D1%81%D1%82%D0%B8_%D1%82%D1%80%D0%B0%D0%BD%D0%B7%D0%B0%D0%BA%D1%86%D0%B8%D0%B9
 
 public class TransactionIsolationProblemTest {
+    DbTab dbTabPersonEmpty;
     DbTab dbTabPersonWithTwoRows;
     SQLCommandQueue sqlCommandQueue1;
     SQLCommandQueue sqlCommandQueue2;
@@ -19,6 +21,7 @@ public class TransactionIsolationProblemTest {
 
     @BeforeEach
     public void beforeEach() {
+        dbTabPersonEmpty = new DbTab(dbTabPersonRoEmpty, false);
         dbTabPersonWithTwoRows = new DbTab(dbTabPersonRoWithTwoRows, false);
         sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue2 = new SQLCommandQueue();
@@ -161,5 +164,53 @@ public class TransactionIsolationProblemTest {
         DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
 
         DbSelectUtil.assertNotEquals(dbSelect1, dbSelect2);
+    }
+
+    //  4.  Phantom read - Фантомное чтение
+    @Test
+    public void PhantomReadProblem() {
+        DbTab dbTabPerson = dbTabPersonEmpty;
+
+        //  --  Transaction 1:                      |   --  Transaction 2:
+        //  SELECT COUNT(*)                         |
+        //    FROM person;                          |
+        //                                          |   INSERT
+        //                                          |     INTO person
+        //                                          |          (id, name, email)
+        //                                          |   VALUES (1, "Bob", "@");
+        //                                          |   COMMIT;
+        //  SELECT COUNT(*)                         |
+        //    FROM person;                          |
+
+        sqlCommandQueue1.add(
+                dbTabPerson.getDQLCommandSelect()
+        );
+
+        sqlCommandQueue2.add(
+                dbTabPerson.getDMLCommandInsert(100L, dbRec1_Bob_email)
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue2.startThread();
+        sqlCommandQueue1.joinToThread();
+        sqlCommandQueue2.joinToThread();
+
+        sqlCommandQueue2.commit();
+
+        DbSelect dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
+
+        sqlCommandQueue1.add(
+                dbTabPerson.getDQLCommandSelect()
+        );
+
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
+
+        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
+
+        logger.info("dbSelect1.count() = {}", dbSelect1.count());
+        logger.info("dbSelect2.count() = {}", dbSelect2.count());
+
+        Assertions.assertNotEquals(dbSelect1.count(), dbSelect2.count());
     }
 }
