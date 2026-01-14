@@ -29,6 +29,7 @@ public class TransactionIsolationProblemTest {
     public void lostUpdateProblem() {
         DbTab dbTabPerson = dbTabPersonWithTwoRows;
 
+        //  --  Transaction 1:
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         //   WHERE id = 2
@@ -44,6 +45,7 @@ public class TransactionIsolationProblemTest {
                 )
         );
 
+        //  --  Transaction 2:
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
         //   WHERE id = 2;
