@@ -46,7 +46,9 @@ public class TransactionIsolationProblemTest {
 
         //  UPDATE person   --  2 rows
         //     SET name = name || " " || name
-        //   WHERE id = 2
+        //   WHERE id = 2;
+        //  SELECT *
+        //    FROM person;
         sqlCommandQueue2.add(
                 dbTabPerson.getDMLCommandUpdate(
                         10L, 100L,
