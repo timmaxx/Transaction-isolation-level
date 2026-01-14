@@ -91,9 +91,6 @@ public class TransactionIsolationProblemTest {
                 )
         );
 
-        //  --  Transaction 2:
-        //  SELECT *
-        //    FROM person;
         sqlCommandQueue2.add(
                 dbTabPerson.getDQLCommandSelect(
                         200L,
