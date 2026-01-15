@@ -74,30 +74,27 @@ public class TransactionIsolationProblemTest {
     //  2.  Dirty read - Грязное чтение
     @Test
     public void dirtyReadProblem() {
-        DbTab dbTabPerson = dbTabPersonWithTwoRows;
+        DbTab dbTabPerson = dbTabPersonWithOneRow;
 
         //  --  Transaction 1:                      |   --  Transaction 2:
-        //  UPDATE person   --  2 rows              |
-        //     SET name = name || " " || name       |
-        //   WHERE id = 2                           |
+        //  UPDATE person   --  1 row               |
+        //     SET name = name || " " || name;      |
         //                                          |   SELECT *
         //                                          |     FROM person;
         //  ROLLBACK;                               |
+        //  SELECT *                                |
+        //    FROM person;                          |
 
         sqlCommandQueue1.add(
                 dbTabPerson.getDMLCommandUpdate(
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        ),
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
+                        )
                 )
         );
 
         sqlCommandQueue2.add(
-                dbTabPerson.getDQLCommandSelect(
-                        200L,
-                        dbRec -> true
-                )
+                dbTabPerson.getDQLCommandSelect(200L)
         );
 
         sqlCommandQueue1.startThread();
@@ -105,11 +102,19 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
+        DbSelect dbSelect1 = sqlCommandQueue2.popFromDQLResultLog();
+
         sqlCommandQueue1.rollback();
 
-        DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
+        sqlCommandQueue1.add(
+                dbTabPerson.getDQLCommandSelect()
+        );
+        sqlCommandQueue1.startThread();
+        sqlCommandQueue1.joinToThread();
 
-        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
+
+        DbSelectUtil.assertNotEquals(dbSelect2, dbSelect1);
     }
 
     //  3.  Non-repeatable read - Неповторяющееся чтение
