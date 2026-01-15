@@ -15,7 +15,6 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 public class TransactionIsolationProblemTest {
     DbTab dbTabPersonEmpty;
     DbTab dbTabPersonWithOneRow;
-    DbTab dbTabPersonWithTwoRows;
     SQLCommandQueue sqlCommandQueue1;
     SQLCommandQueue sqlCommandQueue2;
 
@@ -24,7 +23,6 @@ public class TransactionIsolationProblemTest {
     public void beforeEach() {
         dbTabPersonEmpty = new DbTab(dbTabPersonRoEmpty, false);
         dbTabPersonWithOneRow = new DbTab(dbTabPersonRoWithOneRow, false);
-        dbTabPersonWithTwoRows = new DbTab(dbTabPersonRoWithTwoRows, false);
         sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue2 = new SQLCommandQueue();
     }
@@ -120,22 +118,19 @@ public class TransactionIsolationProblemTest {
     //  3.  Non-repeatable read - Неповторяющееся чтение
     @Test
     public void NonRepeatableReadProblem() {
-        DbTab dbTabPerson = dbTabPersonWithTwoRows;
+        DbTab dbTabPerson = dbTabPersonWithOneRow;
 
         //  --  Transaction 1:                      |   --  Transaction 2:
         //  SELECT *                                |
         //    FROM person;                          |
         //                                          |   UPDATE person   --  2 rows
-        //                                          |      SET name = name || " " || name
-        //                                          |    WHERE id = 2;
+        //                                          |      SET name = name || " " || name;
         //                                          |   COMMIT;
         //  SELECT *                                |
         //    FROM person;                          |
 
         sqlCommandQueue1.add(
-                dbTabPerson.getDQLCommandSelect(
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
-                )
+                dbTabPerson.getDQLCommandSelect()
         );
 
         sqlCommandQueue2.add(
@@ -143,8 +138,7 @@ public class TransactionIsolationProblemTest {
                         100L, 0L,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        ),
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
+                        )
                 )
         );
 
@@ -158,9 +152,7 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue2.commit();
 
         sqlCommandQueue1.add(
-                dbTabPerson.getDQLCommandSelect(
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
-                )
+                dbTabPerson.getDQLCommandSelect()
         );
         sqlCommandQueue1.startThread();
         sqlCommandQueue1.joinToThread();
