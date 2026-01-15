@@ -53,20 +53,12 @@ public non-sealed class DbTab extends DbTableLike {
         return new DQLCommandSelect(whereFunc);
     }
 
-    public DQLCommandSelect getDQLCommandSelect(Long millsBeforeRun, WhereFunc whereFunc) {
-        return new DQLCommandSelect(millsBeforeRun, whereFunc);
-    }
-
     public DMLCommandInsert getDMLCommandInsert(DbRec newDbRec) {
         return new DMLCommandInsert(newDbRec);
     }
 
     public DMLCommandInsert getDMLCommandInsert(List<DbRec> newDbRec_List) {
         return new DMLCommandInsert(newDbRec_List);
-    }
-
-    public DMLCommandInsert getDMLCommandInsert(Long millsBeforeRun, DbRec newDbRec) {
-        return new DMLCommandInsert(millsBeforeRun, newDbRec);
     }
 
     public DMLCommandDelete getDMLCommandDelete() {
@@ -85,10 +77,6 @@ public non-sealed class DbTab extends DbTableLike {
         return new DMLCommandUpdate(updateSetCalcFunc, whereFunc);
     }
 
-    public DMLCommandUpdate getDMLCommandUpdate(Long millsBeforeRun, Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        return new DMLCommandUpdate(millsBeforeRun, millsInsideUpdate, updateSetCalcFunc, whereFunc);
-    }
-
     @Override
     public String toString() {
         return "DbTab{" +
@@ -98,6 +86,18 @@ public non-sealed class DbTab extends DbTableLike {
                 '}';
     }
 
+
+    DQLCommandSelect getDQLCommandSelect(Long millsBeforeRun) {
+        return new DQLCommandSelect(millsBeforeRun);
+    }
+
+    DMLCommandInsert getDMLCommandInsert(Long millsBeforeRun, DbRec newDbRec) {
+        return new DMLCommandInsert(millsBeforeRun, newDbRec);
+    }
+
+    DMLCommandUpdate getDMLCommandUpdate(Long millsBeforeRun, Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc) {
+        return new DMLCommandUpdate(millsBeforeRun, millsInsideUpdate, updateSetCalcFunc);
+    }
 
     @Override
     void rollbackOfInsert(Integer rowId) {
