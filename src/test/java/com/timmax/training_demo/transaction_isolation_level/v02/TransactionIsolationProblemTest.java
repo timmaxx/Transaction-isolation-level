@@ -14,6 +14,7 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestDat
 
 public class TransactionIsolationProblemTest {
     DbTab dbTabPersonEmpty;
+    DbTab dbTabPersonWithOneRow;
     DbTab dbTabPersonWithTwoRows;
     SQLCommandQueue sqlCommandQueue1;
     SQLCommandQueue sqlCommandQueue2;
@@ -22,6 +23,7 @@ public class TransactionIsolationProblemTest {
     @BeforeEach
     public void beforeEach() {
         dbTabPersonEmpty = new DbTab(dbTabPersonRoEmpty, false);
+        dbTabPersonWithOneRow = new DbTab(dbTabPersonRoWithOneRow, false);
         dbTabPersonWithTwoRows = new DbTab(dbTabPersonRoWithTwoRows, false);
         sqlCommandQueue1 = new SQLCommandQueue();
         sqlCommandQueue2 = new SQLCommandQueue();
@@ -30,12 +32,11 @@ public class TransactionIsolationProblemTest {
     //  1.  Lost update - Потерянное обновление
     @Test
     public void lostUpdateProblem() {
-        DbTab dbTabPerson = dbTabPersonWithTwoRows;
+        DbTab dbTabPerson = dbTabPersonWithOneRow;
 
         //  --  Transaction 1:                      |   --  Transaction 2:
-        //  UPDATE person   --  2 rows              |   UPDATE person   --  2 rows
-        //     SET name = name || " " || name       |      SET name = name || " " || name
-        //   WHERE id = 2;                          |    WHERE id = 2;
+        //  UPDATE person   --  1 row               |   UPDATE person   --  1 row
+        //     SET name = name || " " || name;      |      SET name = name || " " || name;
         //                                          |   SELECT *
         //                                          |     FROM person;
 
@@ -47,7 +48,7 @@ public class TransactionIsolationProblemTest {
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
+                        dbRec -> true
                 )
         );
 
@@ -57,7 +58,7 @@ public class TransactionIsolationProblemTest {
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
                         ),
-                        dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(2)
+                        dbRec -> true
                 ),
                 dbTabPerson.getDQLCommandSelect()
         );
@@ -69,7 +70,7 @@ public class TransactionIsolationProblemTest {
 
         DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
 
-        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow_BobBob, dbSelect);
     }
 
     //  2.  Dirty read - Грязное чтение

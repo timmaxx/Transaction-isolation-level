@@ -46,6 +46,9 @@ public class DbTestData {
     public static final DbTab dbTabPersonRoWithOneRow = new DbTab(dbTabPersonRoEmpty, true, List.of(dbRec1_Bob_email));
     public static final DbSelect dbSelectPersonWithOneRow = dbTabPersonRoWithOneRow.select(dbRec -> true).getDbSelect();
 
+    public static final DbTab dbTabPersonRoWithOneRow_BobBob = new DbTab(dbTabPersonRoEmpty, true, List.of(dbRec1_BobBob_email));
+    public static final DbSelect dbSelectPersonWithOneRow_BobBob = dbTabPersonRoWithOneRow_BobBob.select(dbRec -> true).getDbSelect();
+
     public static final DbTab dbTabPersonRoWithTwoRows = new DbTab(dbTabPersonRoWithOneRow, true, List.of(dbRec2_Alice_email));
     public static final DbSelect dbSelectPersonWithTwoRows = dbTabPersonRoWithTwoRows.select(dbRec -> true).getDbSelect();
 
