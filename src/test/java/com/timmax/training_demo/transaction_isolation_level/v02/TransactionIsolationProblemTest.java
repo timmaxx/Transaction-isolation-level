@@ -36,7 +36,7 @@ public class TransactionIsolationProblemTest {
         //  UPDATE person   --  1 row               |   UPDATE person   --  1 row
         //     SET name = name || " " || name;      |      SET name = name || " " || name;
         //                                          |   SELECT *
-        //                                          |     FROM person;
+        //                                          |     FROM person;  --  1 row
 
         sqlCommandQueue1.add(
                 //  Пауза внутри update нужна для демонстрации lostUpdateProblem, но не для других проблем.
@@ -78,10 +78,10 @@ public class TransactionIsolationProblemTest {
         //  UPDATE person   --  1 row               |
         //     SET name = name || " " || name;      |
         //                                          |   SELECT *
-        //                                          |     FROM person;
+        //                                          |     FROM person;  --  1 row
         //  ROLLBACK;                               |
         //  SELECT *                                |
-        //    FROM person;                          |
+        //    FROM person;  --  1 row               |
 
         sqlCommandQueue1.add(
                 dbTabPerson.getDMLCommandUpdate(
@@ -122,12 +122,12 @@ public class TransactionIsolationProblemTest {
 
         //  --  Transaction 1:                      |   --  Transaction 2:
         //  SELECT *                                |
-        //    FROM person;                          |
-        //                                          |   UPDATE person   --  2 rows
+        //    FROM person; --  1 row                |
+        //                                          |   UPDATE person   --  1 row
         //                                          |      SET name = name || " " || name;
         //                                          |   COMMIT;
         //  SELECT *                                |
-        //    FROM person;                          |
+        //    FROM person; --  1 row                |
 
         sqlCommandQueue1.add(
                 dbTabPerson.getDQLCommandSelect()
@@ -169,14 +169,14 @@ public class TransactionIsolationProblemTest {
 
         //  --  Transaction 1:                      |   --  Transaction 2:
         //  SELECT COUNT(*)                         |
-        //    FROM person;                          |
+        //    FROM person;  --  count = 0           |
         //                                          |   INSERT
-        //                                          |     INTO person
+        //                                          |     INTO person  --  0 row to 1 row
         //                                          |          (id, name, email)
         //                                          |   VALUES (1, "Bob", "@");
         //                                          |   COMMIT;
         //  SELECT COUNT(*)                         |
-        //    FROM person;                          |
+        //    FROM person;  --  count = 1           |
 
         sqlCommandQueue1.add(
                 dbTabPerson.getDQLCommandSelect()
@@ -203,9 +203,6 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.joinToThread();
 
         DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
-
-        logger.info("dbSelect1.count() = {}", dbSelect1.count());
-        logger.info("dbSelect2.count() = {}", dbSelect2.count());
 
         Assertions.assertNotEquals(dbSelect1.count(), dbSelect2.count());
     }
