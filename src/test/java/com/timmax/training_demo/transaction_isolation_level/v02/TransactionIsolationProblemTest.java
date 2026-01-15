@@ -47,8 +47,7 @@ public class TransactionIsolationProblemTest {
                         0L, 100L,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        ),
-                        dbRec -> true
+                        )
                 )
         );
 
@@ -57,8 +56,7 @@ public class TransactionIsolationProblemTest {
                         10L, 100L,
                         dbRec -> Map.of(
                                 DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
-                        ),
-                        dbRec -> true
+                        )
                 ),
                 dbTabPerson.getDQLCommandSelect()
         );
