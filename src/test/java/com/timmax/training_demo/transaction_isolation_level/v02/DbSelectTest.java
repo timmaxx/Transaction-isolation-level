@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
+import static com.timmax.training_demo.transaction_isolation_level.v02.SQLCommandQueueUtil.startAllAndJoinToAllThreads;
 
 public class DbSelectTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbSelectTest.class);
@@ -25,8 +26,7 @@ public class DbSelectTest {
         sqlCommandQueue.add(
                 dbTabPersonRoEmpty.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -40,8 +40,7 @@ public class DbSelectTest {
         sqlCommandQueue.add(
                 dbTabPersonRoWithOneRow.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -55,8 +54,7 @@ public class DbSelectTest {
         sqlCommandQueue.add(
                 dbTabPersonRoWithTwoRows.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -73,8 +71,7 @@ public class DbSelectTest {
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
                 )
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -91,8 +88,7 @@ public class DbSelectTest {
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
                 )
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -109,8 +105,7 @@ public class DbSelectTest {
                         dbRec -> dbRec.getValue(DB_FIELD_NAME_ID).eq(1)
                 )
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 

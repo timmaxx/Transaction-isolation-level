@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.ERROR_TABLE_IS_RO_YOU_CANNOT_DELETE;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
+import static com.timmax.training_demo.transaction_isolation_level.v02.SQLCommandQueueUtil.startAllAndJoinToAllThreads;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbDeleteTest {
@@ -60,8 +61,7 @@ public class DbDeleteTest {
                 dbTabPerson.getDMLCommandDelete(),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -75,8 +75,7 @@ public class DbDeleteTest {
                 dbTabPerson.getDMLCommandDelete(),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -97,8 +96,7 @@ public class DbDeleteTest {
                 dbTabPerson.getDMLCommandDelete(),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -122,8 +120,7 @@ public class DbDeleteTest {
                 ),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 

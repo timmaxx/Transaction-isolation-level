@@ -12,6 +12,7 @@ import java.util.List;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.ERROR_TABLE_IS_RO_YOU_CANNOT_INSERT;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
+import static com.timmax.training_demo.transaction_isolation_level.v02.SQLCommandQueueUtil.startAllAndJoinToAllThreads;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbInsertTest {
@@ -64,8 +65,7 @@ public class DbInsertTest {
                 dbTabPerson.getDMLCommandInsert(dbRec3_Tom_Null),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -85,8 +85,7 @@ public class DbInsertTest {
                 dbTabPerson.getDMLCommandInsert(dbRec3_Tom_Null2),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -103,8 +102,7 @@ public class DbInsertTest {
                 dbTabPerson.getDMLCommandInsert(dbRec1_Bob_email),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -129,8 +127,7 @@ public class DbInsertTest {
                 dbTabPerson.getDMLCommandInsert(List.of(dbRec1_Bob_email, dbRec2_Alice_email)),
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -161,8 +158,7 @@ public class DbInsertTest {
                 dbTabPerson1.getDQLCommandSelect(),
                 dbTabPerson2.getDQLCommandSelect()
         );
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect2 = sqlCommandQueue.popFromDQLResultLog();
         DbSelect dbSelect1 = sqlCommandQueue.popFromDQLResultLog();

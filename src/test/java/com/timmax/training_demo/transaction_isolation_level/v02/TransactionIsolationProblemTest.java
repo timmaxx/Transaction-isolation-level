@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
+import static com.timmax.training_demo.transaction_isolation_level.v02.SQLCommandQueueUtil.startAllAndJoinToAllThreads;
 
 //  Уровень изолированности транзакций
 //  Проблемы параллельного доступа с использованием транзакций
@@ -66,10 +67,7 @@ public class TransactionIsolationProblemTest {
                 )
         );
 
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue1.joinToThread();
-        sqlCommandQueue2.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1, sqlCommandQueue2);
 
         //  (Для COMMIT) Стираем журнал отката первой транзакции.
         sqlCommandQueue1.commit();  //  or .rollback();
@@ -80,8 +78,7 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue2.add(
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue2.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue2);
 
         DbSelect dbSelect2 = sqlCommandQueue2.popFromDQLResultLog();
 
@@ -128,17 +125,12 @@ public class TransactionIsolationProblemTest {
                 )
         );
 
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue1.joinToThread();
-        sqlCommandQueue2.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1, sqlCommandQueue2);
 
         sqlCommandQueue2.add(
                 dbTabPerson.getDQLCommandSelect()
         );
-
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue2.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue2);
 
         DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
 
@@ -173,10 +165,7 @@ public class TransactionIsolationProblemTest {
                 dbTabPerson.getDQLCommandSelect(200L)
         );
 
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue1.joinToThread();
-        sqlCommandQueue2.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1, sqlCommandQueue2);
 
         DbSelect dbSelect1 = sqlCommandQueue2.popFromDQLResultLog();
 
@@ -185,8 +174,7 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.add(
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1);
 
         DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
 
@@ -220,10 +208,7 @@ public class TransactionIsolationProblemTest {
                 )
         );
 
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue1.joinToThread();
-        sqlCommandQueue2.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1, sqlCommandQueue2);
 
         DbSelect dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
 
@@ -232,8 +217,7 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.add(
                 dbTabPerson.getDQLCommandSelect()
         );
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1);
 
         DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
 
@@ -266,10 +250,7 @@ public class TransactionIsolationProblemTest {
                 dbTabPerson.getDMLCommandInsert(100L, dbRec1_Bob_email)
         );
 
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue2.startThread();
-        sqlCommandQueue1.joinToThread();
-        sqlCommandQueue2.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1, sqlCommandQueue2);
 
         sqlCommandQueue2.commit();
 
@@ -278,9 +259,7 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.add(
                 dbTabPerson.getDQLCommandSelect()
         );
-
-        sqlCommandQueue1.startThread();
-        sqlCommandQueue1.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue1);
 
         DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
 

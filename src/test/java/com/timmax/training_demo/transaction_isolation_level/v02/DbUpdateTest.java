@@ -13,6 +13,7 @@ import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.ERR
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTab.ERROR_UPDATE_SET_CALC_FUNC_IS_NULL_BUT_YOU_CANNOT_MAKE_IT_NULL;
 import static com.timmax.training_demo.transaction_isolation_level.v02.DbTestData.*;
 
+import static com.timmax.training_demo.transaction_isolation_level.v02.SQLCommandQueueUtil.startAllAndJoinToAllThreads;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbUpdateTest {
@@ -85,9 +86,7 @@ public class DbUpdateTest {
                 ),
                 dbTabPerson.getDQLCommandSelect()
         );
-
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
@@ -114,9 +113,7 @@ public class DbUpdateTest {
                 ),
                 dbTabPerson.getDQLCommandSelect()
         );
-
-        sqlCommandQueue.startThread();
-        sqlCommandQueue.joinToThread();
+        startAllAndJoinToAllThreads(sqlCommandQueue);
 
         DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
