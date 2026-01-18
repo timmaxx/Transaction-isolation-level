@@ -131,7 +131,7 @@ public class TransactionIsolationProblemTest {
         DbSelectUtil.assertNotEquals(dbSelect2, dbSelect1);
     }
 
-    //  3.  Non-repeatable read - Неповторяющееся чтение
+    //  3.  Non-repeatable or Fuzzy Read - Неповторяемое или нечеткое чтение
     @Test
     public void NonRepeatableReadProblem() {
         DbTab dbTabPerson = dbTabPersonWithOneRow;
@@ -179,6 +179,8 @@ public class TransactionIsolationProblemTest {
     }
 
     //  4.  Phantom read - Фантомное чтение
+    //      (это похоже на "Неповторяемое или нечеткое чтение",
+    //      но вторая транзакция может изменить количество записей в таблице - т.е. фантомы)
     @Test
     public void PhantomReadProblem() {
         DbTab dbTabPerson = dbTabPersonEmpty;
