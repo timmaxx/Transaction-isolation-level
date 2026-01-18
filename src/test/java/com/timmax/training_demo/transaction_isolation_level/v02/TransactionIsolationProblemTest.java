@@ -34,13 +34,17 @@ public class TransactionIsolationProblemTest {
 
         //  --  Transaction 1:                      |   --  Transaction 2:
         //  UPDATE person   --  1 row               |   UPDATE person   --  1 row
-        //     SET name = name || " " || name;      |      SET name = name || " " || name;
+        //     SET name = name || " " || name;      |      SET name = name || " (lost update)";
         //                                          |   SELECT *
         //                                          |     FROM person;  --  1 row
 
         sqlCommandQueue1.add(
-                //  Пауза внутри update нужна для демонстрации lostUpdateProblem, но не для других проблем.
-                //  И она должна быть больше, чем пауза перед стартом update в другой транзакции.
+                //  Пауза внутри этого UPDATE (100L) нужна для демонстрации lostUpdateProblem, но не для других проблем.
+                //  И она должна быть больше, чем пауза перед стартом UPDATE (10L) в другой транзакции.
+                //  Т.е. этот UPDATE успеет прочитать старое значение строки, замрёт (на 100L)
+                //  (во время этой паузы выполнится второй UPDATE (он и прочитает и изменит значение строки)),
+                //  и вычислит новое значение строки, основываясь на том, что было у него при старте.
+                //  И первый UPDATE перепишет, то, что уже переписал второй UPDATE.
                 dbTabPerson.getDMLCommandUpdate(
                         0L, 100L,
                         dbRec -> Map.of(
@@ -50,13 +54,16 @@ public class TransactionIsolationProblemTest {
         );
 
         sqlCommandQueue2.add(
+                //  Этот UPDATE начнётся немного позже (на 10L) чем начался первый UPDATE.
+                //  Пауза внутри этого UPDATE не нужна (0L).
+                //  Этот UPDATE успеет прочитать старое значение строки, изменит его по своей формуле до того,
+                //  как первый UPDATE изменит значение строки по своей формуле.
                 dbTabPerson.getDMLCommandUpdate(
-                        10L, 100L,
+                        10L, 0L,
                         dbRec -> Map.of(
-                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " " + dbRec.getValue(DB_FIELD_NAME_NAME)
+                                DB_FIELD_NAME_NAME, dbRec.getValue(DB_FIELD_NAME_NAME) + " (lost update)"
                         )
-                ),
-                dbTabPerson.getDQLCommandSelect()
+                )
         );
 
         sqlCommandQueue1.startThread();
@@ -64,8 +71,17 @@ public class TransactionIsolationProblemTest {
         sqlCommandQueue1.joinToThread();
         sqlCommandQueue2.joinToThread();
 
+        sqlCommandQueue2.add(
+                dbTabPerson.getDQLCommandSelect()
+        );
+
+        sqlCommandQueue2.startThread();
+        sqlCommandQueue2.joinToThread();
+
         DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
 
+        //  Результирующая выборка должна получиться с учетом первого UPDATE,
+        //  а результат второго UPDATE будет утерян.
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow_BobBob, dbSelect);
     }
 
