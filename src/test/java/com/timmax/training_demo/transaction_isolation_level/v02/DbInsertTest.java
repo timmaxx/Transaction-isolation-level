@@ -20,6 +20,8 @@ public class DbInsertTest {
 
     DbTab dbTabPersonEmpty;
     SQLCommandQueue sqlCommandQueue;
+    DbSelect dbSelect1;
+    DbSelect dbSelect2;
 
 
     @BeforeEach
@@ -67,9 +69,9 @@ public class DbInsertTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue.popFromDQLResultLog();
 
-        DbSelectUtil.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRowEmailIsNull, dbSelect1);
     }
 
     @Test
@@ -104,9 +106,9 @@ public class DbInsertTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue.popFromDQLResultLog();
 
-        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect1);
     }
 
     @Test
@@ -129,9 +131,9 @@ public class DbInsertTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue.popFromDQLResultLog();
 
-        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect1);
     }
 
     @Test
@@ -160,8 +162,8 @@ public class DbInsertTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect2 = sqlCommandQueue.popFromDQLResultLog();
-        DbSelect dbSelect1 = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect2 = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelect1, dbSelect2);
     }

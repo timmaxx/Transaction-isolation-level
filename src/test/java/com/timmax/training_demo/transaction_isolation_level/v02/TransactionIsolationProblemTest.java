@@ -21,6 +21,8 @@ public class TransactionIsolationProblemTest {
     DbTab dbTabPersonWithOneRow;
     SQLCommandQueue sqlCommandQueue1;
     SQLCommandQueue sqlCommandQueue2;
+    DbSelect dbSelect1;
+    DbSelect dbSelect2;
 
 
     @BeforeEach
@@ -80,7 +82,7 @@ public class TransactionIsolationProblemTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue2);
 
-        DbSelect dbSelect2 = sqlCommandQueue2.popFromDQLResultLog();
+        dbSelect2 = sqlCommandQueue2.popFromDQLResultLog();
 
         //  Результирующая выборка должна получиться с учетом первого UPDATE.
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow_BobBob, dbSelect2);
@@ -132,11 +134,11 @@ public class TransactionIsolationProblemTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue2);
 
-        DbSelect dbSelect = sqlCommandQueue2.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue2.popFromDQLResultLog();
 
         //  Результирующая выборка должна получиться с учетом первого UPDATE,
         //  а результат второго UPDATE будет утерян.
-        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow_BobBob, dbSelect);
+        DbSelectUtil.assertEquals(dbSelectPersonWithOneRow_BobBob, dbSelect1);
     }
 
     //  2.  Dirty read - Грязное чтение
@@ -167,7 +169,7 @@ public class TransactionIsolationProblemTest {
 
         startAllAndJoinToAllThreads(sqlCommandQueue1, sqlCommandQueue2);
 
-        DbSelect dbSelect1 = sqlCommandQueue2.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue2.popFromDQLResultLog();
 
         sqlCommandQueue1.rollback();
 
@@ -176,7 +178,7 @@ public class TransactionIsolationProblemTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue1);
 
-        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
+        dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
 
         DbSelectUtil.assertNotEquals(dbSelect2, dbSelect1);
     }
@@ -210,7 +212,7 @@ public class TransactionIsolationProblemTest {
 
         startAllAndJoinToAllThreads(sqlCommandQueue1, sqlCommandQueue2);
 
-        DbSelect dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
 
         sqlCommandQueue2.commit();
 
@@ -219,7 +221,7 @@ public class TransactionIsolationProblemTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue1);
 
-        DbSelect dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
+        dbSelect2 = sqlCommandQueue1.popFromDQLResultLog();
 
         DbSelectUtil.assertNotEquals(dbSelect1, dbSelect2);
     }
@@ -254,7 +256,7 @@ public class TransactionIsolationProblemTest {
 
         sqlCommandQueue2.commit();
 
-        DbSelect dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
+        dbSelect1 = sqlCommandQueue1.popFromDQLResultLog();
 
         sqlCommandQueue1.add(
                 dbTabPerson.getDQLCommandSelect()

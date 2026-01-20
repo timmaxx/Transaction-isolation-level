@@ -21,6 +21,7 @@ public class DbDeleteTest {
     DbTab dbTabPersonWithOneRow;
     DbTab dbTabPersonWithTwoRows;
     SQLCommandQueue sqlCommandQueue;
+    DbSelect dbSelect;
 
 
     @BeforeEach
@@ -63,7 +64,7 @@ public class DbDeleteTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -77,7 +78,7 @@ public class DbDeleteTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -98,7 +99,7 @@ public class DbDeleteTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -122,7 +123,7 @@ public class DbDeleteTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }

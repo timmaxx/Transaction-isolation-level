@@ -12,6 +12,7 @@ public class DbSelectTest {
     protected static final Logger logger = LoggerFactory.getLogger(DbSelectTest.class);
 
     SQLCommandQueue sqlCommandQueue;
+    DbSelect dbSelect;
 
 
     @BeforeEach
@@ -28,7 +29,7 @@ public class DbSelectTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -42,7 +43,7 @@ public class DbSelectTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
@@ -56,7 +57,7 @@ public class DbSelectTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRows, dbSelect);
     }
@@ -73,7 +74,7 @@ public class DbSelectTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonEmpty, dbSelect);
     }
@@ -90,7 +91,7 @@ public class DbSelectTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }
@@ -107,7 +108,7 @@ public class DbSelectTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithOneRow, dbSelect);
     }

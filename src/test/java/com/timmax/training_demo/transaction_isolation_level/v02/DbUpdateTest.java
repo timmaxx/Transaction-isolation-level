@@ -21,6 +21,7 @@ public class DbUpdateTest {
 
     DbTab dbTabPersonWithTwoRows;
     SQLCommandQueue sqlCommandQueue;
+    DbSelect dbSelect;
 
 
     @BeforeEach
@@ -88,7 +89,7 @@ public class DbUpdateTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsAllUpdated, dbSelect);
     }
@@ -115,7 +116,7 @@ public class DbUpdateTest {
         );
         startAllAndJoinToAllThreads(sqlCommandQueue);
 
-        DbSelect dbSelect = sqlCommandQueue.popFromDQLResultLog();
+        dbSelect = sqlCommandQueue.popFromDQLResultLog();
 
         DbSelectUtil.assertEquals(dbSelectPersonWithTwoRowsIdEq2Updated, dbSelect);
     }
