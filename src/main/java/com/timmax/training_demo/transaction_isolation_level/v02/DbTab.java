@@ -100,19 +100,19 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     @Override
-    void rollbackOfInsert(Integer rowId) {
+    void rollbackOfInsert(RowId rowId) {
         //  Здесь делается удаление одной строки, но при этом не пишется лог отката
         delete000(Set.of(rowId));
     }
 
     @Override
-    void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
+    void rollbackOfDelete(RowId rowId, DbRec oldDbRec) {
         //  Здесь делается вставка одной строки, но при этом не пишется лог отката
         insert00(Map.of(rowId, oldDbRec));
     }
 
     @Override
-    void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+    void rollbackOfUpdate(RowId rowId, DbRec oldDbRec) {
         rollbackOfInsert(rowId);
         rollbackOfDelete(rowId, oldDbRec);
     }
@@ -146,7 +146,7 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private ResultOfDMLCommand delete0(WhereFunc whereFunc) {
-        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
+        Map<RowId, DbRec> new_rowId_DbRec_Map = new HashMap<>();
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, DELETE);
 
         //  Для DELETE updateSetCalcFunc делаем null
@@ -158,7 +158,7 @@ public non-sealed class DbTab extends DbTableLike {
     }
 
     private ResultOfDMLCommand update0(Long millsInsideUpdate, UpdateSetCalcFunc updateSetCalcFunc, WhereFunc whereFunc) {
-        Map<Integer, DbRec> new_rowId_DbRec_Map = new HashMap<>();
+        Map<RowId, DbRec> new_rowId_DbRec_Map = new HashMap<>();
         DMLCommandLog dmlCommandLog = new DMLCommandLog(this, UPDATE);
 
         //  Для UPDATE updateSetCalcFunc передаём в метод

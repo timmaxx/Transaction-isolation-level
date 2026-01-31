@@ -6,17 +6,17 @@ public non-sealed class DbSelect extends DbTableLike {
     }
 
     @Override
-    void rollbackOfInsert(Integer rowId) {
+    void rollbackOfInsert(RowId rowId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    void rollbackOfDelete(Integer rowId, DbRec oldDbRec) {
+    void rollbackOfDelete(RowId rowId, DbRec oldDbRec) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    void rollbackOfUpdate(Integer rowId, DbRec oldDbRec) {
+    void rollbackOfUpdate(RowId rowId, DbRec oldDbRec) {
         throw new UnsupportedOperationException();
     }
 }

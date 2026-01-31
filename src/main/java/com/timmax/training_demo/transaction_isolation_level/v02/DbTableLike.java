@@ -19,8 +19,8 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     protected final DbFields dbFields;
 
-    private final Map<Integer, DbRec> rowId_DbRec_Map = new HashMap<>();
-    private Integer lastInsertedRowId = 0;
+    private final Map<RowId, DbRec> rowId_DbRec_Map = new HashMap<>();
+    private final RowIdForNextInsert lastInsertedRowId = new RowIdForNextInsert(0);
 
 
     public DbTableLike(DbFields dbFields) {
@@ -57,7 +57,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
 
     //  ToDo:   Сделать private
-    protected void delete000(Set<Integer> rowIdSet) {
+    protected void delete000(Set<RowId> rowIdSet) {
         int countBeforeAll = count();
         int countForProcessing = rowIdSet.size();
 
@@ -83,12 +83,12 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
     //  Вставка группы записей с заранее определёнными ROWID и не создавать записи в журнале отката
-    protected void insert00(Map<Integer, DbRec> new_rowId_DbRec_Map) {
+    protected void insert00(Map<RowId, DbRec> new_rowId_DbRec_Map) {
         int countBeforeAll = rowId_DbRec_Map.size();
         int countForProcessing = new_rowId_DbRec_Map.size();
 
-        for (Map.Entry<Integer, DbRec> entry : new_rowId_DbRec_Map.entrySet()) {
-            Integer rowId = entry.getKey();
+        for (Map.Entry<RowId, DbRec> entry : new_rowId_DbRec_Map.entrySet()) {
+            RowId rowId = entry.getKey();
             DbRec newDbRec = entry.getValue();
             //  После этой вставки нет вставки в журнал отката
             insert000(rowId, newDbRec);
@@ -113,11 +113,11 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     //  Вычисление новых записей (только для UPDATE);
     //  Логирование записей, подлежащих удалению или обновлению;
     //  Удаление этих записей.
-    protected void delete00ForDeletingAndUpdating(Long millsInsideUpdate, WhereFunc whereFunc, Map<Integer, DbRec> new_rowId_DbRec_Map, DMLCommandLog dmlCommandLog, UpdateSetCalcFunc updateSetCalcFunc) {
+    protected void delete00ForDeletingAndUpdating(Long millsInsideUpdate, WhereFunc whereFunc, Map<RowId, DbRec> new_rowId_DbRec_Map, DMLCommandLog dmlCommandLog, UpdateSetCalcFunc updateSetCalcFunc) {
         //  1.  Подготовка для тех записей, которые попали в where:
         //  1.1.    вычисляются новые значения (только для UPDATE),
         //  1.2.    пишутся в лог отката
-        for (Map.Entry<Integer, DbRec> entry: rowId_DbRec_Map.entrySet()) {
+        for (Map.Entry<RowId, DbRec> entry: rowId_DbRec_Map.entrySet()) {
             DbRec oldDbRec = entry.getValue();
 
             //  Пауза нужна для демонстрации lostUpdateProblem, но не для других проблем
@@ -130,7 +130,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
             }
 
             if (whereFunc.where(oldDbRec)) {
-                Integer rowId = entry.getKey();
+                RowId rowId = entry.getKey();
                 DbRec newDbRec;
                 if (updateSetCalcFunc == null) {
                     //  Код для DELETE:
@@ -153,11 +153,11 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
 
-    abstract void rollbackOfInsert(Integer rowId);
+    abstract void rollbackOfInsert(RowId rowId);
 
-    abstract void rollbackOfDelete(Integer rowId, DbRec oldDbRec);
+    abstract void rollbackOfDelete(RowId rowId, DbRec oldDbRec);
 
-    abstract void rollbackOfUpdate(Integer rowId, DbRec oldDbRec);
+    abstract void rollbackOfUpdate(RowId rowId, DbRec oldDbRec);
 
     //  Этот метод объявлен как package-private только лишь для того, чтобы он был доступен в конструкторе
     //  DbTab.DQLCommandSelect.
@@ -191,7 +191,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
 
     //  Вычисление ROWID для одной записи и создание записи в журнале отката
     private void insert00(DMLCommandLog dmlCommandLog, DbRec newDbRec) {
-        Integer rowId = ++lastInsertedRowId;
+        RowId rowId = new RowId(lastInsertedRowId.generateAndGetNext());
 
         insert000(rowId, newDbRec);
 
@@ -200,7 +200,7 @@ public abstract sealed class DbTableLike permits DbTab, DbSelect {
     }
 
     //  Непосредственная вставка одной записи в мапу - носитель таблицы без создания записи в журнале отката
-    private void insert000(Integer rowId, DbRec newDbRec) {
+    private void insert000(RowId rowId, DbRec newDbRec) {
         if (rowId_DbRec_Map.put(rowId, new DbRec(newDbRec)) != null) {
             throw new DbSQLException(ERROR_DUPLICATE_KEY_VALUE_VIOLATES_UNIQUE_CONSTRAINT_COMBINATIONS_OF_ALL_FIELDS_MUST_BE_UNIQUE);
         }

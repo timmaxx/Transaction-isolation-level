@@ -137,7 +137,7 @@ public class SQLCommandQueue {
                 } catch (EmptyStackException ese) {
                     break;
                 }
-                int rowId = dmlCommandLogElement.getRowId();
+                RowId rowId = dmlCommandLogElement.getRowId();
 
                 //  Вероятно этот if можно было-бы перенести в какой-нибудь класс - наследник.
                 if (dmlCommandLogElementType == INSERT) {

@@ -1,19 +1,20 @@
 package com.timmax.training_demo.transaction_isolation_level.v02.sqlcommand.dml;
 
 import com.timmax.training_demo.transaction_isolation_level.v02.DbRec;
+import com.timmax.training_demo.transaction_isolation_level.v02.RowId;
 
 import java.util.Objects;
 
 public final class DMLCommandLogElement {
-    private final Integer rowId;
+    private final RowId rowId;
     private final DbRec oldDbRec;
 
-    public DMLCommandLogElement(Integer rowId, DbRec oldDbRec) {
+    public DMLCommandLogElement(RowId rowId, DbRec oldDbRec) {
         this.rowId = rowId;
         this.oldDbRec = oldDbRec;
     }
 
-    public Integer getRowId() {
+    public RowId getRowId() {
         return rowId;
     }
 
