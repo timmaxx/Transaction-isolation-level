@@ -8,9 +8,7 @@ import java.util.Objects;
 public class ResultOfDQLCommand extends ResultOfSQLCommand {
     private final DbSelect dbSelect;
 
-    public ResultOfDQLCommand(
-            DbSelect dbSelect
-    ) {
+    public ResultOfDQLCommand(DbSelect dbSelect) {
         this.dbSelect = dbSelect;
     }
 
